@@ -1,14 +1,15 @@
 {
-    "New Loadout": {
+    "Arpeggio Cracker": {
         "launcher_ammo": 48,
+        "medium_ammo": 80,
         "herbal_bandage": 4,
         "shield_recharger": 5,
         "tactical_mk3": 1,
         "light_shield": 1,
-        "ARPEGGIO II_03": 1,
-        "HULLCRACKER IV_01": 1,
+        "ARPEGGIO II_06": 1,
+        "HULLCRACKER IV_04": 1,
         "blaze_grenade": 5,
         "snap_blast_grenade": 2,
-        "basic_camera": 1
+        "grappling_hook": 1
     }
 }

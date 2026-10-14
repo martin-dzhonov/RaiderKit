@@ -408,16 +408,6 @@ QLabel#scanLabel {
     font-weight: bold;
 }
 
-/* Spinner */
-QLabel#spinner {
-    background: transparent;
-    color: #6df5c4;
-    font-family: "Segoe UI Symbol";
-    font-size: 6px;
-    font-weight: bold;
-    padding: 0px;
-}
-
 /* =========================================================
    LOADOUT NAME
    ========================================================= */
@@ -443,7 +433,8 @@ QLabel#loadoutResult {
    THREE-SECOND COUNTDOWN BAR
    ========================================================= */
 
-QProgressBar#loadoutResultProgress {
+QProgressBar#loadoutResultProgress,
+QProgressBar#scanProgressIndicator {
     background-color: #252b3e;
     border: none;
     border-radius: 3px;
@@ -453,7 +444,8 @@ QProgressBar#loadoutResultProgress {
 }
 
 /* Countdown Fill */
-QProgressBar#loadoutResultProgress::chunk {
+QProgressBar#loadoutResultProgress::chunk,
+QProgressBar#scanProgressIndicator::chunk {
     background-color: #6df5c4;
     border-radius: 3px;
 }

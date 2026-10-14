@@ -141,22 +141,16 @@ class OverlayUIMixin:
         result_layout.setContentsMargins(0, 0, 0, 0)
         result_layout.setSpacing(8)
 
-        self.spinner_label = QLabel("◐")
-        self.spinner_label.setObjectName("spinner")
-        self.spinner_label.setStyleSheet(
-            "font-family: 'Segoe UI Symbol'; "
-            "font-size: 16pt; "
-            "font-weight: bold; "
-            "color: #6df5c4; "
-            "background: transparent;"
-        )
-        self.spinner_label.setFixedWidth(48)
-        self.spinner_label.setMinimumHeight(55)
-        self.spinner_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.spinner_label.hide()
+        self.scan_progress_bar = QProgressBar()
+        self.scan_progress_bar.setObjectName("scanProgressIndicator")
+        self.scan_progress_bar.setRange(0, 1000)
+        self.scan_progress_bar.setValue(0)
+        self.scan_progress_bar.setTextVisible(False)
+        self.scan_progress_bar.setFixedSize(self.actions_panel_width - 20, 6)
+        self.scan_progress_bar.hide()
 
         result_layout.addWidget(
-            self.spinner_label,
+            self.scan_progress_bar,
             0,
             Qt.AlignmentFlag.AlignCenter,
         )
@@ -314,9 +308,16 @@ class OverlayUIMixin:
 
     def _setup_timers(self):
 
-        self.scan_spinner_timer = QTimer(self)
-        self.scan_spinner_timer.setInterval(100)
-        self.scan_spinner_timer.timeout.connect(self._animate_scan_spinner)
+        self.scan_progress_animation = QPropertyAnimation(
+            self.scan_progress_bar,
+            b"value",
+            self,
+        )
+        self.scan_progress_animation.setStartValue(0)
+        self.scan_progress_animation.setEndValue(1000)
+        self.scan_progress_animation.setDuration(1000)
+        self.scan_progress_animation.setLoopCount(-1)
+        self.scan_progress_animation.setEasingCurve(QEasingCurve.Type.Linear)
 
         self.status_timer = QTimer(self)
         self.status_timer.timeout.connect(self.update_status)

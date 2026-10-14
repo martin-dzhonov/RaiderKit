@@ -277,26 +277,6 @@ class OverlayLoadoutsMixin:
                 alignment=Qt.AlignmentFlag.AlignHCenter,
             )
 
-            is_weapon = name in TAB_ITEMS.get("weapons", set()) or (
-                image_path is not None
-                and image_path.parent.name.casefold() == "weapons"
-            )
-
-            if is_weapon:
-                display_name = get_item_display_name(name)
-
-                name_label = QLabel(display_name)
-
-                name_label.setObjectName("inventoryItemName")
-
-                name_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-
-                name_label.setWordWrap(True)
-
-                name_label.setToolTip(display_name)
-
-                name_label.setFixedWidth(self.LOADOUT_ITEM_SLOT_SIZE)
-
             item_widget.adjustSize()
 
             grid.addWidget(

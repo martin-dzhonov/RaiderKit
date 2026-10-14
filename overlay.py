@@ -1,6 +1,6 @@
 import copy
 import main as automation
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ACTIONS_PANEL_WIDTH,
@@ -59,8 +59,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         # Scanning spinner.
         self.scan_progress_visible = False
         self.scan_status_message = ""
-        self.scan_spinner_frames = ["◐", "◓", "◑", "◒"]
-        self.scan_spinner_index = 0
 
         self.normal_width = self.calculate_window_width()
 
@@ -130,7 +128,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         )
 
     def show_scan_progress(self, message):
-        """Show the large animated spinner without a progress bar."""
+        """Show the repeating progress bar while a scan is running."""
 
         self.loadout_result_timer.stop()
         self.loadout_result_progress.hide()
@@ -139,13 +137,12 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.loadout_result_visible = False
         self.scan_progress_visible = True
         self.scan_status_message = str(message)
-        self.scan_spinner_index = 0
 
         self.player_scan_button.hide()
         self.clear_loadout_button.hide()
 
-        self.spinner_label.setText(self.scan_spinner_frames[0])
-        self.spinner_label.show()
+        self.scan_progress_bar.setValue(0)
+        self.scan_progress_bar.show()
 
         self.loadout_result_label.setProperty("resultType", "progress")
         self.loadout_result_label.setText(self.scan_status_message)
@@ -155,31 +152,19 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.loadout_result_label.style().unpolish(self.loadout_result_label)
         self.loadout_result_label.style().polish(self.loadout_result_label)
 
-        if not self.scan_spinner_timer.isActive():
-            self.scan_spinner_timer.start()
-
-    def _animate_scan_spinner(self):
-        """Animate only the large spinner; keep status text unchanged."""
-
-        if not self.scan_progress_visible:
-            self.scan_spinner_timer.stop()
-            return
-
-        self.scan_spinner_index = (self.scan_spinner_index + 1) % len(
-            self.scan_spinner_frames
-        )
-
-        self.spinner_label.setText(self.scan_spinner_frames[self.scan_spinner_index])
+        self.scan_progress_animation.stop()
+        self.scan_progress_animation.setCurrentTime(0)
+        self.scan_progress_animation.start()
 
     def hide_scan_progress(self):
-        """Stop the spinner and restore controls when appropriate."""
+        """Stop the progress animation and restore controls when appropriate."""
 
-        self.scan_spinner_timer.stop()
+        self.scan_progress_animation.stop()
         self.scan_progress_visible = False
         self.scan_status_message = ""
 
         if not self.loadout_result_visible:
-            self.spinner_label.hide()
+            self.scan_progress_bar.hide()
             self.loadout_result_widget.hide()
             self.loadout_result_progress.hide()
             self.loadout_result_ok_button.hide()
@@ -336,7 +321,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
     def show_loadout_result(self, message, result_type=None):
         """Show success briefly, or missing items until OK is clicked."""
 
-        self.scan_spinner_timer.stop()
+        self.scan_progress_animation.stop()
         self.scan_progress_visible = False
         self.scan_status_message = ""
 
@@ -345,7 +330,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.player_scan_button.hide()
         self.clear_loadout_button.hide()
-        self.spinner_label.hide()
+        self.scan_progress_bar.hide()
 
         if result_type is not None:
             self.loadout_result_label.setProperty("resultType", result_type)
@@ -408,7 +393,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         if self.scan_progress_visible:
             return
 
-        self.spinner_label.hide()
+        self.scan_progress_bar.hide()
         self.loadout_result_widget.hide()
 
         if self.initialization_complete:

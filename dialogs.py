@@ -1,21 +1,23 @@
 import copy
-import json
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
+    QFrame,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QMessageBox,
-    QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QVBoxLayout,
 )
 
 from common import flatten_loadout, validate_loadout
+from overlay_loadouts import OverlayLoadoutsMixin
 
 
-class GeneratedLoadoutDialog(QDialog):
+class GeneratedLoadoutDialog(OverlayLoadoutsMixin, QDialog):
     def __init__(self, loadout_data, existing_names, parent=None):
         super().__init__(parent)
 
@@ -40,13 +42,21 @@ class GeneratedLoadoutDialog(QDialog):
         self.name_input.selectAll()
         layout.addWidget(self.name_input)
 
-        layout.addWidget(QLabel("Generated JSON preview:"))
+        layout.addWidget(QLabel("Loadout preview:"))
 
-        self.json_preview = QPlainTextEdit()
-        self.json_preview.setReadOnly(True)
-        self.json_preview.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
-        self.json_preview.setPlainText(json.dumps(self.loadout_data, indent=4))
-        layout.addWidget(self.json_preview, 1)
+        self.preview_scroll_area = QScrollArea()
+        self.preview_scroll_area.setWidgetResizable(True)
+        self.preview_scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+        self.preview_scroll_area.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        self.preview_scroll_area.setVerticalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAsNeeded
+        )
+        self.preview_scroll_area.setWidget(
+            self._create_loadout_contents(self.loadout_data)
+        )
+        layout.addWidget(self.preview_scroll_area, 1)
 
         buttons = QHBoxLayout()
         buttons.addStretch()
