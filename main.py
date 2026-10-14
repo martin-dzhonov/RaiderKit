@@ -199,6 +199,19 @@ def safe_weapon_item_name(name, slot_label):
     return item_name
 
 
+def unique_weapon_item_id(name, slot_label, used_item_ids):
+    base_name = safe_weapon_item_name(name, slot_label)
+    suffix = 1
+
+    while True:
+        item_id = f"{base_name}_{suffix:02d}"
+        normalized_id = item_id.casefold()
+        if normalized_id not in used_item_ids:
+            used_item_ids.add(normalized_id)
+            return item_id
+        suffix += 1
+
+
 def perform_player_inventory_save_actions(
     initial_image=None,
     before_ocr=None,
@@ -239,6 +252,17 @@ def perform_player_inventory_save_actions(
             (cell["x"] + 64, cell["y"] + 64)
             for cell in empty_boxes[: len(occupied_sources)]
         ]
+        weapons_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "item_templates",
+            "weapons",
+        )
+        os.makedirs(weapons_dir, exist_ok=True)
+        used_item_ids = {
+            os.path.splitext(filename)[0].casefold()
+            for filename in os.listdir(weapons_dir)
+            if filename.lower().endswith(TEMPLATE_EXTENSIONS)
+        }
 
         for source_index, (source, destination) in enumerate(
             zip(drag_sources, destinations),
@@ -261,7 +285,11 @@ def perform_player_inventory_save_actions(
                     f"Could not read the item name in source box {source_index}."
                 )
 
-            item_id = safe_weapon_item_name(weapon_name, f"source box {source_index}")
+            item_id = unique_weapon_item_id(
+                weapon_name,
+                f"source box {source_index}",
+                used_item_ids,
+            )
             weapon_item_ids.append(item_id)
 
             drag_inventory_item(source, destination)
@@ -273,13 +301,6 @@ def perform_player_inventory_save_actions(
         screenshot = utils.capture_screen()
 
         # Save cropped images into item_templates/weapons.
-        weapons_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "item_templates",
-            "weapons",
-        )
-        os.makedirs(weapons_dir, exist_ok=True)
-
         for (x, y), item_id in zip(destinations, weapon_item_ids):
             crop = screenshot.crop(
                 (

@@ -11,29 +11,15 @@
         "combat_mk2": 1,
         "heavy_shield": 1
     },
-    "New Loadout 11": {
-        "medium_ammo": 96,
-        "light_ammo": 100,
-        "tactical_mk3": 1,
-        "medium_shield": 1
-    },
     "New Loadout 2": {
-        "HAIRPIN IV": 1,
-        "VENATOR II": 1
+        "light_shield": 1,
+        "HAIRPIN IV_01": 1,
+        "ARPEGGIO II_01": 1
     },
     "New Loadout 4": {
-        "HAIRPIN IV": 1,
-        "HAIRPIN III": 1
-    },
-    "New Loadout 5": {
-        "medium_ammo": 160,
-        "heavy_ammo": 60,
-        "lure_grenade": 1,
-        "combat_mk2": 1,
-        "medium_shield": 1,
-        "FERRO III": 1,
-        "VENATOR II": 1,
-        "bandage": 5,
-        "shield_recharger": 3
+        "heavy_shield": 1,
+        "light_shield": 1,
+        "HAIRPIN IV_02": 1,
+        "ARPEGGIO II_02": 1
     }
 }
