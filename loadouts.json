@@ -99,5 +99,24 @@
         "looting_mk3": 1,
         "gun_58370": 1,
         "gun_54076": 1
+    },
+    "New Loadout 17": {
+        "light_ammo": 100,
+        "looting_mk3": 1
+    },
+    "New Loadout 18": {
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "gun_67191": 1
+    },
+    "New Loadout 19": {
+        "light_ammo": 100,
+        "looting_mk3": 1
+    },
+    "New Loadout 20": {
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "gun_84936": 1,
+        "gun_39748": 1
     }
 }

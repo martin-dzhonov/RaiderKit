@@ -377,6 +377,41 @@ def has_item_banner(image, row_top, column_x, config=None):
     return False
 
 
+def has_item_banner_at_bottom_border(
+    image,
+    scan_x,
+    bottom_border_y,
+    sample_length=30,
+    required_run=10,
+):
+    sample_bottom = bottom_border_y - BORDER_WIDTH
+    sample_top = sample_bottom - sample_length
+
+    if (
+        sample_length <= 0
+        or required_run <= 0
+        or required_run > sample_length
+        or not 0 <= scan_x < image.width
+        or sample_top < 0
+        or sample_bottom > image.height
+    ):
+        return False
+
+    pixels = image.load()
+    expected = BANNER_COLOR[:3]
+    banner_run = 0
+
+    for y in range(sample_top, sample_bottom):
+        if pixels[scan_x, y][:3] == expected:
+            banner_run += 1
+            if banner_run >= required_run:
+                return True
+        else:
+            banner_run = 0
+
+    return False
+
+
 def detect_scrollbar(image):
     if not 0 <= SCROLLBAR_X < image.width:
         return None

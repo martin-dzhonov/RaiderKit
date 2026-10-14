@@ -42,8 +42,8 @@ PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.16
 PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET = 100
 
 PLAYER_INVENTORY_SAVE_SOURCES = (
-    (1310, 788),
-    (1310, 1076),
+    (1175, 788),
+    (1175, 1076),
 )
 
 
@@ -189,26 +189,32 @@ def perform_player_inventory_save_actions(loadout):
         image = utils.wait_for_settled_screen()
         grid_result = player_main_scanner.scan_inventory(image)
 
+        occupied_sources = [
+            (x, y)
+            for x, y in PLAYER_INVENTORY_SAVE_SOURCES
+            if utils.has_item_banner_at_bottom_border(image, x, y)
+        ]
+
         empty_boxes = [
             cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
         ]
 
-        if len(empty_boxes) < len(PLAYER_INVENTORY_SAVE_SOURCES):
+        if len(empty_boxes) < len(occupied_sources):
             raise RuntimeError(
-                f"Expected at least {len(PLAYER_INVENTORY_SAVE_SOURCES)} "
+                f"Expected at least {len(occupied_sources)} "
                 f"empty boxes, but found {len(empty_boxes)}."
             )
 
         drag_sources = [
             (x, y - PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET)
-            for x, y in PLAYER_INVENTORY_SAVE_SOURCES
+            for x, y in occupied_sources
         ]
 
-        # Select the first two empty boxes in grid order.
+        # Select one empty box per occupied source, in grid order.
         # Coordinates are the centers of the 128x128 boxes.
         destinations = [
             (cell["x"] + 64, cell["y"] + 64)
-            for cell in empty_boxes[: len(PLAYER_INVENTORY_SAVE_SOURCES)]
+            for cell in empty_boxes[: len(occupied_sources)]
         ]
 
         # Drag each item into its selected empty box.
@@ -224,7 +230,7 @@ def perform_player_inventory_save_actions(loadout):
 
         screenshot = utils.wait_for_settled_screen()
 
-        # Scan the screenshot taken after both items have been moved.
+        # Scan the screenshot taken after the occupied items have been moved.
         grid_result = player_main_scanner.scan_inventory(screenshot)
 
         # Save cropped images into item_templates/weapons.
