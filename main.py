@@ -39,7 +39,7 @@ MAX_CLEAR_CLICKS = 50
 MAX_UNCHANGED_CLEAR_SCANS = 2
 BIG_ITEM_CLICK_DELAY = 0.1
 PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.16
-PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET = 100
+PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET = 130
 
 PLAYER_INVENTORY_SAVE_SOURCES = (
     (1175, 788),
@@ -132,12 +132,14 @@ def scan_player_inventory():
                 set_status("Ready")
                 return
 
-            generated_loadout = utils.build_player_loadout(
-                main_items + augmented_items + big_items,
-                quickuse_items,
+            player_inventory_results.put(
+                copy.deepcopy(
+                    {
+                        "main_items": main_items + augmented_items + big_items,
+                        "quickuse_items": quickuse_items,
+                    }
+                )
             )
-
-            player_inventory_results.put(copy.deepcopy(generated_loadout))
             set_status("Done")
 
         except Exception:
@@ -178,10 +180,8 @@ def refresh_weapon_templates():
     )
 
 
-def perform_player_inventory_save_actions(loadout):
+def perform_player_inventory_save_actions():
     completed_drags = []
-    screenshot_path = None
-    grid_result = None
     weapon_item_ids = []
 
     try:
@@ -204,6 +204,9 @@ def perform_player_inventory_save_actions(loadout):
                 f"Expected at least {len(occupied_sources)} "
                 f"empty boxes, but found {len(empty_boxes)}."
             )
+
+        if not occupied_sources:
+            return weapon_item_ids
 
         drag_sources = [
             (x, y - PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET)
@@ -229,9 +232,6 @@ def perform_player_inventory_save_actions(loadout):
         pyautogui.moveTo(1355, 650, duration=0.1)
 
         screenshot = utils.wait_for_settled_screen()
-
-        # Scan the screenshot taken after the occupied items have been moved.
-        grid_result = player_main_scanner.scan_inventory(screenshot)
 
         # Save cropped images into item_templates/weapons.
         weapons_dir = os.path.join(
@@ -274,9 +274,7 @@ def perform_player_inventory_save_actions(loadout):
         for source, destination in reversed(completed_drags):
             drag_inventory_item(destination, source)
 
-    loadout.update(dict.fromkeys(weapon_item_ids, 1))
-
-    return screenshot_path, grid_result
+    return weapon_item_ids
 
 
 def clear_player_inventory():

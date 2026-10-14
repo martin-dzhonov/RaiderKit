@@ -37,86 +37,37 @@
         "gun_64030": 1
     },
     "New Loadout 6": {
-        "medium_ammo": 80,
         "light_shield": 1,
-        "crash_mat": 3,
-        "gun_54561": 1,
-        "gun_41227": 1
+        "gun_13361": 1,
+        "gun_77734": 1
     },
     "New Loadout 7": {
+        "launcher_ammo": 24,
+        "light_ammo": 100,
         "light_shield": 1,
-        "gun_81356": 1,
-        "gun_17514": 1
+        "gun_77904": 1
     },
     "New Loadout 8": {
-        "light_shield": 1,
-        "gun_65414": 1,
-        "gun_85072": 1
+        "launcher_ammo": 24,
+        "light_ammo": 100,
+        "light_shield": 1
     },
     "New Loadout 9": {
+        "light_ammo": 100,
+        "launcher_ammo": 24,
         "light_shield": 1,
-        "gun_9515": 1,
-        "gun_4267": 1
+        "gun_12787": 1
     },
     "New Loadout 10": {
-        "light_shield": 1,
-        "gun_64616": 1,
-        "gun_73680": 1
+        "looting_mk3": 1,
+        "light_shield": 1
     },
     "New Loadout 12": {
-        "light_shield": 1,
-        "gun_81329": 1,
-        "gun_25191": 1
+        "gun_20635": 1,
+        "gun_10736": 1
     },
     "New Loadout 13": {
-        "medium_ammo": 80,
-        "light_ammo": 100,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "vita_spray": 1,
-        "wolfpack": 1,
-        "surge_shield_recharger": 5,
-        "gun_44721": 1,
-        "gun_71396": 1
-    },
-    "New Loadout 14": {
-        "medium_ammo": 80,
-        "light_ammo": 100,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "vita_spray": 1,
-        "wolfpack": 1,
-        "surge_shield_recharger": 5,
-        "gun_16278": 1,
-        "gun_22265": 1
-    },
-    "New Loadout 15": {
-        "looting_mk3": 1,
-        "gun_8402": 1,
-        "gun_44375": 1
-    },
-    "New Loadout 16": {
-        "looting_mk3": 1,
-        "gun_58370": 1,
-        "gun_54076": 1
-    },
-    "New Loadout 17": {
-        "light_ammo": 100,
-        "looting_mk3": 1
-    },
-    "New Loadout 18": {
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "gun_67191": 1
-    },
-    "New Loadout 19": {
-        "light_ammo": 100,
-        "looting_mk3": 1
-    },
-    "New Loadout 20": {
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "gun_84936": 1,
-        "gun_39748": 1
+        "gun_93891": 1,
+        "gun_6067": 1
     }
 }

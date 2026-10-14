@@ -61,8 +61,29 @@ class HotkeyListener:
             self.listener = None
 
 
-def process_generated_loadout(overlay, loadout):
-    """Validate, prompt for a name, and save an automatically generated loadout."""
+def process_generated_loadout(overlay, inventory_scan):
+    """Finish inventory actions, build, validate, and save a generated loadout."""
+    try:
+        weapon_item_ids = automation.perform_player_inventory_save_actions()
+    except Exception as exc:
+        overlay.status.setText("Final inventory actions failed; loadout was not saved.")
+        QMessageBox.critical(
+            overlay,
+            "Inventory Save Failed",
+            f"The final inventory actions or screenshot failed:\n\n{exc}\n\n"
+            "The generated loadout was not saved.",
+        )
+        return
+
+    weapon_items = [
+        {"name": item_id, "banner_text": "1"}
+        for item_id in weapon_item_ids
+    ]
+    loadout = automation.utils.build_player_loadout(
+        inventory_scan["main_items"] + weapon_items,
+        inventory_scan["quickuse_items"],
+    )
+
     try:
         # Flattening checks that the generated structure can be processed.
         flatten_loadout(loadout)
@@ -73,18 +94,6 @@ def process_generated_loadout(overlay, loadout):
             overlay,
             "Invalid Loadout",
             f"The generated loadout could not be saved:\n\n{exc}",
-        )
-        return
-
-    try:
-        screenshot_path, _ = automation.perform_player_inventory_save_actions(loadout)
-    except Exception as exc:
-        overlay.status.setText("Final inventory actions failed; loadout was not saved.")
-        QMessageBox.critical(
-            overlay,
-            "Inventory Save Failed",
-            f"The final inventory actions or screenshot failed:\n\n{exc}\n\n"
-            "The generated loadout was not saved.",
         )
         return
 
@@ -114,9 +123,7 @@ def process_generated_loadout(overlay, loadout):
         return
 
     overlay.refresh_loadouts()
-    overlay.status.setText(
-        f"Saved generated loadout: {name}; screenshot: {screenshot_path}"
-    )
+    overlay.status.setText(f"Saved generated loadout: {name}")
 
 
 def delete_loadout(overlay, name):
