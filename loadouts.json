@@ -159,5 +159,33 @@
         "light_ammo": 100,
         "light_shield": 1,
         "stg": 1
+    },
+    "New Loadout 17": {
+        "heavy_ammo": 33,
+        "light_shield": 1
+    },
+    "New Loadout 18": {
+        "heavy_ammo": 33,
+        "light_shield": 1
+    },
+    "New Loadout 19": {
+        "explosive_mine": 1,
+        "fireworks_box": 1,
+        "light_shield": 1,
+        "advanced_camera": 1,
+        "blaze_grenade": 9,
+        "defibrillator": 3
+    },
+    "New Loadout 20": {
+        "explosive_mine": 1,
+        "fireworks_box": 1,
+        "light_shield": 1,
+        "blaze_grenade": 9
+    },
+    "New Loadout 21": {
+        "explosive_mine": 1,
+        "fireworks_box": 1,
+        "light_shield": 1,
+        "blaze_grenade": 9
     }
 }

@@ -76,6 +76,18 @@ def process_generated_loadout(overlay, loadout):
         )
         return
 
+    try:
+        screenshot_path = automation.perform_player_inventory_save_actions()
+    except Exception as exc:
+        overlay.status.setText("Final inventory actions failed; loadout was not saved.")
+        QMessageBox.critical(
+            overlay,
+            "Inventory Save Failed",
+            f"The final inventory actions or screenshot failed:\n\n{exc}\n\n"
+            "The generated loadout was not saved.",
+        )
+        return
+
     dialog = GeneratedLoadoutDialog(
         loadout,
         overlay.loadouts.keys(),
@@ -102,7 +114,9 @@ def process_generated_loadout(overlay, loadout):
         return
 
     overlay.refresh_loadouts()
-    overlay.status.setText(f"Saved generated loadout: {name}")
+    overlay.status.setText(
+        f"Saved generated loadout: {name}; screenshot: {screenshot_path}"
+    )
 
 
 def delete_loadout(overlay, name):

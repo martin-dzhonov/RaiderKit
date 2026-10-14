@@ -16,6 +16,7 @@ import utils
 import main_config
 
 from common import TAB_ITEMS
+import player_main_scanner
 
 try:
     from skimage.metrics import structural_similarity
@@ -53,6 +54,11 @@ SCROLLBAR_CLICK_OFFSET = 10
 MAX_CLEAR_CLICKS = 50
 MAX_UNCHANGED_CLEAR_SCANS = 2
 BIG_ITEM_CLICK_DELAY = 0.1
+PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.4
+PLAYER_INVENTORY_SAVE_DRAGS = (
+    ((1310, 665), (1453, 700)),
+    ((1310, 890), (1590, 700)),
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -582,6 +588,68 @@ def scan_player_inventory():
                 task_running = False
 
     threading.Thread(target=worker, daemon=True).start()
+
+
+def drag_inventory_item(start, destination):
+    pyautogui.moveTo(*start, duration=0.1)
+    pyautogui.mouseDown()
+
+    try:
+        pyautogui.moveTo(
+            *destination,
+            duration=PLAYER_INVENTORY_SAVE_DRAG_DURATION,
+            tween=pyautogui.linear,
+        )
+    finally:
+        pyautogui.mouseUp()
+
+
+def perform_player_inventory_save_actions():
+    completed_drags = []
+    screenshot_path = None
+    grid_result = None
+
+    try:
+        for start, destination in PLAYER_INVENTORY_SAVE_DRAGS:
+            completed_drags.append((start, destination))
+            drag_inventory_item(start, destination)
+
+        # Move the mouse before taking the screenshot.
+        pyautogui.moveTo(1355, 650, duration=0.1)
+
+        screenshot = utils.wait_for_settled_screen()
+
+        # Scan only this screenshot.
+        grid_result = player_main_scanner.scan_inventory(screenshot)
+
+        print("Grid:", grid_result["grid"])
+
+        for cell in grid_result["cells"]:
+            print(
+                f"Row {cell['row_index'] + 1}, "
+                f"Column {cell['column_index'] + 1}: "
+                f"x={cell['x']}, y={cell['y']}, "
+                f"status={cell['status']}"
+            )
+
+        screenshot_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "screenshots",
+        )
+        os.makedirs(screenshot_dir, exist_ok=True)
+
+        screenshot_path = os.path.join(
+            screenshot_dir,
+            f"player_inventory_{time.strftime('%Y%m%d_%H%M%S')}_{time.time_ns()}.png",
+        )
+        screenshot.save(screenshot_path)
+        logger.info("Saved post-inventory screenshot to %s", screenshot_path)
+
+    finally:
+        for start, destination in reversed(completed_drags):
+            drag_inventory_item(destination, start)
+
+    return screenshot_path, grid_result
 
 
 def clear_player_inventory():
