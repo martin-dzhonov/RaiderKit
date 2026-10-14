@@ -16,10 +16,5 @@
         "light_ammo": 100,
         "tactical_mk3": 1,
         "medium_shield": 1
-    },
-    "New Loadout 2": {
-        "combat_mk3": 1,
-        "gun_3077": 1,
-        "gun_17921": 1
     }
 }

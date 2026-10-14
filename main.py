@@ -392,16 +392,21 @@ def recognize_slot(
     if grid_config is utils.GRID_CONFIGS["stash"] and name.casefold() == "empty":
         return None
 
-    should_read_quantity = requested_names is None or name in requested_names
-    banner_text = ""
+    # Weapons stash items always have a quantity of 1.
 
-    if should_read_quantity:
-        banner_text = read_banner_text(
-            image,
-            row_top,
-            column_x,
-            grid_config=grid_config,
-        )
+    if grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons":
+        banner_text = "1"
+    else:
+        should_read_quantity = requested_names is None or name in requested_names
+        banner_text = ""
+
+        if should_read_quantity:
+            banner_text = read_banner_text(
+                image,
+                row_top,
+                column_x,
+                grid_config=grid_config,
+            )
 
     return {
         "name": name,
@@ -998,7 +1003,10 @@ def move_requested_items(
 
             banner_text = item["banner_text"]
 
-            if banner_text is None or not str(banner_text).strip():
+            # Weapons in the weapons stash tab are always single items.
+            if CURRENT_TAB == "weapons":
+                stack_size = 1
+            elif banner_text is None or not str(banner_text).strip():
                 stack_size = 1
             else:
                 try:
