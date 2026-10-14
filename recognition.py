@@ -25,6 +25,7 @@ except ImportError:
 
 MIN_SIMILARITY = 81.0
 OCR_SCALE_FACTOR = 3
+ICON_BORDER_INSET = 4
 STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
@@ -72,9 +73,7 @@ def save_ssim_debug_pair(candidate_array, template_array, context, template_name
 
     try:
         SSIM_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
-        Image.fromarray(candidate_array).save(
-            SSIM_DEBUG_DIR / f"{prefix}_1_grid.png"
-        )
+        Image.fromarray(candidate_array).save(SSIM_DEBUG_DIR / f"{prefix}_1_grid.png")
         Image.fromarray(template_array).save(
             SSIM_DEBUG_DIR / f"{prefix}_2_template.png"
         )
@@ -105,7 +104,6 @@ def initialize(
             tab_dir,
             stash_config["item_width"],
             stash_config["item_height"],
-            stash_config["icon_height"],
             template_extensions,
             structural_similarity,
             set_status,
@@ -120,7 +118,6 @@ def initialize(
     BIG_TEMPLATES = utils.load_templates(
         big_template_dir,
         192,
-        128,
         128,
         template_extensions,
         structural_similarity,
@@ -157,7 +154,6 @@ def refresh_weapon_templates(weapons_dir, template_extensions, set_status):
         weapons_dir,
         stash_config["item_width"],
         stash_config["item_height"],
-        stash_config["icon_height"],
         template_extensions,
         structural_similarity,
         set_status,
@@ -248,24 +244,32 @@ def find_best_match(
         return None, 0.0
 
     item_width = grid_config["item_width"]
+    item_height = grid_config["item_height"]
     icon_height = grid_config["icon_height"]
 
     try:
         candidate = cell_image.convert("RGB").resize(
-            (item_width, icon_height),
+            (item_width, item_height),
             Image.Resampling.LANCZOS,
         )
-        candidate_array = np.asarray(candidate, dtype=np.uint8)
+        candidate_array = np.asarray(candidate, dtype=np.uint8)[
+            ICON_BORDER_INSET:icon_height,
+            ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
+        ]
 
         best_name = None
         best_score = -1.0
         best_template = None
 
         for template in templates:
+            template_icon = template["image"][
+                ICON_BORDER_INSET:icon_height,
+                ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
+            ]
             score = (
                 structural_similarity(
                     candidate_array,
-                    template["image"],
+                    template_icon,
                     channel_axis=2,
                     data_range=255,
                 )
@@ -280,7 +284,10 @@ def find_best_match(
         if best_template is not None:
             save_ssim_debug_pair(
                 candidate_array,
-                best_template["image"],
+                best_template["image"][
+                    ICON_BORDER_INSET:icon_height,
+                    ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
+                ],
                 debug_context,
                 best_template["name"],
             )
@@ -459,9 +466,10 @@ def recognize_slot(
         grid_config = utils.GRID_CONFIGS["stash"]
 
     item_width = grid_config["item_width"]
+    item_height = grid_config["item_height"]
     icon_height = grid_config["icon_height"]
     x_end = column_x + item_width
-    y_end = row_top + icon_height
+    y_end = row_top + item_height
 
     if column_x < 0 or x_end > image.width or row_top < 0 or y_end > image.height:
         return None

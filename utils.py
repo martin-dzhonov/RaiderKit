@@ -425,7 +425,6 @@ def load_templates(
     template_dir,
     item_width,
     item_height,
-    icon_height,
     template_extensions,
     structural_similarity,
     set_status,
@@ -457,10 +456,7 @@ def load_templates(
                     Image.Resampling.LANCZOS,
                 )
 
-            template_array = np.asarray(
-                template_image.crop((0, 0, item_width, icon_height)),
-                dtype=np.uint8,
-            )
+            template_array = np.asarray(template_image, dtype=np.uint8)
 
             templates.append(
                 {
