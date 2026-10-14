@@ -22,11 +22,12 @@ except ImportError:
     structural_similarity = None
 
 
-MIN_SIMILARITY = 88.0
-MIN_WEAPON_BANNER_SIMILARITY = 86.0
+MIN_SIMILARITY = 85.0
+MIN_WEAPON_TIER_SIMILARITY = 80.0
 OCR_SCALE_FACTOR = 3
 ICON_BORDER_INSET = 4
-BANNER_INSET = 0
+WEAPON_TIER_REGION_SIZE = 30
+WEAPON_TIER_INSET = 2
 STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
@@ -60,10 +61,12 @@ def set_current_tab(tab_name):
 def save_ssim_debug_pair(
     candidate_array,
     template_array,
+    template_name,
     row,
     column,
     score,
     area=None,
+    row_directories=None,
 ):
     prefix = f"r{row}_c{column}"
     if area:
@@ -71,11 +74,44 @@ def save_ssim_debug_pair(
     prefix = f"{prefix}_{score:.2f}"
 
     try:
-        SSIM_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
-        Image.fromarray(candidate_array).save(SSIM_DEBUG_DIR / f"{prefix}_1_grid.png")
-        Image.fromarray(template_array).save(
-            SSIM_DEBUG_DIR / f"{prefix}_2_template.png"
-        )
+        if row_directories is None:
+            row_directories = {}
+
+        safe_template_name = re.sub(
+            r'[<>:"/\\|?*\x00-\x1f]',
+            "_",
+            str(template_name),
+        ).strip(" .")
+        if not safe_template_name:
+            safe_template_name = "unknown_template"
+        if safe_template_name.upper() in {
+            "CON",
+            "PRN",
+            "AUX",
+            "NUL",
+            *(f"COM{number}" for number in range(1, 10)),
+            *(f"LPT{number}" for number in range(1, 10)),
+        }:
+            safe_template_name = f"_{safe_template_name}"
+
+        template_dir = SSIM_DEBUG_DIR / safe_template_name
+        row_key = (safe_template_name, row)
+        row_dir = row_directories.get(row_key)
+        if row_dir is None:
+            row_name = f"row_{row}"
+            suffix = 1
+            while True:
+                folder_name = row_name if suffix == 1 else f"{row_name}_{suffix}"
+                row_dir = template_dir / folder_name
+                try:
+                    row_dir.mkdir(parents=True, exist_ok=False)
+                    break
+                except FileExistsError:
+                    suffix += 1
+            row_directories[row_key] = row_dir
+
+        Image.fromarray(candidate_array).save(row_dir / f"{prefix}_1_grid.png")
+        Image.fromarray(template_array).save(row_dir / f"{prefix}_2_template.png")
     except OSError:
         logger.exception(
             "Could not save SSIM debug images for row %d, column %d",
@@ -86,95 +122,67 @@ def save_ssim_debug_pair(
 
 def compare_banner_for_diagnostics(
     cell_image,
-    templates,
     grid_config,
     row,
     column,
     matched_template=None,
+    row_directories=None,
 ):
+    if structural_similarity is None or matched_template is None:
+        return None
+
     try:
         item_width = grid_config["item_width"]
         item_height = grid_config["item_height"]
-        icon_height = grid_config["icon_height"]
+        region_size = WEAPON_TIER_REGION_SIZE
+        inset = WEAPON_TIER_INSET
+        if region_size > item_width or region_size > item_height:
+            raise ValueError("Weapon tier region exceeds item dimensions")
+        if inset < 0 or inset * 2 >= region_size:
+            raise ValueError("Weapon tier inset must be smaller than half the region")
+
         candidate = cell_image.convert("RGB").resize(
             (item_width, item_height),
             Image.Resampling.LANCZOS,
         )
         candidate_array = np.asarray(candidate, dtype=np.uint8)[
-            icon_height + BANNER_INSET : item_height - BANNER_INSET,
-            BANNER_INSET : item_width - BANNER_INSET,
+            item_height - region_size + inset : item_height - inset,
+            item_width - region_size + inset : item_width - inset,
         ]
-
-        best_template = None
-        best_score = -1.0
-        for template in templates:
-            template_banner = template["image"][
-                icon_height + BANNER_INSET : item_height - BANNER_INSET,
-                BANNER_INSET : item_width - BANNER_INSET,
-            ]
-            score = (
-                structural_similarity(
-                    candidate_array,
-                    template_banner,
-                    channel_axis=2,
-                    data_range=255,
-                )
-                * 100.0
-            )
-            if score > best_score:
-                best_template = template
-                best_score = score
-
-        if best_template is None:
-            return
-
-        template_banner = best_template["image"][
-            icon_height + BANNER_INSET : item_height - BANNER_INSET,
-            BANNER_INSET : item_width - BANNER_INSET,
+        template_region = matched_template["image"][
+            item_height - region_size + inset : item_height - inset,
+            item_width - region_size + inset : item_width - inset,
         ]
-        logger.info(
-            "SSIM banner diagnostic: row=%d col=%d best_template=%s score=%.2f",
-            row,
-            column,
-            best_template["name"],
-            best_score,
-        )
-        save_ssim_debug_pair(
-            candidate_array,
-            template_banner,
-            row,
-            column,
-            best_score,
-            area="banner",
-        )
-
-        if matched_template is None:
-            return None
-
-        matched_banner = matched_template["image"][
-            icon_height + BANNER_INSET : item_height - BANNER_INSET,
-            BANNER_INSET : item_width - BANNER_INSET,
-        ]
-        matched_score = (
+        score = (
             structural_similarity(
                 candidate_array,
-                matched_banner,
+                template_region,
                 channel_axis=2,
                 data_range=255,
             )
             * 100.0
         )
         logger.info(
-            "SSIM matched banner: row=%d col=%d template=%s score=%.2f",
+            "Weapon tier SSIM: row=%d col=%d template=%s score=%.2f",
             row,
             column,
             matched_template["name"],
-            matched_score,
+            score,
         )
-        return matched_score
+        save_ssim_debug_pair(
+            candidate_array,
+            template_region,
+            matched_template["name"],
+            row,
+            column,
+            score,
+            area="weapon_tier",
+            row_directories=row_directories,
+        )
+        return score
     except Exception:
         logger.exception(
-            "Banner SSIM diagnostic failed for row %d, column %d",
+            "Weapon tier SSIM failed for row %d, column %d",
             row,
             column,
         )
@@ -328,9 +336,10 @@ def find_best_match(
     templates=None,
     debug_row=1,
     debug_column=1,
+    row_directories=None,
 ):
     if structural_similarity is None:
-        return None, 0.0
+        return None, 0.0, None
 
     if grid_config is None:
         grid_config = utils.GRID_CONFIGS["stash"]
@@ -339,7 +348,7 @@ def find_best_match(
         templates = TEMPLATES
 
     if not templates:
-        return None, 0.0
+        return None, 0.0, None
 
     item_width = grid_config["item_width"]
     item_height = grid_config["item_height"]
@@ -356,7 +365,10 @@ def find_best_match(
         ]
         best_name = None
         best_score = -1.0
-        best_template = None
+        validation_score = None
+        is_weapon_stash = (
+            grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons"
+        )
 
         for template in templates:
             template_icon = template["image"][
@@ -373,33 +385,34 @@ def find_best_match(
                 * 100.0
             )
 
+            if is_weapon_stash:
+                save_ssim_debug_pair(
+                    candidate_array,
+                    template_icon,
+                    template["name"],
+                    debug_row,
+                    debug_column,
+                    score,
+                    row_directories=row_directories,
+                )
+
+            template_validation_score = None
+            if is_weapon_stash:
+                template_validation_score = compare_banner_for_diagnostics(
+                    cell_image,
+                    grid_config,
+                    debug_row,
+                    debug_column,
+                    matched_template=template,
+                    row_directories=row_directories,
+                )
+
             if score > best_score:
                 best_name = template["name"]
                 best_score = score
-                best_template = template
+                validation_score = template_validation_score
 
-        if best_template is not None:
-            save_ssim_debug_pair(
-                candidate_array,
-                best_template["image"][
-                    ICON_BORDER_INSET:icon_height,
-                    ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
-                ],
-                debug_row,
-                debug_column,
-                best_score,
-            )
-
-        matched_banner_score = compare_banner_for_diagnostics(
-            cell_image,
-            templates,
-            grid_config,
-            debug_row,
-            debug_column,
-            matched_template=best_template,
-        )
-
-        return best_name, max(0.0, best_score), matched_banner_score
+        return best_name, max(0.0, best_score), validation_score
 
     except Exception:
         logger.exception("Template matching failed")
@@ -411,6 +424,8 @@ def recognize_big_inventory(image):
 
     if not BIG_TEMPLATES or structural_similarity is None:
         return observations
+
+    row_directories = {}
 
     for box_index, (box_name, bounds) in enumerate(BOXES.items(), start=1):
         if _is_cancelled is not None and _is_cancelled():
@@ -463,9 +478,11 @@ def recognize_big_inventory(image):
             save_ssim_debug_pair(
                 candidate_array,
                 best_template["image"],
+                best_template["name"],
                 1,
                 box_index,
                 best_score,
+                row_directories=row_directories,
             )
 
         if best_name is None or best_score < MIN_SIMILARITY:
@@ -569,6 +586,7 @@ def recognize_slot(
     requested_names=None,
     templates=None,
     check_occupancy=False,
+    row_directories=None,
 ):
     if grid_config is None:
         grid_config = utils.GRID_CONFIGS["stash"]
@@ -591,12 +609,13 @@ def recognize_slot(
         return None
 
     cell = image.crop((column_x, row_top, x_end, y_end))
-    name, score, banner_score = find_best_match(
+    name, score, extra_validation_score = find_best_match(
         cell,
         grid_config=grid_config,
         templates=templates,
         debug_row=row_number,
         debug_column=slot_index,
+        row_directories=row_directories,
     )
 
     if name is None or score < MIN_SIMILARITY:
@@ -606,17 +625,22 @@ def recognize_slot(
         grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons"
     )
     if is_weapon_tab and (
-        banner_score is None or banner_score < MIN_WEAPON_BANNER_SIMILARITY
+        extra_validation_score is None
+        or extra_validation_score < MIN_WEAPON_TIER_SIMILARITY
     ):
         logger.info(
             "Rejected weapon recognition: row=%d slot=%d item=%s "
-            "icon_score=%.2f banner_score=%s banner_threshold=%.2f",
+            "icon_score=%.2f tier_score=%s tier_threshold=%.2f",
             row_number,
             slot_index,
             name,
             score,
-            f"{banner_score:.2f}" if banner_score is not None else "unavailable",
-            MIN_WEAPON_BANNER_SIMILARITY,
+            (
+                f"{extra_validation_score:.2f}"
+                if extra_validation_score is not None
+                else "unavailable"
+            ),
+            MIN_WEAPON_TIER_SIMILARITY,
         )
         return None
 
@@ -684,6 +708,7 @@ def recognize_current_grid(
     columns = grid_config["column_x"]
     total = len(rows) * len(columns)
     current = 0
+    row_directories = {}
 
     for row_number, row in enumerate(rows, start=1):
         if _is_cancelled is not None and _is_cancelled():
@@ -708,6 +733,7 @@ def recognize_current_grid(
                 requested_names=requested_names,
                 templates=templates,
                 check_occupancy=check_occupancy,
+                row_directories=row_directories,
             )
 
             if item is not None:
