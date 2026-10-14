@@ -15,7 +15,6 @@ import main_config
 import player_main_scanner
 import recognition
 
-
 TEMPLATE_DIR = "item_templates"
 BIG_TEMPLATE_DIR = "item_templates_big"
 TEMPLATE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".webp")
@@ -40,10 +39,11 @@ MAX_CLEAR_CLICKS = 50
 MAX_UNCHANGED_CLEAR_SCANS = 2
 BIG_ITEM_CLICK_DELAY = 0.1
 PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.16
+PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET = 100
 
 PLAYER_INVENTORY_SAVE_SOURCES = (
-    (1310, 665),
-    (1310, 890),
+    (1310, 788),
+    (1310, 1076),
 )
 
 
@@ -199,6 +199,11 @@ def perform_player_inventory_save_actions(loadout):
                 f"empty boxes, but found {len(empty_boxes)}."
             )
 
+        drag_sources = [
+            (x, y - PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET)
+            for x, y in PLAYER_INVENTORY_SAVE_SOURCES
+        ]
+
         # Select the first two empty boxes in grid order.
         # Coordinates are the centers of the 128x128 boxes.
         destinations = [
@@ -208,7 +213,7 @@ def perform_player_inventory_save_actions(loadout):
 
         # Drag each item into its selected empty box.
         for source, destination in zip(
-            PLAYER_INVENTORY_SAVE_SOURCES,
+            drag_sources,
             destinations,
         ):
             drag_inventory_item(source, destination)
