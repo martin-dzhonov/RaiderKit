@@ -1,25 +1,14 @@
 {
     "New Loadout": {
-        "shotgun_ammo": 20,
-        "light_ammo": 100,
-        "tactical_mk2": 1,
-        "blaze_grenade": 4
-    },
-    "New Loadout 3": {
-        "light_ammo": 200,
-        "launcher_ammo": 3,
-        "combat_mk2": 1,
-        "heavy_shield": 1
-    },
-    "New Loadout 2": {
+        "launcher_ammo": 48,
+        "herbal_bandage": 4,
+        "shield_recharger": 5,
+        "tactical_mk3": 1,
         "light_shield": 1,
-        "HAIRPIN IV_01": 1,
-        "ARPEGGIO II_01": 1
-    },
-    "New Loadout 4": {
-        "heavy_shield": 1,
-        "light_shield": 1,
-        "HAIRPIN IV_02": 1,
-        "ARPEGGIO II_02": 1
+        "ARPEGGIO II_03": 1,
+        "HULLCRACKER IV_01": 1,
+        "blaze_grenade": 5,
+        "snap_blast_grenade": 2,
+        "basic_camera": 1
     }
 }

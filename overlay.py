@@ -4,7 +4,6 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ACTIONS_PANEL_WIDTH,
-    DETAILS_WIDTH,
     ITEM_NAMES,
     LOADOUTS_PANEL_WIDTH,
     NORMAL_HEIGHT,
@@ -46,12 +45,8 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.title_bar_height = TITLE_BAR_HEIGHT
         self.actions_panel_width = ACTIONS_PANEL_WIDTH
         self.loadouts_panel_width = LOADOUTS_PANEL_WIDTH
-        self.details_width = DETAILS_WIDTH
 
         self.compact_mode = False
-        self.details_open = False
-        self.selected_loadout_name = None
-        self.loadout_expand_buttons = {}
 
         self.loadouts = read_loadouts()
 
@@ -67,10 +62,9 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_spinner_frames = ["◐", "◓", "◑", "◒"]
         self.scan_spinner_index = 0
 
-        self.normal_width = self.calculate_window_width(details=False)
-        self.expanded_width = self.calculate_window_width(details=True)
+        self.normal_width = self.calculate_window_width()
 
-        self.resize(self.normal_width, self.normal_height)
+        self.resize(self.normal_width * 2 + 80, self.normal_height)
         self.center_at_top()
 
         self._build_main_panel()
@@ -131,7 +125,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         geometry = screen.availableGeometry()
 
         self.move(
-            geometry.left() + (geometry.width() - self.width()) // 2,
+            geometry.left() + 150,
             geometry.top(),
         )
 

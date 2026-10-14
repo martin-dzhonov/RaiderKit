@@ -128,42 +128,6 @@ QPushButton#scan:pressed {
     background: #fffcee
 }
 
-/* View Loadout Button */
-QPushButton#loadoutExpand {
-    background: #252b3e;
-    color: #ffffff;
-    border: 1px solid #454b5a;
-    border-radius: 8px;
-    font-weight: bold;
-    padding: 9px;
-}
-
-QPushButton#loadoutExpand:hover {
-    background: #e8ecf8;
-    color: #10131d;
-    border-color: #e8ecf8;
-}
-
-/* Active state: Viewing */
-QPushButton#loadoutExpand:checked {
-    background: #e8ecf8;
-    color: #10131d;
-    border-color: #e8ecf8;
-}
-
-/* Keep the active style while hovering */
-QPushButton#loadoutExpand:checked:hover {
-    background: #e8ecf8;
-    color: #10131d;
-    border-color: #e8ecf8;
-}
-
-QPushButton#loadoutExpand:pressed {
-    background: #c0c7da;
-    color: #10131d;
-    border-color: #c0c7da;
-}
-
 /* Quit Button */
 QPushButton#quit {
     background: #321e2b;
@@ -459,7 +423,7 @@ QLabel#spinner {
    ========================================================= */
 
 QLabel#loadoutName {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     color: #f4f6ff;
 }

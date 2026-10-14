@@ -6,16 +6,11 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
 from common import (
-    INVENTORY_COLUMNS,
-    INVENTORY_ICON_SIZE,
-    INVENTORY_SLOT_SIZE,
-    ITEM_NAMES,
     TAB_ITEMS,
     TEMPLATE_DIR,
     get_item_display_name,
@@ -23,6 +18,10 @@ from common import (
 
 
 class OverlayLoadoutsMixin:
+
+    LOADOUT_CARD_WIDTH = 470
+    LOADOUT_ITEM_SLOT_SIZE = 66
+    LOADOUT_ITEM_ICON_SIZE = 64
 
     def _sort_loadout_items(self, loadout):
         """Sort items by tab priority, preserving order within each tab."""
@@ -38,6 +37,11 @@ class OverlayLoadoutsMixin:
         item_tab = {
             item_name: tab for tab, items in TAB_ITEMS.items() for item_name in items
         }
+        weapon_names = {
+            path.stem for path in TEMPLATE_DIR.glob("weapons/*") if path.is_file()
+        }
+        for weapon_name in weapon_names:
+            item_tab[weapon_name] = "weapons"
 
         return sorted(
             loadout.items(),
@@ -46,76 +50,6 @@ class OverlayLoadoutsMixin:
                 len(tab_priority),
             ),
         )
-
-    def _clear_details_content(self):
-
-        while self.details_content_layout.count():
-
-            item = self.details_content_layout.takeAt(0)
-
-            widget = item.widget()
-
-            if widget is not None:
-
-                widget.deleteLater()
-
-    def show_loadout_details(self, name):
-
-        if name not in self.loadouts:
-
-            self.hide_loadout_details()
-
-            return
-
-        self.details_open = True
-
-        self.selected_loadout_name = name
-
-        self.details_loadout_name.setText(f"- {name}")
-
-        self.details_loadout_name.setToolTip(name)
-
-        self._clear_details_content()
-
-        contents = self._create_loadout_contents(self.loadouts[name])
-
-        self.details_content_layout.addWidget(contents)
-
-        self.details_content_layout.addStretch(1)
-
-        self.details_panel.setMinimumWidth(self.details_width)
-
-        self.details_panel.setMaximumWidth(self.details_width)
-
-        self.details_panel.show()
-
-        self.normal_width = self.calculate_window_width(details=False)
-
-        self.expanded_width = self.calculate_window_width(details=True)
-
-        self._resize_window(self.expanded_width)
-
-    def hide_loadout_details(self):
-
-        self.details_open = False
-
-        self.selected_loadout_name = None
-
-        self.details_loadout_name.setText("")
-
-        self.details_panel.hide()
-
-        self.details_panel.setMinimumWidth(0)
-
-        self.details_panel.setMaximumWidth(0)
-
-        self._clear_details_content()
-
-        self.normal_width = self.calculate_window_width(details=False)
-
-        self.expanded_width = self.calculate_window_width(details=True)
-
-        self._resize_window(self.normal_width)
 
     def refresh_loadouts(self):
 
@@ -128,8 +62,6 @@ class OverlayLoadoutsMixin:
             if widget is not None:
 
                 widget.deleteLater()
-
-        self.loadout_expand_buttons = {}
 
         if not self.loadouts:
 
@@ -149,41 +81,20 @@ class OverlayLoadoutsMixin:
 
                 self.loadout_list.addWidget(self._create_loadout_entry(name, loadout))
 
-        self.loadout_list.addStretch()
-
-        if self.details_open:
-
-            if self.selected_loadout_name in self.loadouts:
-
-                button = self.loadout_expand_buttons.get(self.selected_loadout_name)
-
-                if button is not None:
-
-                    button.blockSignals(True)
-
-                    button.setChecked(True)
-
-                    button.setText("Viewing")
-
-                    button.blockSignals(False)
-
-                self.show_loadout_details(self.selected_loadout_name)
-
-            else:
-
-                self.hide_loadout_details()
+        self.loadout_list.addStretch(1)
 
     def _create_loadout_entry(self, name, loadout):
 
         entry = QWidget()
 
         entry.setObjectName("loadoutEntry")
+        entry.setFixedWidth(self.LOADOUT_CARD_WIDTH)
 
         entry_layout = QVBoxLayout(entry)
 
-        entry_layout.setContentsMargins(0, 0, 0, 0)
+        entry_layout.setContentsMargins(8, 8, 8, 3)
 
-        entry_layout.setSpacing(0)
+        entry_layout.setSpacing(4)
 
         row = QWidget()
 
@@ -191,7 +102,7 @@ class OverlayLoadoutsMixin:
 
         row_layout = QHBoxLayout(row)
 
-        row_layout.setContentsMargins(8, 8, 8, 8)
+        row_layout.setContentsMargins(0, 0, 0, 0)
 
         row_layout.setSpacing(6)
 
@@ -199,37 +110,19 @@ class OverlayLoadoutsMixin:
 
         label.setObjectName("loadoutName")
 
+        label.setContentsMargins(12, 0, 0, 0)
+
         label.setWordWrap(True)
 
         delete = QPushButton("X")
 
         delete.setObjectName("quit")
 
-        delete.setFixedWidth(32)
+        delete.setFixedSize(28, 28)
 
         delete.clicked.connect(
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)
         )
-
-        expand = QPushButton("View")
-
-        expand.setObjectName("loadoutExpand")
-
-        expand.setFixedWidth(75)
-
-        expand.setCheckable(True)
-
-        expand.setToolTip("Show or hide loadout contents")
-
-        expand.setProperty("loadout_name", name)
-
-        if self.details_open and self.selected_loadout_name == name:
-
-            expand.setChecked(True)
-
-            expand.setText("Viewing")
-
-        self.loadout_expand_buttons[name] = expand
 
         load = QPushButton("Equip")
 
@@ -245,48 +138,16 @@ class OverlayLoadoutsMixin:
 
         row_layout.addWidget(delete)
 
-        row_layout.addWidget(expand)
-
         row_layout.addWidget(load)
 
         entry_layout.addWidget(row)
 
-        expand.toggled.connect(
-            lambda checked, n=name: self._on_loadout_arrow_toggled(n, checked)
-        )
+        entry_layout.addWidget(self._create_loadout_contents(loadout), 1)
 
         return entry
 
-    def _on_loadout_arrow_toggled(self, name, checked):
-
-        if checked:
-
-            for other_name, button in self.loadout_expand_buttons.items():
-
-                if other_name != name and button.isChecked():
-
-                    button.blockSignals(True)
-
-                    button.setChecked(False)
-
-                    button.setText("View")
-
-                    button.blockSignals(False)
-
-            self.show_loadout_details(name)
-
-        elif self.selected_loadout_name == name:
-
-            self.hide_loadout_details()
-
-        sender_button = self.loadout_expand_buttons.get(name)
-
-        if sender_button is not None:
-
-            sender_button.setText("Viewing" if checked else "View")
-
     def _create_loadout_contents(self, loadout):
-        """Create a fixed-width grid of item icons and quantities."""
+        """Create a grid of item icons and quantities."""
 
         contents = QWidget()
 
@@ -298,7 +159,7 @@ class OverlayLoadoutsMixin:
 
         grid.setHorizontalSpacing(7)
 
-        grid.setVerticalSpacing(4)
+        grid.setVerticalSpacing(8)
 
         grid.setAlignment(Qt.AlignmentFlag.AlignTop)
 
@@ -312,11 +173,13 @@ class OverlayLoadoutsMixin:
 
             return contents
 
+        columns = 6
+
         for index, (name, quantity) in enumerate(self._sort_loadout_items(loadout)):
 
-            row_index = index // INVENTORY_COLUMNS
+            row_index = index // columns
 
-            column_index = index % INVENTORY_COLUMNS
+            column_index = index % columns
 
             item_widget = QWidget()
 
@@ -325,7 +188,7 @@ class OverlayLoadoutsMixin:
                 QSizePolicy.Policy.Fixed,
             )
 
-            item_widget.setFixedWidth(INVENTORY_SLOT_SIZE)
+            item_widget.setFixedWidth(self.LOADOUT_ITEM_SLOT_SIZE)
 
             item_layout = QVBoxLayout(item_widget)
 
@@ -338,15 +201,15 @@ class OverlayLoadoutsMixin:
             slot.setObjectName("inventorySlot")
 
             slot.setFixedSize(
-                INVENTORY_SLOT_SIZE,
-                INVENTORY_SLOT_SIZE,
+                self.LOADOUT_ITEM_SLOT_SIZE,
+                self.LOADOUT_ITEM_SLOT_SIZE,
             )
 
             slot.setToolTip(get_item_display_name(name))
 
             slot_layout = QGridLayout(slot)
 
-            slot_layout.setContentsMargins(3, 3, 3, 3)
+            slot_layout.setContentsMargins(1, 1, 1, 1)
 
             slot_layout.setSpacing(0)
 
@@ -354,9 +217,7 @@ class OverlayLoadoutsMixin:
                 (
                     path
                     for extension in ("webp", "png")
-                    for path in sorted(
-                        TEMPLATE_DIR.glob(f"*/{name}.{extension}")
-                    )
+                    for path in sorted(TEMPLATE_DIR.glob(f"*/{name}.{extension}"))
                 ),
                 None,
             )
@@ -366,7 +227,6 @@ class OverlayLoadoutsMixin:
                 pixmap = QPixmap(str(image_path))
 
                 if not pixmap.isNull():
-
                     icon_label = QLabel()
 
                     icon_label.setObjectName("inventoryIcon")
@@ -374,14 +234,14 @@ class OverlayLoadoutsMixin:
                     icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
                     icon_label.setFixedSize(
-                        INVENTORY_ICON_SIZE,
-                        INVENTORY_ICON_SIZE,
+                        self.LOADOUT_ITEM_ICON_SIZE,
+                        self.LOADOUT_ITEM_ICON_SIZE,
                     )
 
                     icon_label.setPixmap(
                         pixmap.scaled(
-                            INVENTORY_ICON_SIZE,
-                            INVENTORY_ICON_SIZE,
+                            self.LOADOUT_ITEM_ICON_SIZE,
+                            self.LOADOUT_ITEM_ICON_SIZE,
                             Qt.AspectRatioMode.KeepAspectRatio,
                             Qt.TransformationMode.SmoothTransformation,
                         )
@@ -417,21 +277,25 @@ class OverlayLoadoutsMixin:
                 alignment=Qt.AlignmentFlag.AlignHCenter,
             )
 
-            display_name = get_item_display_name(name)
+            is_weapon = name in TAB_ITEMS.get("weapons", set()) or (
+                image_path is not None
+                and image_path.parent.name.casefold() == "weapons"
+            )
 
-            name_label = QLabel(display_name)
+            if is_weapon:
+                display_name = get_item_display_name(name)
 
-            name_label.setObjectName("inventoryItemName")
+                name_label = QLabel(display_name)
 
-            name_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+                name_label.setObjectName("inventoryItemName")
 
-            name_label.setWordWrap(True)
+                name_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-            name_label.setToolTip(display_name)
+                name_label.setWordWrap(True)
 
-            name_label.setFixedWidth(INVENTORY_SLOT_SIZE)
+                name_label.setToolTip(display_name)
 
-            item_layout.addWidget(name_label)
+                name_label.setFixedWidth(self.LOADOUT_ITEM_SLOT_SIZE)
 
             item_widget.adjustSize()
 
