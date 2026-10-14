@@ -1,0 +1,163 @@
+{
+    "New Loadout": {
+        "shotgun_ammo": 20,
+        "light_ammo": 100,
+        "tactical_mk2": 1,
+        "blaze_grenade": 4
+    },
+    "New Loadout 3": {
+        "light_ammo": 200,
+        "launcher_ammo": 3,
+        "combat_mk2": 1,
+        "heavy_shield": 1
+    },
+    "New Loadout 11": {
+        "medium_ammo": 96,
+        "light_ammo": 100,
+        "tactical_mk3": 1,
+        "medium_shield": 1
+    },
+    "New Loadout 2": {
+        "light_ammo": 100,
+        "medium_ammo": 80,
+        "lil_smoke_grenade": 2,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "deadline": 1,
+        "blaze_grenade": 4,
+        "defibrillator": 3,
+        "shield_recharger": 3
+    },
+    "New Loadout 4": {
+        "medium_ammo": 96,
+        "light_ammo": 100,
+        "shield_recharger": 3,
+        "lure_grenade": 3,
+        "snap_blast_grenade": 1,
+        "adrenaline_shot": 5,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "defibrillator": 3,
+        "blaze_grenade": 4,
+        "deadline": 1,
+        "lil_smoke_grenade": 2
+    },
+    "New Loadout 6": {
+        "light_ammo": 300,
+        "medium_ammo": 160,
+        "barricade_kit": 2,
+        "lure_grenade": 3,
+        "noisemaker": 3,
+        "zipline": 3,
+        "trigger_nade": 3,
+        "advanced_camera": 1,
+        "wolfpack": 1,
+        "smoke_grenade": 5,
+        "surge_shield_recharger": 5,
+        "vita_spray": 1,
+        "adrenaline_shot": 5,
+        "tactical_mk3": 1,
+        "medium_shield": 1,
+        "deadline": 1,
+        "heavy_fuze_grenade": 3,
+        "seeker_grenade": 5,
+        "snap_hook": 1
+    },
+    "New Loadout 5": {
+        "medium_ammo": 176,
+        "light_ammo": 300,
+        "deadline": 1,
+        "zipline": 3,
+        "seeker_grenade": 5,
+        "lure_grenade": 3,
+        "barricade_kit": 2,
+        "noisemaker": 3,
+        "adrenaline_shot": 6,
+        "surge_shield_recharger": 5,
+        "vita_spray": 1,
+        "tactical_mk3": 1,
+        "medium_shield": 1,
+        "trigger_nade": 3,
+        "advanced_camera": 1
+    },
+    "New Loadout 7": {
+        "heavy_ammo": 53,
+        "light_ammo": 100,
+        "blaze_grenade": 5,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 8": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 9": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 10": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "vita_spray": 1,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 12": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "vita_spray": 2,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 13": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "vita_spray": 1,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 14": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "vita_spray": 2,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 15": {
+        "blaze_grenade": 5,
+        "heavy_ammo": 53,
+        "vita_spray": 1,
+        "wolfpack": 1,
+        "light_ammo": 100,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "heavy_fuze_grenade": 6
+    },
+    "New Loadout 16": {
+        "light_ammo": 100,
+        "light_shield": 1,
+        "stg": 1
+    }
+}
