@@ -32,7 +32,7 @@ def capture_screen():
 
 
 def wait_for_settled_screen(previous_image=None):
-    time.sleep(0.30)
+    time.sleep(0.3)
     return capture_screen()
 
 

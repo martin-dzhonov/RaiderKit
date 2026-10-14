@@ -5,7 +5,7 @@ import easyocr
 import numpy as np
 import pyautogui
 
-WEAPON_HOVER_DELAY = 0.5
+WEAPON_HOVER_DELAY = 0.2
 
 POPUP_BACKGROUND = (249, 238, 223)
 POPUP_CONTENT_OFFSET = 33

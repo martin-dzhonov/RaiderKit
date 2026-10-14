@@ -43,5 +43,13 @@
         "HAIRPIN IV": 1,
         "blaze_grenade": 5,
         "jolt_mine": 3
+    },
+    "New Loadout 8": {
+        "light_ammo": 100,
+        "medium_ammo": 80,
+        "combat_mk2": 1,
+        "light_shield": 1,
+        "FERRO III": 1,
+        "VENATOR II": 1
     }
 }

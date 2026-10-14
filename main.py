@@ -206,7 +206,7 @@ def perform_player_inventory_save_actions(before_ocr=None, after_ocr=None):
 
     try:
         # Take an initial screenshot to identify empty boxes.
-        image = utils.wait_for_settled_screen()
+        image = utils.capture_screen()
         grid_result = player_main_scanner.scan_inventory(image)
 
         occupied_sources = [
@@ -267,7 +267,7 @@ def perform_player_inventory_save_actions(before_ocr=None, after_ocr=None):
         # Move the mouse away before taking the screenshot.
         pyautogui.moveTo(1355, 650, duration=0.1)
 
-        screenshot = utils.wait_for_settled_screen()
+        screenshot = utils.capture_screen()
 
         # Save cropped images into item_templates/weapons.
         weapons_dir = os.path.join(
