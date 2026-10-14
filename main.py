@@ -64,7 +64,7 @@ scan_cancel_event = threading.Event()
 
 def set_status(message):
     message = str(message)
-    if message in ("Ready", "Done") or re.fullmatch(r"Scanning \d+/\d+", message):
+    if message in ("Ready", "Done", "Saving Loadout\nHold On"):
         status_queue.put(message)
 
 
@@ -86,6 +86,8 @@ def scan_player_inventory():
         global task_running
 
         try:
+            set_status("Saving Loadout\nHold On")
+
             if not recognition.TEMPLATES or is_cancelled():
                 set_status("Ready")
                 return

@@ -1,38 +1,31 @@
 {
-    "New Loadout 3": {
-        "shotgun_ammo": 40,
-        "launcher_ammo": 24,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN II_06": 1,
-        "BANTAM I_06": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 6,
-        "shield_recharger": 4
-    },
     "New Loadout": {
         "shotgun_ammo": 40,
-        "launcher_ammo": 24,
         "barricade_kit": 2,
         "combat_mk3": 1,
         "light_shield": 1,
-        "HAIRPIN II_07": 1,
-        "BANTAM I_07": 1,
+        "HAIRPIN II_02": 1,
+        "BANTAM I_02": 1,
         "heavy_fuze_grenade": 6,
-        "herbal_bandage": 6,
+        "herbal_bandage": 7,
         "shield_recharger": 4
     },
     "New Loadout 2": {
-        "shotgun_ammo": 40,
+        "heavy_ammo": 46,
         "launcher_ammo": 24,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
+        "looting_mk2": 1,
         "light_shield": 1,
-        "HAIRPIN II_08": 1,
-        "BANTAM I_08": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 6,
-        "shield_recharger": 4
+        "VENATOR II_01": 1,
+        "ARPEGGIO II_01": 1,
+        "vita_spray": 1,
+        "advanced_camera": 1
+    },
+    "New Loadout 3": {
+        "shotgun_ammo": 40,
+        "tactical_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO I_01": 1,
+        "explosive_mine": 1,
+        "showstopper": 4
     }
 }

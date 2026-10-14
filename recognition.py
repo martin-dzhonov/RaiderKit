@@ -827,8 +827,6 @@ def recognize_current_grid(
     )
 
     columns = grid_config["column_x"]
-    total = len(rows) * len(columns)
-    current = 0
     row_directories = {}
 
     for row_number, row in enumerate(rows, start=1):
@@ -838,11 +836,6 @@ def recognize_current_grid(
         for slot_index, column_x in enumerate(columns, start=1):
             if _is_cancelled is not None and _is_cancelled():
                 break
-
-            current += 1
-            if total > 0:
-                if _set_status is not None:
-                    _set_status(f"Scanning {current}/{total}")
 
             item = recognize_slot(
                 image,
