@@ -22,7 +22,8 @@ except ImportError:
     structural_similarity = None
 
 
-MIN_SIMILARITY = 82.0
+MIN_SIMILARITY = 88.0
+MIN_WEAPON_BANNER_SIMILARITY = 86.0
 OCR_SCALE_FACTOR = 3
 ICON_BORDER_INSET = 4
 BANNER_INSET = 0
@@ -89,18 +90,18 @@ def compare_banner_for_diagnostics(
     grid_config,
     row,
     column,
+    matched_template=None,
 ):
     try:
         item_width = grid_config["item_width"]
         item_height = grid_config["item_height"]
         icon_height = grid_config["icon_height"]
-        banner_height = grid_config["banner_height"]
         candidate = cell_image.convert("RGB").resize(
             (item_width, item_height),
             Image.Resampling.LANCZOS,
         )
         candidate_array = np.asarray(candidate, dtype=np.uint8)[
-            icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+            icon_height + BANNER_INSET : item_height - BANNER_INSET,
             BANNER_INSET : item_width - BANNER_INSET,
         ]
 
@@ -108,7 +109,7 @@ def compare_banner_for_diagnostics(
         best_score = -1.0
         for template in templates:
             template_banner = template["image"][
-                icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+                icon_height + BANNER_INSET : item_height - BANNER_INSET,
                 BANNER_INSET : item_width - BANNER_INSET,
             ]
             score = (
@@ -128,7 +129,7 @@ def compare_banner_for_diagnostics(
             return
 
         template_banner = best_template["image"][
-            icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+            icon_height + BANNER_INSET : item_height - BANNER_INSET,
             BANNER_INSET : item_width - BANNER_INSET,
         ]
         logger.info(
@@ -146,12 +147,38 @@ def compare_banner_for_diagnostics(
             best_score,
             area="banner",
         )
+
+        if matched_template is None:
+            return None
+
+        matched_banner = matched_template["image"][
+            icon_height + BANNER_INSET : item_height - BANNER_INSET,
+            BANNER_INSET : item_width - BANNER_INSET,
+        ]
+        matched_score = (
+            structural_similarity(
+                candidate_array,
+                matched_banner,
+                channel_axis=2,
+                data_range=255,
+            )
+            * 100.0
+        )
+        logger.info(
+            "SSIM matched banner: row=%d col=%d template=%s score=%.2f",
+            row,
+            column,
+            matched_template["name"],
+            matched_score,
+        )
+        return matched_score
     except Exception:
         logger.exception(
             "Banner SSIM diagnostic failed for row %d, column %d",
             row,
             column,
         )
+        return None
 
 
 def initialize(
@@ -363,19 +390,20 @@ def find_best_match(
                 best_score,
             )
 
-        compare_banner_for_diagnostics(
+        matched_banner_score = compare_banner_for_diagnostics(
             cell_image,
             templates,
             grid_config,
             debug_row,
             debug_column,
+            matched_template=best_template,
         )
 
-        return best_name, max(0.0, best_score)
+        return best_name, max(0.0, best_score), matched_banner_score
 
     except Exception:
         logger.exception("Template matching failed")
-        return None, 0.0
+        return None, 0.0, None
 
 
 def recognize_big_inventory(image):
@@ -563,7 +591,7 @@ def recognize_slot(
         return None
 
     cell = image.crop((column_x, row_top, x_end, y_end))
-    name, score = find_best_match(
+    name, score, banner_score = find_best_match(
         cell,
         grid_config=grid_config,
         templates=templates,
@@ -574,10 +602,28 @@ def recognize_slot(
     if name is None or score < MIN_SIMILARITY:
         return None
 
+    is_weapon_tab = (
+        grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons"
+    )
+    if is_weapon_tab and (
+        banner_score is None or banner_score < MIN_WEAPON_BANNER_SIMILARITY
+    ):
+        logger.info(
+            "Rejected weapon recognition: row=%d slot=%d item=%s "
+            "icon_score=%.2f banner_score=%s banner_threshold=%.2f",
+            row_number,
+            slot_index,
+            name,
+            score,
+            f"{banner_score:.2f}" if banner_score is not None else "unavailable",
+            MIN_WEAPON_BANNER_SIMILARITY,
+        )
+        return None
+
     if grid_config is utils.GRID_CONFIGS["stash"] and name.casefold() == "empty":
         return None
 
-    if grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons":
+    if is_weapon_tab:
         banner_text = "1"
     else:
         should_read_quantity = requested_names is None or name in requested_names

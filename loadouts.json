@@ -35,5 +35,20 @@
         "heavy_fuze_grenade": 3,
         "gun_94564": 1,
         "gun_78333": 1
+    },
+    "New Loadout 6": {
+        "light_shield": 1,
+        "gun_7481": 1,
+        "gun_83449": 1
+    },
+    "New Loadout 7": {
+        "light_shield": 1,
+        "gun_6362": 1,
+        "gun_61945": 1
+    },
+    "New Loadout 8": {
+        "looting_mk3": 1,
+        "gun_42647": 1,
+        "gun_4227": 1
     }
 }
