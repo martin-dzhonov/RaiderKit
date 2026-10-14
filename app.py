@@ -78,6 +78,7 @@ def process_generated_loadout(overlay, inventory_scan):
 
     try:
         weapon_item_ids = automation.perform_player_inventory_save_actions(
+            initial_image=inventory_scan["image"],
             before_ocr=hide_overlay_for_ocr,
             after_ocr=restore_overlay_after_ocr_check,
         )

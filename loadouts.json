@@ -26,30 +26,14 @@
         "HAIRPIN III": 1
     },
     "New Loadout 5": {
-        "HAIRPIN IV": 1,
-        "HAIRPIN III": 1
-    },
-    "New Loadout 6": {
-        "light_ammo": 100,
-        "light_shield": 1,
-        "FERRO III": 1,
-        "HAIRPIN IV": 1,
-        "blaze_grenade": 5,
-        "jolt_mine": 3
-    },
-    "New Loadout 7": {
-        "light_ammo": 100,
-        "light_shield": 1,
-        "HAIRPIN IV": 1,
-        "blaze_grenade": 5,
-        "jolt_mine": 3
-    },
-    "New Loadout 8": {
-        "light_ammo": 100,
-        "medium_ammo": 80,
+        "medium_ammo": 160,
+        "heavy_ammo": 60,
+        "lure_grenade": 1,
         "combat_mk2": 1,
-        "light_shield": 1,
+        "medium_shield": 1,
         "FERRO III": 1,
-        "VENATOR II": 1
+        "VENATOR II": 1,
+        "bandage": 5,
+        "shield_recharger": 3
     }
 }

@@ -133,12 +133,11 @@ def scan_player_inventory():
                 return
 
             player_inventory_results.put(
-                copy.deepcopy(
-                    {
-                        "main_items": main_items + augmented_items + big_items,
-                        "quickuse_items": quickuse_items,
-                    }
-                )
+                {
+                    "main_items": main_items + augmented_items + big_items,
+                    "quickuse_items": quickuse_items,
+                    "image": image,
+                }
             )
             set_status("Done")
 
@@ -200,13 +199,17 @@ def safe_weapon_item_name(name, slot_label):
     return item_name
 
 
-def perform_player_inventory_save_actions(before_ocr=None, after_ocr=None):
+def perform_player_inventory_save_actions(
+    initial_image=None,
+    before_ocr=None,
+    after_ocr=None,
+):
     completed_drags = []
     weapon_item_ids = []
 
     try:
         # Take an initial screenshot to identify empty boxes.
-        image = utils.capture_screen()
+        image = initial_image if initial_image is not None else utils.capture_screen()
         grid_result = player_main_scanner.scan_inventory(image)
 
         occupied_sources = [
