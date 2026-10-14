@@ -24,11 +24,14 @@ except ImportError:
 
 MIN_SIMILARITY = 84.0
 MIN_WEAPON_TIER_SIMILARITY = 71.0
+MIN_WEAPON_ATTACHMENT_SIMILARITY = 69.0
 OCR_SCALE_FACTOR = 3
 ICON_BORDER_INSET = 5
 WEAPON_TIER_REGION_SIZE = 30
 WEAPON_TIER_TOP_LEFT_INSET = 0
 WEAPON_TIER_BOTTOM_RIGHT_INSET = 2
+WEAPON_ATTACHMENT_REGION_SIZE = 30
+WEAPON_ATTACHMENT_RIGHT_INSET = 50
 STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
@@ -201,6 +204,88 @@ def compare_banner_for_diagnostics(
         return None
 
 
+def compare_weapon_attachments_for_diagnostics(
+    cell_image,
+    grid_config,
+    row,
+    column,
+    matched_template=None,
+    row_directories=None,
+):
+    if structural_similarity is None or matched_template is None:
+        return None
+
+    try:
+        item_width = grid_config["item_width"]
+        item_height = grid_config["item_height"]
+        region_size = WEAPON_ATTACHMENT_REGION_SIZE
+        right_inset = WEAPON_ATTACHMENT_RIGHT_INSET
+        top_left_inset = WEAPON_TIER_TOP_LEFT_INSET
+        bottom_right_inset = WEAPON_TIER_BOTTOM_RIGHT_INSET
+        if (
+            region_size > item_width
+            or region_size > item_height
+            or right_inset < 0
+            or right_inset + region_size > item_width
+        ):
+            raise ValueError("Weapon attachment region exceeds item dimensions")
+
+        candidate = cell_image.convert("RGB").resize(
+            (item_width, item_height),
+            Image.Resampling.LANCZOS,
+        )
+        x_start = item_width - right_inset - region_size
+        x_end = item_width - right_inset
+        candidate_array = np.asarray(candidate, dtype=np.uint8)[
+            item_height
+            - region_size
+            + top_left_inset : item_height
+            - bottom_right_inset,
+            x_start:x_end,
+        ]
+        template_region = matched_template["image"][
+            item_height
+            - region_size
+            + top_left_inset : item_height
+            - bottom_right_inset,
+            x_start:x_end,
+        ]
+        score = (
+            structural_similarity(
+                candidate_array,
+                template_region,
+                channel_axis=2,
+                data_range=255,
+            )
+            * 100.0
+        )
+        logger.info(
+            "Weapon attachment SSIM: row=%d col=%d template=%s score=%.2f",
+            row,
+            column,
+            matched_template["name"],
+            score,
+        )
+        save_ssim_debug_pair(
+            candidate_array,
+            template_region,
+            matched_template["name"],
+            row,
+            column,
+            score,
+            area="weapon_attachments",
+            row_directories=row_directories,
+        )
+        return score
+    except Exception:
+        logger.exception(
+            "Weapon attachment SSIM failed for row %d, column %d",
+            row,
+            column,
+        )
+        return None
+
+
 def initialize(
     template_dir,
     big_template_dir,
@@ -351,7 +436,7 @@ def find_best_match(
     row_directories=None,
 ):
     if structural_similarity is None:
-        return None, 0.0, None
+        return None, 0.0, None, None
 
     if grid_config is None:
         grid_config = utils.GRID_CONFIGS["stash"]
@@ -360,7 +445,7 @@ def find_best_match(
         templates = TEMPLATES
 
     if not templates:
-        return None, 0.0, None
+        return None, 0.0, None, None
 
     item_width = grid_config["item_width"]
     item_height = grid_config["item_height"]
@@ -377,7 +462,8 @@ def find_best_match(
         ]
         best_name = None
         best_score = -1.0
-        validation_score = None
+        tier_validation_score = None
+        attachment_validation_score = None
         is_weapon_stash = (
             grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons"
         )
@@ -409,8 +495,17 @@ def find_best_match(
                 )
 
             template_validation_score = None
+            template_attachment_score = None
             if is_weapon_stash:
                 template_validation_score = compare_banner_for_diagnostics(
+                    cell_image,
+                    grid_config,
+                    debug_row,
+                    debug_column,
+                    matched_template=template,
+                    row_directories=row_directories,
+                )
+                template_attachment_score = compare_weapon_attachments_for_diagnostics(
                     cell_image,
                     grid_config,
                     debug_row,
@@ -422,13 +517,19 @@ def find_best_match(
             if score > best_score:
                 best_name = template["name"]
                 best_score = score
-                validation_score = template_validation_score
+                tier_validation_score = template_validation_score
+                attachment_validation_score = template_attachment_score
 
-        return best_name, max(0.0, best_score), validation_score
+        return (
+            best_name,
+            max(0.0, best_score),
+            tier_validation_score,
+            attachment_validation_score,
+        )
 
     except Exception:
         logger.exception("Template matching failed")
-        return None, 0.0, None
+        return None, 0.0, None, None
 
 
 def recognize_big_inventory(image):
@@ -621,7 +722,7 @@ def recognize_slot(
         return None
 
     cell = image.crop((column_x, row_top, x_end, y_end))
-    name, score, extra_validation_score = find_best_match(
+    name, score, tier_validation_score, attachment_validation_score = find_best_match(
         cell,
         grid_config=grid_config,
         templates=templates,
@@ -629,7 +730,6 @@ def recognize_slot(
         debug_column=slot_index,
         row_directories=row_directories,
     )
-
     if name is None or score < MIN_SIMILARITY:
         return None
 
@@ -637,22 +737,31 @@ def recognize_slot(
         grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB == "weapons"
     )
     if is_weapon_tab and (
-        extra_validation_score is None
-        or extra_validation_score < MIN_WEAPON_TIER_SIMILARITY
+        tier_validation_score is None
+        or tier_validation_score < MIN_WEAPON_TIER_SIMILARITY
+        or attachment_validation_score is None
+        or attachment_validation_score < MIN_WEAPON_ATTACHMENT_SIMILARITY
     ):
         logger.info(
             "Rejected weapon recognition: row=%d slot=%d item=%s "
-            "icon_score=%.2f tier_score=%s tier_threshold=%.2f",
+            "icon_score=%.2f tier_score=%s tier_threshold=%.2f "
+            "attachment_score=%s attachment_threshold=%.2f",
             row_number,
             slot_index,
             name,
             score,
             (
-                f"{extra_validation_score:.2f}"
-                if extra_validation_score is not None
+                f"{tier_validation_score:.2f}"
+                if tier_validation_score is not None
                 else "unavailable"
             ),
             MIN_WEAPON_TIER_SIMILARITY,
+            (
+                f"{attachment_validation_score:.2f}"
+                if attachment_validation_score is not None
+                else "unavailable"
+            ),
+            MIN_WEAPON_ATTACHMENT_SIMILARITY,
         )
         return None
 

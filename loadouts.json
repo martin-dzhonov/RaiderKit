@@ -42,5 +42,57 @@
         "crash_mat": 3,
         "gun_54561": 1,
         "gun_41227": 1
+    },
+    "New Loadout 7": {
+        "light_shield": 1,
+        "gun_81356": 1,
+        "gun_17514": 1
+    },
+    "New Loadout 8": {
+        "light_shield": 1,
+        "gun_65414": 1,
+        "gun_85072": 1
+    },
+    "New Loadout 9": {
+        "light_shield": 1,
+        "gun_9515": 1,
+        "gun_4267": 1
+    },
+    "New Loadout 10": {
+        "light_shield": 1,
+        "gun_64616": 1,
+        "gun_73680": 1
+    },
+    "New Loadout 12": {
+        "light_shield": 1,
+        "gun_81329": 1,
+        "gun_25191": 1
+    },
+    "New Loadout 13": {
+        "medium_ammo": 80,
+        "light_ammo": 100,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "vita_spray": 1,
+        "wolfpack": 1,
+        "surge_shield_recharger": 5,
+        "gun_44721": 1,
+        "gun_71396": 1
+    },
+    "New Loadout 14": {
+        "medium_ammo": 80,
+        "light_ammo": 100,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "vita_spray": 1,
+        "wolfpack": 1,
+        "surge_shield_recharger": 5,
+        "gun_16278": 1,
+        "gun_22265": 1
+    },
+    "New Loadout 15": {
+        "looting_mk3": 1,
+        "gun_8402": 1,
+        "gun_44375": 1
     }
 }
