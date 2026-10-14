@@ -19,17 +19,12 @@ QWidget#centralFrame {
     border-radius: 7px;
 }
 
-/* TEMP: contrasting panel colors for resizing-boundary debugging. */
-QWidget#actionsPanel {
-    background-color: #3b1f3f;
-}
-
-QWidget#loadoutsPanel {
-    background-color: #183e4a;
-}
-
 QWidget#loadoutContainer {
     background: transparent;
+}
+
+QWidget#panelDivider {
+    background-color: rgba(137, 146, 173, 180);
 }
 
 /* Title Bar */
@@ -60,6 +55,12 @@ QLabel#status {
 QLabel#hint {
     color: #8992ad;
     font-size: 11px;
+}
+
+QLabel#emptyLoadoutsMessage {
+    color: rgba(190, 220, 255, 25);
+    font-size: 20px;
+    font-weight: 700;
 }
 
 /* =========================================================

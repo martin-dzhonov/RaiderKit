@@ -80,7 +80,7 @@ class OverlayUIMixin:
 
         layout = QHBoxLayout(root)
         layout.setContentsMargins(14, 10, 14, 10)
-        layout.setSpacing(14)
+        layout.setSpacing(6)
 
         self.status = QLabel("Loading assets...")
         self.status.setObjectName("status")
@@ -97,6 +97,7 @@ class OverlayUIMixin:
         actions_layout = QVBoxLayout(self.actions_panel)
         actions_layout.setContentsMargins(0, 0, 0, 0)
         actions_layout.setSpacing(10)
+        actions_layout.addSpacing(5)
 
         self.player_scan_button = QPushButton("SAVE LOADOUT")
         self.player_scan_button.setObjectName("playerScan")
@@ -112,6 +113,7 @@ class OverlayUIMixin:
             0,
             Qt.AlignmentFlag.AlignHCenter,
         )
+        actions_layout.addSpacing(5)
 
         self.clear_loadout_button = QPushButton("CLEAR INVENTORY")
         self.clear_loadout_button.setObjectName("clearLoadout")
@@ -193,7 +195,7 @@ class OverlayUIMixin:
         actions_layout.addWidget(self.loadout_result_progress)
         actions_layout.addStretch(1)
 
-        self.hint = QLabel("F10  ·  Show / Hide")
+        self.hint = QLabel("Ctrl+R  ·  Show / Hide")
         self.hint.setObjectName("hint")
         self.hint.setAlignment(Qt.AlignmentFlag.AlignLeft)
         actions_layout.addWidget(self.hint)
@@ -246,7 +248,16 @@ class OverlayUIMixin:
 
         loadouts_layout.addWidget(self.scroll_area, 1)
 
+        self.panel_divider = QWidget()
+        self.panel_divider.setObjectName("panelDivider")
+        self.panel_divider.setFixedWidth(1)
+        self.panel_divider.setSizePolicy(
+            QSizePolicy.Policy.Fixed,
+            QSizePolicy.Policy.Expanding,
+        )
+
         layout.addWidget(self.actions_panel, 0)
+        layout.addWidget(self.panel_divider, 0)
         layout.addWidget(self.loadouts_panel, 1)
 
         self.ui_stack = QStackedWidget()

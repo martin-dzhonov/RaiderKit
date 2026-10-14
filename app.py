@@ -40,18 +40,18 @@ class InitializationWorker(QThread):
 
 
 class HotkeyListener:
-    """Listen for F10 globally and request an overlay visibility toggle."""
+    """Listen for Ctrl+R globally and request an overlay visibility toggle."""
 
     def __init__(self, callback):
         self.callback = callback
         self.listener = keyboard.GlobalHotKeys(
             {
-                "<f10>": self._on_f10,
+                "<ctrl>+r": self._on_ctrl_r,
             }
         )
         self.listener.start()
 
-    def _on_f10(self):
+    def _on_ctrl_r(self):
         # pynput invokes this from its listener thread.
         self.callback()
 

@@ -16,6 +16,7 @@ from common import (
     LOADOUT_CARD_WIDTH,
     LOADOUT_CARD_GAP,
     LOADOUT_ITEM_COLUMNS,
+    LOADOUT_ITEM_SLOT_SIZE,
     LOADOUT_ITEM_SIZE,
     LOADOUTS_EMPTY_PANEL_WIDTH,
     LOADOUTS_MAX_VISIBLE_CARDS,
@@ -70,15 +71,20 @@ class OverlayLoadoutsMixin:
 
         if not self.loadouts:
 
-            empty = QLabel("No loadouts yet.")
+            empty = QLabel("NO LOADOUTS\nYET")
 
-            empty.setObjectName("hint")
+            empty.setObjectName("emptyLoadoutsMessage")
 
             empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
             empty.setWordWrap(True)
 
-            self.loadout_list.addWidget(empty)
+            empty.setSizePolicy(
+                QSizePolicy.Policy.Expanding,
+                QSizePolicy.Policy.Expanding,
+            )
+
+            self.loadout_list.addWidget(empty, 1)
 
         else:
 
@@ -86,7 +92,8 @@ class OverlayLoadoutsMixin:
 
                 self.loadout_list.addWidget(self._create_loadout_entry(name, loadout))
 
-        self.loadout_list.addStretch(1)
+        if self.loadouts:
+            self.loadout_list.addStretch(1)
         self._resize_for_loadout_count()
 
     def _resize_for_loadout_count(self):
@@ -211,7 +218,7 @@ class OverlayLoadoutsMixin:
                 QSizePolicy.Policy.Fixed,
             )
 
-            item_widget.setFixedWidth(LOADOUT_ITEM_SIZE)
+            item_widget.setFixedWidth(LOADOUT_ITEM_SLOT_SIZE)
 
             item_layout = QVBoxLayout(item_widget)
 
@@ -224,8 +231,8 @@ class OverlayLoadoutsMixin:
             slot.setObjectName("inventorySlot")
 
             slot.setFixedSize(
-                LOADOUT_ITEM_SIZE,
-                LOADOUT_ITEM_SIZE,
+                LOADOUT_ITEM_SLOT_SIZE,
+                LOADOUT_ITEM_SLOT_SIZE,
             )
 
             slot.setToolTip(get_item_display_name(name))
@@ -277,10 +284,7 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            if (
-                name not in TAB_ITEMS["augment"]
-                and name not in TAB_ITEMS["shields"]
-            ):
+            if name not in TAB_ITEMS["augment"] and name not in TAB_ITEMS["shields"]:
                 quantity_text = f"×{quantity}"
                 if name in weapon_names:
                     weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)
@@ -302,7 +306,9 @@ class OverlayLoadoutsMixin:
                     quantity_label,
                     0,
                     0,
-                    alignment=(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight),
+                    alignment=(
+                        Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
+                    ),
                 )
 
             item_layout.addWidget(
