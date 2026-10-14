@@ -263,6 +263,15 @@ def recognize_big_inventory(image):
         if best_name.casefold() == "empty":
             continue
 
+        logger.info(
+            "SSIM recognized big inventory item: box=%s item=%s "
+            "score=%.2f threshold=%.2f",
+            box_name,
+            best_name,
+            best_score,
+            MIN_SIMILARITY,
+        )
+
         observations.append(
             {
                 "name": best_name,
@@ -442,7 +451,7 @@ def recognize_current_grid(
     total = len(rows) * len(columns)
     current = 0
 
-    for row in rows:
+    for row_number, row in enumerate(rows, start=1):
         if is_cancelled():
             break
 
@@ -469,6 +478,16 @@ def recognize_current_grid(
             if item is not None:
                 item["grid_name"] = grid_name
                 observations.append(item)
+                logger.info(
+                    "SSIM recognized inventory item: grid=%s row=%d slot=%d "
+                    "item=%s score=%.2f threshold=%.2f",
+                    grid_name,
+                    row_number,
+                    slot_index,
+                    item["name"],
+                    item["score"],
+                    MIN_SIMILARITY,
+                )
 
     return observations
 
@@ -682,16 +701,6 @@ def perform_player_inventory_save_actions(loadout):
 
         # Scan the screenshot taken after both items have been moved.
         grid_result = player_main_scanner.scan_inventory(screenshot)
-
-        print("Grid:", grid_result["grid"])
-
-        for cell in grid_result["cells"]:
-            print(
-                f"Row {cell['row_index'] + 1}, "
-                f"Column {cell['column_index'] + 1}: "
-                f"x={cell['x']}, y={cell['y']}, "
-                f"status={cell['status']}"
-            )
 
         # Save cropped images into item_templates/weapons.
         weapons_dir = os.path.join(
