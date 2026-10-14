@@ -22,12 +22,13 @@ except ImportError:
     structural_similarity = None
 
 
-MIN_SIMILARITY = 85.0
-MIN_WEAPON_TIER_SIMILARITY = 77.0
+MIN_SIMILARITY = 84.0
+MIN_WEAPON_TIER_SIMILARITY = 71.0
 OCR_SCALE_FACTOR = 3
-ICON_BORDER_INSET = 4
+ICON_BORDER_INSET = 5
 WEAPON_TIER_REGION_SIZE = 30
-WEAPON_TIER_INSET = 1
+WEAPON_TIER_TOP_LEFT_INSET = 0
+WEAPON_TIER_BOTTOM_RIGHT_INSET = 2
 STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
@@ -135,23 +136,34 @@ def compare_banner_for_diagnostics(
         item_width = grid_config["item_width"]
         item_height = grid_config["item_height"]
         region_size = WEAPON_TIER_REGION_SIZE
-        inset = WEAPON_TIER_INSET
+        top_left_inset = WEAPON_TIER_TOP_LEFT_INSET
+        bottom_right_inset = WEAPON_TIER_BOTTOM_RIGHT_INSET
         if region_size > item_width or region_size > item_height:
             raise ValueError("Weapon tier region exceeds item dimensions")
-        if inset < 0 or inset * 2 >= region_size:
-            raise ValueError("Weapon tier inset must be smaller than half the region")
+        if (
+            top_left_inset < 0
+            or bottom_right_inset < 0
+            or top_left_inset + bottom_right_inset >= region_size
+        ):
+            raise ValueError("Weapon tier insets must leave a non-empty region")
 
         candidate = cell_image.convert("RGB").resize(
             (item_width, item_height),
             Image.Resampling.LANCZOS,
         )
         candidate_array = np.asarray(candidate, dtype=np.uint8)[
-            item_height - region_size + inset : item_height - inset,
-            item_width - region_size + inset : item_width - inset,
+            item_height
+            - region_size
+            + top_left_inset : item_height
+            - bottom_right_inset,
+            item_width - region_size + top_left_inset : item_width - bottom_right_inset,
         ]
         template_region = matched_template["image"][
-            item_height - region_size + inset : item_height - inset,
-            item_width - region_size + inset : item_width - inset,
+            item_height
+            - region_size
+            + top_left_inset : item_height
+            - bottom_right_inset,
+            item_width - region_size + top_left_inset : item_width - bottom_right_inset,
         ]
         score = (
             structural_similarity(

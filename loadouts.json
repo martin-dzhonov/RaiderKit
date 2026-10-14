@@ -23,5 +23,24 @@
         "crash_mat": 3,
         "gun_83286": 1,
         "gun_35467": 1
+    },
+    "New Loadout 4": {
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "gun_57185": 1,
+        "gun_27289": 1
+    },
+    "New Loadout 5": {
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "gun_40794": 1,
+        "gun_64030": 1
+    },
+    "New Loadout 6": {
+        "medium_ammo": 80,
+        "light_shield": 1,
+        "crash_mat": 3,
+        "gun_54561": 1,
+        "gun_41227": 1
     }
 }
