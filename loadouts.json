@@ -16,5 +16,43 @@
         "light_ammo": 100,
         "tactical_mk3": 1,
         "medium_shield": 1
+    },
+    "FerroSTICH": {
+        "heavy_ammo": 90,
+        "light_ammo": 100,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "bandage": 5,
+        "shield_recharger": 3,
+        "lure_grenade": 3,
+        "gun_87674": 1,
+        "gun_71707": 1
+    },
+    "New Loadout 2": {
+        "light_shield": 1,
+        "gun_97479": 1,
+        "gun_43195": 1
+    },
+    "New Loadout 4": {
+        "light_shield": 1,
+        "gun_51084": 1,
+        "gun_693": 1
+    },
+    "New Loadout 5": {
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "deadline": 1,
+        "blaze_grenade": 1,
+        "bandage": 5,
+        "gun_53889": 1,
+        "gun_15605": 1
+    },
+    "New Loadout 6": {
+        "vita_spray": 3,
+        "blaze_grenade": 10,
+        "tactical_mk3": 1,
+        "light_shield": 1,
+        "gun_98929": 1,
+        "gun_29730": 1
     }
 }
