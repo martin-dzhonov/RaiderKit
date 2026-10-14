@@ -101,5 +101,51 @@
         "fireworks_box": 1,
         "explosive_mine": 1,
         "light_shield": 1
+    },
+    "New Loadout 10": {
+        "blaze_grenade": 9,
+        "fireworks_box": 1,
+        "explosive_mine": 1,
+        "light_shield": 1,
+        "gun_37589": 1,
+        "gun_54540": 1
+    },
+    "New Loadout 12": {
+        "light_shield": 1,
+        "fireworks_box": 1,
+        "explosive_mine": 1,
+        "blaze_grenade": 9,
+        "gun_61405": 1,
+        "gun_9257": 1
+    },
+    "New Loadout 13": {
+        "tactical_mk1": 1,
+        "gun_85584": 1,
+        "gun_29829": 1
+    },
+    "New Loadout 14": {
+        "light_shield": 1,
+        "gun_13309": 1,
+        "gun_69361": 1
+    },
+    "New Loadout 15": {
+        "light_shield": 1,
+        "gun_23083": 1,
+        "gun_93524": 1
+    },
+    "New Loadout 16": {
+        "light_shield": 1,
+        "gun_31333": 1,
+        "gun_50722": 1
+    },
+    "New Loadout 17": {
+        "light_shield": 1,
+        "gun_59620": 1,
+        "gun_34195": 1
+    },
+    "New Loadout 18": {
+        "light_shield": 1,
+        "gun_35219": 1,
+        "gun_45434": 1
     }
 }

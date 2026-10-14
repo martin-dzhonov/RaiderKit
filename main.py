@@ -612,10 +612,46 @@ PLAYER_INVENTORY_SAVE_SOURCES = (
 PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.2
 
 
-def perform_player_inventory_save_actions():
+def refresh_weapon_templates():
+    stash_config = utils.GRID_CONFIGS["stash"]
+    weapons_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        TEMPLATE_DIR,
+        "weapons",
+    )
+    loaded_templates = utils.load_templates(
+        weapons_dir,
+        stash_config["item_width"],
+        stash_config["item_height"],
+        stash_config["icon_height"],
+        TEMPLATE_EXTENSIONS,
+        structural_similarity,
+        set_status,
+    )
+
+    previous_template_ids = {
+        id(template) for template in TAB_TEMPLATES.get("weapons", [])
+    }
+    TEMPLATES[:] = [
+        template
+        for template in TEMPLATES
+        if id(template) not in previous_template_ids
+    ]
+
+    weapon_templates = [
+        template
+        for template in loaded_templates
+        if str(template.get("name", "")).casefold() != "empty"
+    ]
+    TEMPLATES.extend(weapon_templates)
+    TAB_TEMPLATES["weapons"] = weapon_templates
+
+
+def perform_player_inventory_save_actions(loadout):
     completed_drags = []
     screenshot_path = None
     grid_result = None
+    weapon_item_ids = []
 
     try:
         # Take an initial screenshot to identify empty boxes.
@@ -694,14 +730,19 @@ def perform_player_inventory_save_actions():
                 if not os.path.exists(crop_path):
                     crop.save(crop_path)
                     logger.info("Saved weapon crop: %s", crop_path)
+                    weapon_item_ids.append(item_id)
                     break
             else:
                 raise RuntimeError("Could not generate a unique gun filename.")
+
+        refresh_weapon_templates()
 
     finally:
         # Restore items in reverse order, even if scanning or saving fails.
         for source, destination in reversed(completed_drags):
             drag_inventory_item(destination, source)
+
+    loadout.update(dict.fromkeys(weapon_item_ids, 1))
 
     return screenshot_path, grid_result
 
