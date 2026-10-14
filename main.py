@@ -54,11 +54,13 @@ SCROLLBAR_CLICK_OFFSET = 10
 MAX_CLEAR_CLICKS = 50
 MAX_UNCHANGED_CLEAR_SCANS = 2
 BIG_ITEM_CLICK_DELAY = 0.1
-PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.4
-PLAYER_INVENTORY_SAVE_DRAGS = (
-    ((1310, 665), (1453, 700)),
-    ((1310, 890), (1590, 700)),
+PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.16
+
+PLAYER_INVENTORY_SAVE_SOURCES = (
+    (1310, 665),
+    (1310, 890),
 )
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -604,14 +606,6 @@ def drag_inventory_item(start, destination):
         pyautogui.mouseUp()
 
 
-PLAYER_INVENTORY_SAVE_SOURCES = (
-    (1310, 665),
-    (1310, 890),
-)
-
-PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.2
-
-
 def refresh_weapon_templates():
     stash_config = utils.GRID_CONFIGS["stash"]
     weapons_dir = os.path.join(
@@ -633,9 +627,7 @@ def refresh_weapon_templates():
         id(template) for template in TAB_TEMPLATES.get("weapons", [])
     }
     TEMPLATES[:] = [
-        template
-        for template in TEMPLATES
-        if id(template) not in previous_template_ids
+        template for template in TEMPLATES if id(template) not in previous_template_ids
     ]
 
     weapon_templates = [

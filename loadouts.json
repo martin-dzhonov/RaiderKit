@@ -147,5 +147,55 @@
         "light_shield": 1,
         "gun_35219": 1,
         "gun_45434": 1
+    },
+    "New Loadout 19": {
+        "light_shield": 1,
+        "gun_4500": 1,
+        "gun_41890": 1
+    },
+    "New Loadout 20": {
+        "light_ammo": 100,
+        "heavy_ammo": 60,
+        "vita_spray": 2,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "defibrillator": 3,
+        "lure_grenade": 3,
+        "shield_recharger": 5,
+        "gun_52641": 1,
+        "gun_84587": 1
+    },
+    "New Loadout 21": {
+        "light_shield": 1,
+        "gun_86634": 1,
+        "gun_34090": 1
+    },
+    "New Loadout 22": {
+        "light_shield": 1,
+        "gun_26627": 1,
+        "gun_81496": 1
+    },
+    "New Loadout 23": {
+        "light_shield": 1,
+        "gun_27955": 1,
+        "gun_63969": 1
+    },
+    "New Loadout 24": {
+        "light_shield": 1,
+        "gun_57477": 1,
+        "gun_11871": 1
+    },
+    "New Loadout 25": {
+        "light_shield": 1,
+        "gun_47000": 1,
+        "gun_12662": 1
+    },
+    "New Loadout 26": {
+        "vita_spray": 1,
+        "deadline": 2,
+        "photoelectric_cloak": 1,
+        "light_shield": 1,
+        "gun_45645": 1,
+        "gun_10627": 1
     }
 }

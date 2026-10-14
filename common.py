@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 LOADOUTS_FILE = BASE_DIR / "loadouts.json"
 STYLES_FILE = BASE_DIR / "styles.qss"
-ITEM_ICONS_DIR = BASE_DIR / "item_icons"
+TEMPLATE_DIR = BASE_DIR / "item_templates"
 
 MAX_WIDGET_SIZE = 16_777_215
 

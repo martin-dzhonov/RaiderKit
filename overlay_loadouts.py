@@ -15,9 +15,9 @@ from common import (
     INVENTORY_COLUMNS,
     INVENTORY_ICON_SIZE,
     INVENTORY_SLOT_SIZE,
-    ITEM_ICONS_DIR,
     ITEM_NAMES,
     TAB_ITEMS,
+    TEMPLATE_DIR,
     get_item_display_name,
 )
 
@@ -350,13 +350,18 @@ class OverlayLoadoutsMixin:
 
             slot_layout.setSpacing(0)
 
-            image_path = ITEM_ICONS_DIR / f"{name}.webp"
+            image_path = next(
+                (
+                    path
+                    for extension in ("webp", "png")
+                    for path in sorted(
+                        TEMPLATE_DIR.glob(f"*/{name}.{extension}")
+                    )
+                ),
+                None,
+            )
 
-            if not image_path.is_file():
-
-                image_path = ITEM_ICONS_DIR / f"{name}.png"
-
-            if image_path.is_file():
+            if image_path is not None:
 
                 pixmap = QPixmap(str(image_path))
 
