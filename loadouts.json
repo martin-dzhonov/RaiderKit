@@ -21,5 +21,19 @@
         "light_shield": 1,
         "gun_41764": 1,
         "gun_37937": 1
+    },
+    "New Loadout 4": {
+        "looting_mk3": 1,
+        "gun_1639": 1,
+        "gun_81829": 1
+    },
+    "New Loadout 5": {
+        "medium_ammo": 80,
+        "light_shield": 1,
+        "vita_spray": 1,
+        "deadline": 1,
+        "heavy_fuze_grenade": 3,
+        "gun_94564": 1,
+        "gun_78333": 1
     }
 }

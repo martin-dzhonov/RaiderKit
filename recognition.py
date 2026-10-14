@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import warnings
-import uuid
 from pathlib import Path
 
 import easyocr
@@ -23,9 +22,10 @@ except ImportError:
     structural_similarity = None
 
 
-MIN_SIMILARITY = 81.0
+MIN_SIMILARITY = 82.0
 OCR_SCALE_FACTOR = 3
 ICON_BORDER_INSET = 4
+BANNER_INSET = 0
 STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
@@ -56,20 +56,18 @@ def set_current_tab(tab_name):
     CURRENT_TAB = tab_name
 
 
-def save_ssim_debug_pair(candidate_array, template_array, context, template_name):
-    pair_id = uuid.uuid4().hex
-    safe_context = re.sub(r"[^A-Za-z0-9_-]+", "_", context).strip("_")
-    safe_template_name = re.sub(
-        r"[^A-Za-z0-9_-]+",
-        "_",
-        template_name,
-    ).strip("_")
-    prefix_parts = [pair_id]
-    if safe_context:
-        prefix_parts.append(safe_context)
-    if safe_template_name:
-        prefix_parts.append(safe_template_name)
-    prefix = "_".join(prefix_parts)
+def save_ssim_debug_pair(
+    candidate_array,
+    template_array,
+    row,
+    column,
+    score,
+    area=None,
+):
+    prefix = f"r{row}_c{column}"
+    if area:
+        prefix = f"{prefix}_{area}"
+    prefix = f"{prefix}_{score:.2f}"
 
     try:
         SSIM_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
@@ -79,8 +77,80 @@ def save_ssim_debug_pair(candidate_array, template_array, context, template_name
         )
     except OSError:
         logger.exception(
-            "Could not save SSIM debug images for comparison '%s'",
-            context,
+            "Could not save SSIM debug images for row %d, column %d",
+            row,
+            column,
+        )
+
+
+def compare_banner_for_diagnostics(
+    cell_image,
+    templates,
+    grid_config,
+    row,
+    column,
+):
+    try:
+        item_width = grid_config["item_width"]
+        item_height = grid_config["item_height"]
+        icon_height = grid_config["icon_height"]
+        banner_height = grid_config["banner_height"]
+        candidate = cell_image.convert("RGB").resize(
+            (item_width, item_height),
+            Image.Resampling.LANCZOS,
+        )
+        candidate_array = np.asarray(candidate, dtype=np.uint8)[
+            icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+            BANNER_INSET : item_width - BANNER_INSET,
+        ]
+
+        best_template = None
+        best_score = -1.0
+        for template in templates:
+            template_banner = template["image"][
+                icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+                BANNER_INSET : item_width - BANNER_INSET,
+            ]
+            score = (
+                structural_similarity(
+                    candidate_array,
+                    template_banner,
+                    channel_axis=2,
+                    data_range=255,
+                )
+                * 100.0
+            )
+            if score > best_score:
+                best_template = template
+                best_score = score
+
+        if best_template is None:
+            return
+
+        template_banner = best_template["image"][
+            icon_height + BANNER_INSET : icon_height + banner_height - BANNER_INSET,
+            BANNER_INSET : item_width - BANNER_INSET,
+        ]
+        logger.info(
+            "SSIM banner diagnostic: row=%d col=%d best_template=%s score=%.2f",
+            row,
+            column,
+            best_template["name"],
+            best_score,
+        )
+        save_ssim_debug_pair(
+            candidate_array,
+            template_banner,
+            row,
+            column,
+            best_score,
+            area="banner",
+        )
+    except Exception:
+        logger.exception(
+            "Banner SSIM diagnostic failed for row %d, column %d",
+            row,
+            column,
         )
 
 
@@ -229,7 +299,8 @@ def find_best_match(
     cell_image,
     grid_config=None,
     templates=None,
-    debug_context="grid",
+    debug_row=1,
+    debug_column=1,
 ):
     if structural_similarity is None:
         return None, 0.0
@@ -256,7 +327,6 @@ def find_best_match(
             ICON_BORDER_INSET:icon_height,
             ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
         ]
-
         best_name = None
         best_score = -1.0
         best_template = None
@@ -288,9 +358,18 @@ def find_best_match(
                     ICON_BORDER_INSET:icon_height,
                     ICON_BORDER_INSET : item_width - ICON_BORDER_INSET,
                 ],
-                debug_context,
-                best_template["name"],
+                debug_row,
+                debug_column,
+                best_score,
             )
+
+        compare_banner_for_diagnostics(
+            cell_image,
+            templates,
+            grid_config,
+            debug_row,
+            debug_column,
+        )
 
         return best_name, max(0.0, best_score)
 
@@ -305,7 +384,7 @@ def recognize_big_inventory(image):
     if not BIG_TEMPLATES or structural_similarity is None:
         return observations
 
-    for box_name, bounds in BOXES.items():
+    for box_index, (box_name, bounds) in enumerate(BOXES.items(), start=1):
         if _is_cancelled is not None and _is_cancelled():
             break
 
@@ -356,8 +435,9 @@ def recognize_big_inventory(image):
             save_ssim_debug_pair(
                 candidate_array,
                 best_template["image"],
-                f"big_{box_name}",
-                best_template["name"],
+                1,
+                box_index,
+                best_score,
             )
 
         if best_name is None or best_score < MIN_SIMILARITY:
@@ -456,7 +536,7 @@ def recognize_slot(
     row_top,
     slot_index,
     column_x,
-    grid_name="stash",
+    row_number=1,
     grid_config=None,
     requested_names=None,
     templates=None,
@@ -487,7 +567,8 @@ def recognize_slot(
         cell,
         grid_config=grid_config,
         templates=templates,
-        debug_context=f"{grid_name}_row{row_top}_column{column_x}",
+        debug_row=row_number,
+        debug_column=slot_index,
     )
 
     if name is None or score < MIN_SIMILARITY:
@@ -576,7 +657,7 @@ def recognize_current_grid(
                 row["top"],
                 slot_index,
                 column_x,
-                grid_name=grid_name,
+                row_number=row_number,
                 grid_config=grid_config,
                 requested_names=requested_names,
                 templates=templates,
