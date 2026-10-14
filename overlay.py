@@ -5,7 +5,6 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ITEM_NAMES,
     WINDOW_HEIGHT,
-    WINDOW_WIDTH,
     drain_queue,
     read_loadouts,
 )
@@ -54,8 +53,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_status_message = ""
         self.scan_progress_updates_from_status = True
 
-        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        self.center_at_top()
+        self.setFixedHeight(WINDOW_HEIGHT)
 
         self._build_main_panel()
         self._build_title_bar()
@@ -63,6 +61,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self._setup_timers()
 
         self.refresh_loadouts()
+        self.center_at_top()
 
     def start_initialization(self):
         if self.init_worker is not None:

@@ -14,10 +14,14 @@ from PySide6.QtWidgets import (
 )
 from common import (
     LOADOUT_CARD_WIDTH,
+    LOADOUT_CARD_GAP,
     LOADOUT_ITEM_COLUMNS,
     LOADOUT_ITEM_SIZE,
+    LOADOUTS_EMPTY_PANEL_WIDTH,
+    LOADOUTS_MAX_VISIBLE_CARDS,
     TAB_ITEMS,
     TEMPLATE_DIR,
+    WINDOW_FIXED_WIDTH,
     get_item_display_name,
 )
 
@@ -83,6 +87,21 @@ class OverlayLoadoutsMixin:
                 self.loadout_list.addWidget(self._create_loadout_entry(name, loadout))
 
         self.loadout_list.addStretch(1)
+        self._resize_for_loadout_count()
+
+    def _resize_for_loadout_count(self):
+        visible_count = min(len(self.loadouts), LOADOUTS_MAX_VISIBLE_CARDS)
+
+        if visible_count == 0:
+            panel_width = LOADOUTS_EMPTY_PANEL_WIDTH
+        else:
+            panel_width = (
+                visible_count * LOADOUT_CARD_WIDTH
+                + (visible_count - 1) * LOADOUT_CARD_GAP
+            )
+
+        self.loadouts_panel.setFixedWidth(panel_width)
+        self.setFixedWidth(WINDOW_FIXED_WIDTH + panel_width)
 
     def _create_loadout_entry(self, name, loadout):
 

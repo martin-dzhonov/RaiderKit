@@ -19,6 +19,19 @@ QWidget#centralFrame {
     border-radius: 7px;
 }
 
+/* TEMP: contrasting panel colors for resizing-boundary debugging. */
+QWidget#actionsPanel {
+    background-color: #3b1f3f;
+}
+
+QWidget#loadoutsPanel {
+    background-color: #183e4a;
+}
+
+QWidget#loadoutContainer {
+    background: transparent;
+}
+
 /* Title Bar */
 QWidget#titleBar {
     background: #191e2d;

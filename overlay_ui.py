@@ -4,7 +4,6 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
-    QLayout,
     QProgressBar,
     QPushButton,
     QScrollArea,
@@ -16,7 +15,8 @@ from PySide6.QtWidgets import (
 from common import (
     ACTION_PANEL_BUTTON_WIDTH,
     ACTIONS_PANEL_WIDTH,
-    LOADOUTS_PANEL_WIDTH,
+    LOADOUT_CARD_GAP,
+    LOADOUTS_EMPTY_PANEL_WIDTH,
     TITLE_BAR_HEIGHT,
 )
 
@@ -202,7 +202,7 @@ class OverlayUIMixin:
 
         self.loadouts_panel = QWidget()
         self.loadouts_panel.setObjectName("loadoutsPanel")
-        self.loadouts_panel.setFixedWidth(LOADOUTS_PANEL_WIDTH)
+        self.loadouts_panel.setFixedWidth(LOADOUTS_EMPTY_PANEL_WIDTH)
         self.loadouts_panel.setSizePolicy(
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Expanding,
@@ -214,11 +214,13 @@ class OverlayUIMixin:
 
         self.loadout_list = QHBoxLayout()
         self.loadout_list.setContentsMargins(0, 0, 0, 0)
-        self.loadout_list.setSpacing(8)
-        self.loadout_list.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.loadout_list.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        self.loadout_list.setSpacing(LOADOUT_CARD_GAP)
+        self.loadout_list.setAlignment(
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
+        )
 
         self.loadout_container = QWidget()
+        self.loadout_container.setObjectName("loadoutContainer")
         self.loadout_container.setLayout(self.loadout_list)
         self.loadout_container.setSizePolicy(
             QSizePolicy.Policy.Minimum,

@@ -1,28 +1,29 @@
 {
     "New Loadout": {
-        "launcher_ammo": 48,
-        "medium_ammo": 80,
-        "vita_spray": 1,
-        "tactical_mk3": 1,
+        "heavy_ammo": 46,
+        "launcher_ammo": 24,
+        "looting_mk2": 1,
         "light_shield": 1,
-        "ARPEGGIO II_07": 1,
-        "HULLCRACKER IV_05": 1,
-        "blaze_grenade": 5,
-        "smoke_grenade": 5,
-        "herbal_bandage": 5,
-        "shield_recharger": 5
+        "BURLETTA III_15": 1,
+        "ARPEGGIO II_20": 1,
+        "deadline": 2
     },
     "New Loadout 2": {
-        "medium_ammo": 80,
-        "launcher_ammo": 48,
-        "vita_spray": 1,
-        "herbal_bandage": 6,
-        "tactical_mk3": 1,
+        "heavy_ammo": 46,
+        "launcher_ammo": 24,
+        "looting_mk2": 1,
         "light_shield": 1,
-        "ARPEGGIO II_09": 1,
-        "HULLCRACKER IV_07": 1,
-        "smoke_grenade": 5,
-        "blaze_grenade": 5,
-        "shield_recharger": 5
+        "BURLETTA III_16": 1,
+        "ARPEGGIO II_21": 1,
+        "deadline": 2
+    },
+    "New Loadout 3": {
+        "heavy_ammo": 46,
+        "launcher_ammo": 24,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "BURLETTA III_17": 1,
+        "ARPEGGIO II_22": 1,
+        "deadline": 2
     }
 }
