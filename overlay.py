@@ -3,11 +3,9 @@ import main as automation
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
-    ACTIONS_PANEL_WIDTH,
     ITEM_NAMES,
-    LOADOUTS_PANEL_WIDTH,
-    NORMAL_HEIGHT,
-    TITLE_BAR_HEIGHT,
+    WINDOW_HEIGHT,
+    WINDOW_WIDTH,
     drain_queue,
     read_loadouts,
 )
@@ -41,11 +39,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.initialization_failed = False
         self.init_worker = None
 
-        self.normal_height = NORMAL_HEIGHT
-        self.title_bar_height = TITLE_BAR_HEIGHT
-        self.actions_panel_width = ACTIONS_PANEL_WIDTH
-        self.loadouts_panel_width = LOADOUTS_PANEL_WIDTH
-
         self.compact_mode = False
 
         self.loadouts = read_loadouts()
@@ -61,9 +54,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_status_message = ""
         self.scan_progress_updates_from_status = True
 
-        self.normal_width = self.calculate_window_width()
-
-        self.resize(self.normal_width * 2 + 80, self.normal_height)
+        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.center_at_top()
 
         self._build_main_panel()

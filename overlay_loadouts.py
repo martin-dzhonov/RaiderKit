@@ -13,6 +13,9 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from common import (
+    LOADOUT_CARD_WIDTH,
+    LOADOUT_ITEM_COLUMNS,
+    LOADOUT_ITEM_SIZE,
     TAB_ITEMS,
     TEMPLATE_DIR,
     get_item_display_name,
@@ -20,10 +23,6 @@ from common import (
 
 
 class OverlayLoadoutsMixin:
-
-    LOADOUT_CARD_WIDTH = 470
-    LOADOUT_ITEM_SLOT_SIZE = 66
-    LOADOUT_ITEM_ICON_SIZE = 64
 
     def _sort_loadout_items(self, loadout):
         """Sort items by tab priority, preserving order within each tab."""
@@ -90,7 +89,7 @@ class OverlayLoadoutsMixin:
         entry = QWidget()
 
         entry.setObjectName("loadoutEntry")
-        entry.setFixedWidth(self.LOADOUT_CARD_WIDTH)
+        entry.setFixedWidth(LOADOUT_CARD_WIDTH)
 
         entry_layout = QVBoxLayout(entry)
 
@@ -175,7 +174,7 @@ class OverlayLoadoutsMixin:
 
             return contents
 
-        columns = 6
+        columns = LOADOUT_ITEM_COLUMNS
         weapon_names = {
             path.stem for path in TEMPLATE_DIR.glob("weapons/*") if path.is_file()
         }
@@ -193,7 +192,7 @@ class OverlayLoadoutsMixin:
                 QSizePolicy.Policy.Fixed,
             )
 
-            item_widget.setFixedWidth(self.LOADOUT_ITEM_SLOT_SIZE)
+            item_widget.setFixedWidth(LOADOUT_ITEM_SIZE)
 
             item_layout = QVBoxLayout(item_widget)
 
@@ -206,8 +205,8 @@ class OverlayLoadoutsMixin:
             slot.setObjectName("inventorySlot")
 
             slot.setFixedSize(
-                self.LOADOUT_ITEM_SLOT_SIZE,
-                self.LOADOUT_ITEM_SLOT_SIZE,
+                LOADOUT_ITEM_SIZE,
+                LOADOUT_ITEM_SIZE,
             )
 
             slot.setToolTip(get_item_display_name(name))
@@ -239,14 +238,14 @@ class OverlayLoadoutsMixin:
                     icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
                     icon_label.setFixedSize(
-                        self.LOADOUT_ITEM_ICON_SIZE,
-                        self.LOADOUT_ITEM_ICON_SIZE,
+                        LOADOUT_ITEM_SIZE,
+                        LOADOUT_ITEM_SIZE,
                     )
 
                     icon_label.setPixmap(
                         pixmap.scaled(
-                            self.LOADOUT_ITEM_ICON_SIZE,
-                            self.LOADOUT_ITEM_ICON_SIZE,
+                            LOADOUT_ITEM_SIZE,
+                            LOADOUT_ITEM_SIZE,
                             Qt.AspectRatioMode.KeepAspectRatio,
                             Qt.TransformationMode.SmoothTransformation,
                         )

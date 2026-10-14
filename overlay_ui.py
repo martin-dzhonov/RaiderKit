@@ -13,6 +13,12 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from common import (
+    ACTION_PANEL_BUTTON_WIDTH,
+    ACTIONS_PANEL_WIDTH,
+    LOADOUTS_PANEL_WIDTH,
+    TITLE_BAR_HEIGHT,
+)
 
 
 class HorizontalWheelScrollArea(QScrollArea):
@@ -67,16 +73,6 @@ class HorizontalWheelScrollArea(QScrollArea):
 
 class OverlayUIMixin:
 
-    def calculate_window_width(self):
-        """Calculate the width of the actions and loadouts panels."""
-        panel_width = self.actions_panel_width + self.loadouts_panel_width
-        panel_count = 2
-        margins = 14 * 2
-        spacing = 14 * (panel_count - 1)
-        frame_margins = 2
-
-        return panel_width + margins + spacing + frame_margins
-
     def _build_main_panel(self):
 
         root = QWidget()
@@ -96,7 +92,7 @@ class OverlayUIMixin:
 
         self.actions_panel = QWidget()
         self.actions_panel.setObjectName("actionsPanel")
-        self.actions_panel.setFixedWidth(self.actions_panel_width)
+        self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH)
 
         actions_layout = QVBoxLayout(self.actions_panel)
         actions_layout.setContentsMargins(0, 0, 0, 0)
@@ -106,7 +102,7 @@ class OverlayUIMixin:
         self.player_scan_button.setObjectName("playerScan")
         self.player_scan_button.setEnabled(False)
         self.player_scan_button.setMinimumHeight(36)
-        self.player_scan_button.setFixedWidth(self.actions_panel_width - 20)
+        self.player_scan_button.setFixedWidth(ACTION_PANEL_BUTTON_WIDTH)
         self.player_scan_button.setToolTip(
             "Scan your current inventory to create a loadout"
         )
@@ -121,7 +117,7 @@ class OverlayUIMixin:
         self.clear_loadout_button.setObjectName("clearLoadout")
         self.clear_loadout_button.setEnabled(False)
         self.clear_loadout_button.setMinimumHeight(36)
-        self.clear_loadout_button.setFixedWidth(self.actions_panel_width - 20)
+        self.clear_loadout_button.setFixedWidth(ACTION_PANEL_BUTTON_WIDTH)
         self.clear_loadout_button.setToolTip(
             "Double-click recognized items in your player inventory"
         )
@@ -146,7 +142,7 @@ class OverlayUIMixin:
         self.scan_progress_bar.setRange(0, 1000)
         self.scan_progress_bar.setValue(0)
         self.scan_progress_bar.setTextVisible(False)
-        self.scan_progress_bar.setFixedSize(self.actions_panel_width - 20, 6)
+        self.scan_progress_bar.setFixedSize(ACTION_PANEL_BUTTON_WIDTH, 6)
         self.scan_progress_bar.hide()
 
         result_layout.addWidget(
@@ -206,7 +202,7 @@ class OverlayUIMixin:
 
         self.loadouts_panel = QWidget()
         self.loadouts_panel.setObjectName("loadoutsPanel")
-        self.loadouts_panel.setMinimumWidth(0)
+        self.loadouts_panel.setFixedWidth(LOADOUTS_PANEL_WIDTH)
         self.loadouts_panel.setSizePolicy(
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Expanding,
@@ -260,7 +256,7 @@ class OverlayUIMixin:
 
         self.title_bar = QWidget()
         self.title_bar.setObjectName("titleBar")
-        self.title_bar.setFixedHeight(self.title_bar_height)
+        self.title_bar.setFixedHeight(TITLE_BAR_HEIGHT)
 
         layout = QHBoxLayout(self.title_bar)
         layout.setContentsMargins(12, 0, 6, 0)
