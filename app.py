@@ -63,8 +63,24 @@ class HotkeyListener:
 
 def process_generated_loadout(overlay, inventory_scan):
     """Finish inventory actions, build, validate, and save a generated loadout."""
+    restore_overlay_after_ocr = overlay.isVisible()
+
+    def hide_overlay_for_ocr():
+        if restore_overlay_after_ocr:
+            overlay.hide()
+            QApplication.processEvents()
+
+    def restore_overlay_after_ocr_check():
+        if restore_overlay_after_ocr:
+            overlay.show()
+            overlay.raise_()
+            QApplication.processEvents()
+
     try:
-        weapon_item_ids = automation.perform_player_inventory_save_actions()
+        weapon_item_ids = automation.perform_player_inventory_save_actions(
+            before_ocr=hide_overlay_for_ocr,
+            after_ocr=restore_overlay_after_ocr_check,
+        )
     except Exception as exc:
         overlay.status.setText("Final inventory actions failed; loadout was not saved.")
         QMessageBox.critical(

@@ -18,56 +18,30 @@
         "medium_shield": 1
     },
     "New Loadout 2": {
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "crash_mat": 3,
-        "gun_83286": 1,
-        "gun_35467": 1
+        "HAIRPIN IV": 1,
+        "VENATOR II": 1
     },
     "New Loadout 4": {
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "gun_57185": 1,
-        "gun_27289": 1
+        "HAIRPIN IV": 1,
+        "HAIRPIN III": 1
     },
     "New Loadout 5": {
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "gun_40794": 1,
-        "gun_64030": 1
+        "HAIRPIN IV": 1,
+        "HAIRPIN III": 1
     },
     "New Loadout 6": {
+        "light_ammo": 100,
         "light_shield": 1,
-        "gun_13361": 1,
-        "gun_77734": 1
+        "FERRO III": 1,
+        "HAIRPIN IV": 1,
+        "blaze_grenade": 5,
+        "jolt_mine": 3
     },
     "New Loadout 7": {
-        "launcher_ammo": 24,
         "light_ammo": 100,
         "light_shield": 1,
-        "gun_77904": 1
-    },
-    "New Loadout 8": {
-        "launcher_ammo": 24,
-        "light_ammo": 100,
-        "light_shield": 1
-    },
-    "New Loadout 9": {
-        "light_ammo": 100,
-        "launcher_ammo": 24,
-        "light_shield": 1,
-        "gun_12787": 1
-    },
-    "New Loadout 10": {
-        "looting_mk3": 1,
-        "light_shield": 1
-    },
-    "New Loadout 12": {
-        "gun_20635": 1,
-        "gun_10736": 1
-    },
-    "New Loadout 13": {
-        "gun_93891": 1,
-        "gun_6067": 1
+        "HAIRPIN IV": 1,
+        "blaze_grenade": 5,
+        "jolt_mine": 3
     }
 }

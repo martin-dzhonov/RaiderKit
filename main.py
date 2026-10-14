@@ -4,7 +4,6 @@ import os
 import re
 import threading
 import time
-import random
 from queue import Queue
 
 import pyautogui
@@ -14,6 +13,7 @@ import main_config
 
 import player_main_scanner
 import recognition
+import ocr_weapons
 
 TEMPLATE_DIR = "item_templates"
 BIG_TEMPLATE_DIR = "item_templates_big"
@@ -180,7 +180,27 @@ def refresh_weapon_templates():
     )
 
 
-def perform_player_inventory_save_actions():
+def safe_weapon_item_name(name, slot_label):
+    item_name = re.sub(
+        r'[<>:"/\\|?*\x00-\x1f]',
+        "_",
+        name,
+    ).strip(" .")
+    if not item_name:
+        raise RuntimeError(f"OCR returned an invalid item name for {slot_label}.")
+    if item_name.upper() in {
+        "CON",
+        "PRN",
+        "AUX",
+        "NUL",
+        *(f"COM{number}" for number in range(1, 10)),
+        *(f"LPT{number}" for number in range(1, 10)),
+    }:
+        item_name = f"_{item_name}"
+    return item_name
+
+
+def perform_player_inventory_save_actions(before_ocr=None, after_ocr=None):
     completed_drags = []
     weapon_item_ids = []
 
@@ -212,19 +232,35 @@ def perform_player_inventory_save_actions():
             (x, y - PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET)
             for x, y in occupied_sources
         ]
-
-        # Select one empty box per occupied source, in grid order.
-        # Coordinates are the centers of the 128x128 boxes.
         destinations = [
             (cell["x"] + 64, cell["y"] + 64)
             for cell in empty_boxes[: len(occupied_sources)]
         ]
 
-        # Drag each item into its selected empty box.
-        for source, destination in zip(
-            drag_sources,
-            destinations,
+        for source_index, (source, destination) in enumerate(
+            zip(drag_sources, destinations),
+            start=1,
         ):
+            try:
+                if before_ocr is not None:
+                    before_ocr()
+                weapon_name = ocr_weapons.recognize_weapon_at(
+                    *source,
+                    slot_label=f"box{source_index}",
+                    ocr_reader=recognition.OCR_READER,
+                )
+            finally:
+                if after_ocr is not None:
+                    after_ocr()
+
+            if not weapon_name:
+                raise RuntimeError(
+                    f"Could not read the item name in source box {source_index}."
+                )
+
+            item_id = safe_weapon_item_name(weapon_name, f"source box {source_index}")
+            weapon_item_ids.append(item_id)
+
             drag_inventory_item(source, destination)
             completed_drags.append((source, destination))
 
@@ -241,7 +277,7 @@ def perform_player_inventory_save_actions():
         )
         os.makedirs(weapons_dir, exist_ok=True)
 
-        for x, y in destinations:
+        for (x, y), item_id in zip(destinations, weapon_item_ids):
             crop = screenshot.crop(
                 (
                     x - 64,
@@ -251,21 +287,9 @@ def perform_player_inventory_save_actions():
                 )
             )
 
-            # Generate a unique gun ID between 1 and 100000.
-            for _ in range(1000):
-                item_id = f"gun_{random.randint(1, 100000)}"
-                crop_path = os.path.join(
-                    weapons_dir,
-                    f"{item_id}.png",
-                )
-
-                if not os.path.exists(crop_path):
-                    crop.save(crop_path)
-                    logger.info("Saved weapon crop: %s", crop_path)
-                    weapon_item_ids.append(item_id)
-                    break
-            else:
-                raise RuntimeError("Could not generate a unique gun filename.")
+            crop_path = os.path.join(weapons_dir, f"{item_id}.png")
+            crop.save(crop_path)
+            logger.info("Saved weapon crop: %s", crop_path)
 
         refresh_weapon_templates()
 
