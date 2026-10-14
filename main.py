@@ -4,6 +4,7 @@ import os
 import re
 import threading
 import time
+import random
 import warnings
 from queue import Queue
 
@@ -15,7 +16,6 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import utils
 import main_config
 
-from common import TAB_ITEMS
 import player_main_scanner
 
 try:
@@ -604,22 +604,55 @@ def drag_inventory_item(start, destination):
         pyautogui.mouseUp()
 
 
+PLAYER_INVENTORY_SAVE_SOURCES = (
+    (1310, 665),
+    (1310, 890),
+)
+
+PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.2
+
+
 def perform_player_inventory_save_actions():
     completed_drags = []
     screenshot_path = None
     grid_result = None
 
     try:
-        for start, destination in PLAYER_INVENTORY_SAVE_DRAGS:
-            completed_drags.append((start, destination))
-            drag_inventory_item(start, destination)
+        # Take an initial screenshot to identify empty boxes.
+        image = utils.wait_for_settled_screen()
+        grid_result = player_main_scanner.scan_inventory(image)
 
-        # Move the mouse before taking the screenshot.
+        empty_boxes = [
+            cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
+        ]
+
+        if len(empty_boxes) < len(PLAYER_INVENTORY_SAVE_SOURCES):
+            raise RuntimeError(
+                f"Expected at least {len(PLAYER_INVENTORY_SAVE_SOURCES)} "
+                f"empty boxes, but found {len(empty_boxes)}."
+            )
+
+        # Select the first two empty boxes in grid order.
+        # Coordinates are the centers of the 128x128 boxes.
+        destinations = [
+            (cell["x"] + 64, cell["y"] + 64)
+            for cell in empty_boxes[: len(PLAYER_INVENTORY_SAVE_SOURCES)]
+        ]
+
+        # Drag each item into its selected empty box.
+        for source, destination in zip(
+            PLAYER_INVENTORY_SAVE_SOURCES,
+            destinations,
+        ):
+            drag_inventory_item(source, destination)
+            completed_drags.append((source, destination))
+
+        # Move the mouse away before taking the screenshot.
         pyautogui.moveTo(1355, 650, duration=0.1)
 
         screenshot = utils.wait_for_settled_screen()
 
-        # Scan only this screenshot.
+        # Scan the screenshot taken after both items have been moved.
         grid_result = player_main_scanner.scan_inventory(screenshot)
 
         print("Grid:", grid_result["grid"])
@@ -632,22 +665,43 @@ def perform_player_inventory_save_actions():
                 f"status={cell['status']}"
             )
 
-        screenshot_dir = os.path.join(
+        # Save cropped images into item_templates/weapons.
+        weapons_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "screenshots",
+            "item_templates",
+            "weapons",
         )
-        os.makedirs(screenshot_dir, exist_ok=True)
+        os.makedirs(weapons_dir, exist_ok=True)
 
-        screenshot_path = os.path.join(
-            screenshot_dir,
-            f"player_inventory_{time.strftime('%Y%m%d_%H%M%S')}_{time.time_ns()}.png",
-        )
-        screenshot.save(screenshot_path)
-        logger.info("Saved post-inventory screenshot to %s", screenshot_path)
+        for x, y in destinations:
+            crop = screenshot.crop(
+                (
+                    x - 64,
+                    y - 64,
+                    x + 64,
+                    y + 64,
+                )
+            )
+
+            # Generate a unique gun ID between 1 and 100000.
+            for _ in range(1000):
+                item_id = f"gun_{random.randint(1, 100000)}"
+                crop_path = os.path.join(
+                    weapons_dir,
+                    f"{item_id}.png",
+                )
+
+                if not os.path.exists(crop_path):
+                    crop.save(crop_path)
+                    logger.info("Saved weapon crop: %s", crop_path)
+                    break
+            else:
+                raise RuntimeError("Could not generate a unique gun filename.")
 
     finally:
-        for start, destination in reversed(completed_drags):
-            drag_inventory_item(destination, start)
+        # Restore items in reverse order, even if scanning or saving fails.
+        for source, destination in reversed(completed_drags):
+            drag_inventory_item(destination, source)
 
     return screenshot_path, grid_result
 
@@ -1034,11 +1088,13 @@ def move_items_by_tab(loadout):
     if not remaining:
         return remaining
 
+    tab_items = get_tab_items()
+
     eligible_tabs = {
         name: {
             tab_name
             for tab_name in STASH_TABS
-            if name in TAB_ITEMS.get(tab_name, set())
+            if name in tab_items.get(tab_name, set())
         }
         for name in remaining
     }
@@ -1139,6 +1195,26 @@ def start_scan(loadout):
     threading.Thread(target=worker, daemon=True).start()
 
 
+def get_tab_items():
+    tab_items = {}
+
+    for tab_name in STASH_TABS:
+        tab_dir = os.path.join(TEMPLATE_DIR, tab_name)
+
+        if not os.path.isdir(tab_dir):
+            tab_items[tab_name] = set()
+            continue
+
+        tab_items[tab_name] = {
+            os.path.splitext(filename)[0]
+            for filename in os.listdir(tab_dir)
+            if filename.lower().endswith(TEMPLATE_EXTENSIONS)
+            and os.path.splitext(filename)[0].casefold() != "empty"
+        }
+
+    return tab_items
+
+
 def initialize():
     global TEMPLATES, TAB_TEMPLATES, BIG_TEMPLATES, OCR_READER
 
@@ -1167,25 +1243,6 @@ def initialize():
             if str(template.get("name", "")).casefold() != "empty"
         ]
         TAB_TEMPLATES[tab_name] = tab_templates
-
-        loaded_names = {template["name"] for template in tab_templates}
-        declared_names = TAB_ITEMS.get(tab_name, set())
-        missing_templates = declared_names - loaded_names
-        unexpected_templates = loaded_names - declared_names
-
-        if missing_templates:
-            logger.warning(
-                "Tab '%s' is missing declared templates: %s",
-                tab_name,
-                sorted(missing_templates),
-            )
-
-        if unexpected_templates:
-            logger.warning(
-                "Tab '%s' contains templates not in TAB_ITEMS: %s",
-                tab_name,
-                sorted(unexpected_templates),
-            )
 
     BIG_TEMPLATES = utils.load_templates(
         BIG_TEMPLATE_DIR,

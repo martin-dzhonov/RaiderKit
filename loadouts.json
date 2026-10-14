@@ -97,95 +97,9 @@
         "heavy_fuze_grenade": 6
     },
     "New Loadout 9": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 10": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "vita_spray": 1,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 12": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "vita_spray": 2,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 13": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "vita_spray": 1,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 14": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "vita_spray": 2,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 15": {
-        "blaze_grenade": 5,
-        "heavy_ammo": 53,
-        "vita_spray": 1,
-        "wolfpack": 1,
-        "light_ammo": 100,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 16": {
-        "light_ammo": 100,
-        "light_shield": 1,
-        "stg": 1
-    },
-    "New Loadout 17": {
-        "heavy_ammo": 33,
-        "light_shield": 1
-    },
-    "New Loadout 18": {
-        "heavy_ammo": 33,
-        "light_shield": 1
-    },
-    "New Loadout 19": {
-        "explosive_mine": 1,
-        "fireworks_box": 1,
-        "light_shield": 1,
-        "advanced_camera": 1,
         "blaze_grenade": 9,
-        "defibrillator": 3
-    },
-    "New Loadout 20": {
-        "explosive_mine": 1,
         "fireworks_box": 1,
-        "light_shield": 1,
-        "blaze_grenade": 9
-    },
-    "New Loadout 21": {
         "explosive_mine": 1,
-        "fireworks_box": 1,
-        "light_shield": 1,
-        "blaze_grenade": 9
+        "light_shield": 1
     }
 }
