@@ -59,6 +59,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         # Scanning spinner.
         self.scan_progress_visible = False
         self.scan_status_message = ""
+        self.scan_progress_updates_from_status = True
 
         self.normal_width = self.calculate_window_width()
 
@@ -127,7 +128,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             geometry.top(),
         )
 
-    def show_scan_progress(self, message):
+    def show_scan_progress(self, message, update_from_status=True):
         """Show the repeating progress bar while a scan is running."""
 
         self.loadout_result_timer.stop()
@@ -137,6 +138,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.loadout_result_visible = False
         self.scan_progress_visible = True
         self.scan_status_message = str(message)
+        self.scan_progress_updates_from_status = update_from_status
 
         self.player_scan_button.hide()
         self.clear_loadout_button.hide()
@@ -162,6 +164,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_progress_animation.stop()
         self.scan_progress_visible = False
         self.scan_status_message = ""
+        self.scan_progress_updates_from_status = True
 
         if not self.loadout_result_visible:
             self.scan_progress_bar.hide()
@@ -180,6 +183,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         status,
         running_message="●  A scan is already running.",
         prepare=None,
+        update_progress_message=True,
     ):
         if not self.initialization_complete:
             self.status.setText("●  Assets are still loading.")
@@ -194,7 +198,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.hide_loadout_result()
         self.status.setText(status)
-        self.show_scan_progress(label)
+        self.show_scan_progress(label, update_progress_message)
 
         try:
             start()
@@ -252,9 +256,10 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self._start_scan(
             lambda: automation.start_scan(copy.deepcopy(loadout)),
-            "Scanning stash",
+            f"Equipping\n{name}",
             f"●  Starting loadout: {name}",
             running_message="●  Please wait for the current task to finish.",
+            update_progress_message=False,
         )
 
     def check_player_scan_finished(self):
@@ -418,7 +423,11 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.status.setText(message)
 
-        if self.scan_progress_visible and automation.task_running:
+        if (
+            self.scan_progress_visible
+            and self.scan_progress_updates_from_status
+            and automation.task_running
+        ):
             self.scan_status_message = message
             self.loadout_result_label.setText(message)
 

@@ -1,3 +1,5 @@
+import re
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
@@ -174,6 +176,9 @@ class OverlayLoadoutsMixin:
             return contents
 
         columns = 6
+        weapon_names = {
+            path.stem for path in TEMPLATE_DIR.glob("weapons/*") if path.is_file()
+        }
 
         for index, (name, quantity) in enumerate(self._sort_loadout_items(loadout)):
 
@@ -254,23 +259,33 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            quantity_label = QLabel(f"×{quantity}")
+            if (
+                name not in TAB_ITEMS["augment"]
+                and name not in TAB_ITEMS["shields"]
+            ):
+                quantity_text = f"×{quantity}"
+                if name in weapon_names:
+                    weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)
+                    if weapon_tier is not None:
+                        quantity_text = weapon_tier.group(1)
 
-            quantity_label.setObjectName("inventoryQuantity")
+                quantity_label = QLabel(quantity_text)
 
-            quantity_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                quantity_label.setObjectName("inventoryQuantity")
 
-            quantity_label.setAttribute(
-                Qt.WidgetAttribute.WA_TransparentForMouseEvents,
-                True,
-            )
+                quantity_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            slot_layout.addWidget(
-                quantity_label,
-                0,
-                0,
-                alignment=(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight),
-            )
+                quantity_label.setAttribute(
+                    Qt.WidgetAttribute.WA_TransparentForMouseEvents,
+                    True,
+                )
+
+                slot_layout.addWidget(
+                    quantity_label,
+                    0,
+                    0,
+                    alignment=(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight),
+                )
 
             item_layout.addWidget(
                 slot,
