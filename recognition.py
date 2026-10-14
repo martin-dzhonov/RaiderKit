@@ -2,6 +2,8 @@ import logging
 import os
 import re
 import warnings
+import uuid
+from pathlib import Path
 
 import easyocr
 import numpy as np
@@ -30,6 +32,7 @@ BOXES = {
 }
 
 logger = logging.getLogger(__name__)
+SSIM_DEBUG_DIR = Path(__file__).resolve().parent / "SSIM_debug"
 
 TEMPLATES = []
 TAB_TEMPLATES = {}
@@ -50,6 +53,36 @@ def set_runtime_callbacks(set_status, is_cancelled):
 def set_current_tab(tab_name):
     global CURRENT_TAB
     CURRENT_TAB = tab_name
+
+
+def save_ssim_debug_pair(candidate_array, template_array, context, template_name):
+    pair_id = uuid.uuid4().hex
+    safe_context = re.sub(r"[^A-Za-z0-9_-]+", "_", context).strip("_")
+    safe_template_name = re.sub(
+        r"[^A-Za-z0-9_-]+",
+        "_",
+        template_name,
+    ).strip("_")
+    prefix_parts = [pair_id]
+    if safe_context:
+        prefix_parts.append(safe_context)
+    if safe_template_name:
+        prefix_parts.append(safe_template_name)
+    prefix = "_".join(prefix_parts)
+
+    try:
+        SSIM_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+        Image.fromarray(candidate_array).save(
+            SSIM_DEBUG_DIR / f"{prefix}_1_grid.png"
+        )
+        Image.fromarray(template_array).save(
+            SSIM_DEBUG_DIR / f"{prefix}_2_template.png"
+        )
+    except OSError:
+        logger.exception(
+            "Could not save SSIM debug images for comparison '%s'",
+            context,
+        )
 
 
 def initialize(
@@ -196,7 +229,12 @@ def read_banner_text(image, row_top, column_x, grid_config=None):
         return ""
 
 
-def find_best_match(cell_image, grid_config=None, templates=None):
+def find_best_match(
+    cell_image,
+    grid_config=None,
+    templates=None,
+    debug_context="grid",
+):
     if structural_similarity is None:
         return None, 0.0
 
@@ -221,6 +259,7 @@ def find_best_match(cell_image, grid_config=None, templates=None):
 
         best_name = None
         best_score = -1.0
+        best_template = None
 
         for template in templates:
             score = (
@@ -236,6 +275,15 @@ def find_best_match(cell_image, grid_config=None, templates=None):
             if score > best_score:
                 best_name = template["name"]
                 best_score = score
+                best_template = template
+
+        if best_template is not None:
+            save_ssim_debug_pair(
+                candidate_array,
+                best_template["image"],
+                debug_context,
+                best_template["name"],
+            )
 
         return best_name, max(0.0, best_score)
 
@@ -275,6 +323,7 @@ def recognize_big_inventory(image):
         candidate_array = np.asarray(cell, dtype=np.uint8)
         best_name = None
         best_score = -1.0
+        best_template = None
 
         for template in BIG_TEMPLATES:
             try:
@@ -291,9 +340,18 @@ def recognize_big_inventory(image):
                 if score > best_score:
                     best_name = template["name"]
                     best_score = score
+                    best_template = template
 
             except Exception:
                 continue
+
+        if best_template is not None:
+            save_ssim_debug_pair(
+                candidate_array,
+                best_template["image"],
+                f"big_{box_name}",
+                best_template["name"],
+            )
 
         if best_name is None or best_score < MIN_SIMILARITY:
             continue
@@ -391,6 +449,7 @@ def recognize_slot(
     row_top,
     slot_index,
     column_x,
+    grid_name="stash",
     grid_config=None,
     requested_names=None,
     templates=None,
@@ -420,6 +479,7 @@ def recognize_slot(
         cell,
         grid_config=grid_config,
         templates=templates,
+        debug_context=f"{grid_name}_row{row_top}_column{column_x}",
     )
 
     if name is None or score < MIN_SIMILARITY:
@@ -508,6 +568,7 @@ def recognize_current_grid(
                 row["top"],
                 slot_index,
                 column_x,
+                grid_name=grid_name,
                 grid_config=grid_config,
                 requested_names=requested_names,
                 templates=templates,
