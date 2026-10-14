@@ -18,8 +18,10 @@
         "medium_shield": 1
     },
     "New Loadout 2": {
+        "looting_mk3": 1,
         "light_shield": 1,
-        "gun_24207": 1,
-        "gun_55580": 1
+        "crash_mat": 3,
+        "gun_83286": 1,
+        "gun_35467": 1
     }
 }
