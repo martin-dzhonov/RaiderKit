@@ -24,7 +24,19 @@ QWidget#loadoutContainer {
 }
 
 QWidget#panelDivider {
-    background-color: rgba(137, 146, 173, 180);
+    margin-top: 12px;
+    margin-bottom: 12px;
+    background: qlineargradient(
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 1,
+        stop: 0 rgba(137, 146, 173, 0),
+        stop: 0.1 rgba(137, 146, 173, 85),
+        stop: 0.5 rgba(190, 220, 255, 125),
+        stop: 0.9 rgba(137, 146, 173, 85),
+        stop: 1 rgba(137, 146, 173, 0)
+    );
 }
 
 /* Title Bar */
@@ -467,6 +479,10 @@ QProgressBar#scanProgressIndicator::chunk {
 QLabel#loadoutResultText {
     background: transparent;
     color: #6df5c4;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
+}
+
+QWidget#loadoutResultContainer {
+    background: transparent;
 }

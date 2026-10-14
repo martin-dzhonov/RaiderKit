@@ -2,6 +2,7 @@ from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import (
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QProgressBar,
@@ -94,7 +95,15 @@ class OverlayUIMixin:
         self.actions_panel.setObjectName("actionsPanel")
         self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH)
 
-        actions_layout = QVBoxLayout(self.actions_panel)
+        actions_panel_layout = QGridLayout(self.actions_panel)
+        actions_panel_layout.setContentsMargins(0, 0, 0, 0)
+        actions_panel_layout.setSpacing(0)
+
+        actions_content = QWidget()
+        actions_content.setObjectName("actionsContent")
+        actions_panel_layout.addWidget(actions_content, 0, 0)
+
+        actions_layout = QVBoxLayout(actions_content)
         actions_layout.setContentsMargins(0, 0, 0, 0)
         actions_layout.setSpacing(10)
         actions_layout.addSpacing(5)
@@ -134,10 +143,15 @@ class OverlayUIMixin:
 
         self.loadout_result_widget = QWidget()
         self.loadout_result_widget.setObjectName("loadoutResultContainer")
+        self.loadout_result_widget.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Expanding,
+        )
 
         result_layout = QVBoxLayout(self.loadout_result_widget)
-        result_layout.setContentsMargins(0, 0, 0, 0)
+        result_layout.setContentsMargins(0, 0, 0, 60)
         result_layout.setSpacing(8)
+        result_layout.addStretch(1)
 
         self.scan_progress_bar = QProgressBar()
         self.scan_progress_bar.setObjectName("scanProgressIndicator")
@@ -146,12 +160,6 @@ class OverlayUIMixin:
         self.scan_progress_bar.setTextVisible(False)
         self.scan_progress_bar.setFixedSize(ACTION_PANEL_BUTTON_WIDTH, 6)
         self.scan_progress_bar.hide()
-
-        result_layout.addWidget(
-            self.scan_progress_bar,
-            0,
-            Qt.AlignmentFlag.AlignCenter,
-        )
 
         self.loadout_result_label = QLabel()
         self.loadout_result_label.setObjectName("loadoutResultText")
@@ -162,6 +170,26 @@ class OverlayUIMixin:
         self.loadout_result_label.hide()
 
         result_layout.addWidget(self.loadout_result_label)
+        result_layout.addWidget(
+            self.scan_progress_bar,
+            0,
+            Qt.AlignmentFlag.AlignHCenter,
+        )
+
+        # Completed-result countdown bar.
+        self.loadout_result_progress = QProgressBar()
+        self.loadout_result_progress.setObjectName("loadoutResultProgress")
+        self.loadout_result_progress.setRange(0, 2500)
+        self.loadout_result_progress.setValue(2500)
+        self.loadout_result_progress.setTextVisible(False)
+        self.loadout_result_progress.setFixedHeight(6)
+        self.loadout_result_progress.hide()
+
+        result_layout.addWidget(
+            self.loadout_result_progress,
+            0,
+            Qt.AlignmentFlag.AlignHCenter,
+        )
 
         # OK appears underneath the missing-items message.
         self.loadout_result_ok_button = QPushButton("OK")
@@ -177,22 +205,10 @@ class OverlayUIMixin:
             Qt.AlignmentFlag.AlignHCenter,
         )
 
+        result_layout.addStretch(1)
         self.loadout_result_widget.hide()
-        actions_layout.addWidget(self.loadout_result_widget)
 
         actions_layout.setSpacing(8)
-
-        # Completed-result countdown bar.
-
-        self.loadout_result_progress = QProgressBar()
-        self.loadout_result_progress.setObjectName("loadoutResultProgress")
-        self.loadout_result_progress.setRange(0, 2500)
-        self.loadout_result_progress.setValue(2500)
-        self.loadout_result_progress.setTextVisible(False)
-        self.loadout_result_progress.setFixedHeight(6)
-        self.loadout_result_progress.hide()
-
-        actions_layout.addWidget(self.loadout_result_progress)
         actions_layout.addStretch(1)
 
         self.hint = QLabel("Ctrl+R  ·  Show / Hide")
@@ -250,7 +266,7 @@ class OverlayUIMixin:
 
         self.panel_divider = QWidget()
         self.panel_divider.setObjectName("panelDivider")
-        self.panel_divider.setFixedWidth(1)
+        self.panel_divider.setFixedWidth(2)
         self.panel_divider.setSizePolicy(
             QSizePolicy.Policy.Fixed,
             QSizePolicy.Policy.Expanding,
@@ -259,6 +275,7 @@ class OverlayUIMixin:
         layout.addWidget(self.actions_panel, 0)
         layout.addWidget(self.panel_divider, 0)
         layout.addWidget(self.loadouts_panel, 1)
+        actions_panel_layout.addWidget(self.loadout_result_widget, 0, 0)
 
         self.ui_stack = QStackedWidget()
         self.ui_stack.setContentsMargins(0, 0, 0, 0)

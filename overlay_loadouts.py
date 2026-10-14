@@ -71,20 +71,26 @@ class OverlayLoadoutsMixin:
 
         if not self.loadouts:
 
-            empty = QLabel("NO LOADOUTS\nYET")
-
-            empty.setObjectName("emptyLoadoutsMessage")
-
-            empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-            empty.setWordWrap(True)
-
-            empty.setSizePolicy(
+            empty_state = QWidget()
+            empty_state.setSizePolicy(
                 QSizePolicy.Policy.Expanding,
                 QSizePolicy.Policy.Expanding,
             )
 
-            self.loadout_list.addWidget(empty, 1)
+            empty_state_layout = QVBoxLayout(empty_state)
+            empty_state_layout.setContentsMargins(0, 0, 0, 0)
+            empty_state_layout.setSpacing(0)
+            empty_state_layout.addStretch(1)
+
+            empty = QLabel("NO LOADOUTS\nYET")
+            empty.setObjectName("emptyLoadoutsMessage")
+            empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            empty.setWordWrap(True)
+            empty_state_layout.addWidget(empty)
+            empty_state_layout.addSpacing(60)
+            empty_state_layout.addStretch(1)
+
+            self.loadout_list.addWidget(empty_state, 1)
 
         else:
 

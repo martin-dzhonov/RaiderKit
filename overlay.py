@@ -399,7 +399,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.start_loadout_scan(name)
 
     def update_status(self):
-        """Update status text and the Actions-panel scanning message."""
+        """Update status text and the loadouts-panel scanning message."""
 
         messages = drain_queue(automation.status_queue)
 
