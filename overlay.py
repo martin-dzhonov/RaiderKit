@@ -1,15 +1,19 @@
 import copy
+import logging
 import main as automation
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ITEM_NAMES,
     WINDOW_HEIGHT,
+    WINDOW_FIXED_WIDTH,
     drain_queue,
     read_loadouts,
 )
 from overlay_ui import OverlayUIMixin
 from overlay_loadouts import OverlayLoadoutsMixin
+
+logger = logging.getLogger(__name__)
 
 
 class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
@@ -39,6 +43,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.init_worker = None
 
         self.compact_mode = False
+        self.inventory_save_layout = None
 
         self.loadouts = read_loadouts()
 
@@ -118,6 +123,43 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             geometry.top(),
         )
 
+    def collapse_for_inventory_save(self):
+        if self.inventory_save_layout is not None:
+            return
+
+        self.inventory_save_layout = (
+            self.width(),
+            self.loadouts_panel.isVisible(),
+            self.panel_divider.isVisible(),
+        )
+        self.loadouts_panel.hide()
+        self.panel_divider.hide()
+        self.setFixedWidth(WINDOW_FIXED_WIDTH)
+        QApplication.processEvents()
+        logger.info(
+            "Inventory save: collapsed overlay to %d px before inventory scans",
+            self.width(),
+        )
+
+    def restore_after_inventory_save(self):
+        if self.inventory_save_layout is None:
+            return
+
+        previous_width, loadouts_were_visible, divider_was_visible = (
+            self.inventory_save_layout
+        )
+        self.setFixedWidth(previous_width)
+        if loadouts_were_visible:
+            self.loadouts_panel.show()
+        if divider_was_visible:
+            self.panel_divider.show()
+        self.inventory_save_layout = None
+        QApplication.processEvents()
+        logger.info(
+            "Inventory save: restored overlay to %d px",
+            self.width(),
+        )
+
     def show_scan_progress(self, message, update_from_status=True):
         """Show the repeating progress bar while a scan is running."""
 
@@ -195,6 +237,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         except Exception as exc:
             self.scan_restore_timer.stop()
+            self.restore_after_inventory_save()
             self.hide_scan_progress()
 
             self.status.setText(f"●  Could not start task: {exc}")
@@ -209,6 +252,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         if automation.task_running:
             self.scan_restore_timer.start()
         else:
+            self.restore_after_inventory_save()
             self.hide_scan_progress()
 
     def scan_player_inventory(self):
@@ -217,8 +261,12 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             "Scanning player inventory...",
             "●  Scanning visible inventory grid...",
             running_message="●  Please wait for the current task to finish.",
-            prepare=lambda: drain_queue(automation.player_inventory_results),
+            prepare=self._prepare_player_inventory_scan,
         )
+
+    def _prepare_player_inventory_scan(self):
+        drain_queue(automation.player_inventory_results)
+        self.collapse_for_inventory_save()
 
     def clear_player_inventory(self):
         if not hasattr(automation, "clear_player_inventory"):
@@ -263,6 +311,8 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.update_status()
         self.update_player_inventory_results()
         self.update_loadout_results()
+
+        self.restore_after_inventory_save()
 
         if self.scan_progress_visible and not self.loadout_result_visible:
             self.hide_scan_progress()

@@ -104,5 +104,38 @@
         "heavy_fuze_grenade": 6,
         "herbal_bandage": 7,
         "shield_recharger": 4
+    },
+    "New Loadout 11": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_11": 1,
+        "BANTAM I_15": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 12": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_12": 1,
+        "BANTAM I_16": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 13": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_13": 1,
+        "BANTAM I_17": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
     }
 }

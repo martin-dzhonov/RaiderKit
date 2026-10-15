@@ -214,11 +214,7 @@ def unique_weapon_item_id(name, slot_label, used_item_ids):
         suffix += 1
 
 
-def perform_player_inventory_save_actions(
-    initial_image=None,
-    before_ocr=None,
-    after_ocr=None,
-):
+def perform_player_inventory_save_actions(initial_image=None):
     completed_drags = []
     weapon_item_ids = []
 
@@ -277,22 +273,15 @@ def perform_player_inventory_save_actions(
             start=1,
         ):
             logger.info(
-                "[box%d] OCR starting at %s; loadouts panel will be hidden",
+                "[box%d] Starting hover and OCR at %s",
                 source_index,
                 source,
             )
-            try:
-                if before_ocr is not None:
-                    before_ocr()
-                weapon_name = ocr_weapons.recognize_weapon_at(
-                    *source,
-                    slot_label=f"box{source_index}",
-                    ocr_reader=recognition.OCR_READER,
-                )
-            finally:
-                if after_ocr is not None:
-                    after_ocr()
-                    logger.info("[box%d] OCR finished; loadouts panel restored", source_index)
+            weapon_name = ocr_weapons.recognize_weapon_at(
+                *source,
+                slot_label=f"box{source_index}",
+                ocr_reader=recognition.OCR_READER,
+            )
 
             if not weapon_name:
                 raise RuntimeError(
