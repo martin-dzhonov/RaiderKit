@@ -22,8 +22,8 @@ class GeneratedLoadoutDialog(OverlayLoadoutsMixin, QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Generated Loadout")
-        self.setMinimumSize(500, 520)
-        self.resize(560, 600)
+        self.setMinimumSize(500, 338)
+        self.resize(560, 390)
 
         self.loadout_data = flatten_loadout(copy.deepcopy(loadout_data))
         self.existing_names = {name.casefold() for name in existing_names}
@@ -36,13 +36,11 @@ class GeneratedLoadoutDialog(OverlayLoadoutsMixin, QDialog):
         title = QLabel("SAVE LOADOUT")
         title.setStyleSheet("font-size: 15px; font-weight: bold;")
         layout.addWidget(title)
-        layout.addWidget(QLabel("Loadout name:"))
 
         self.name_input = QLineEdit(self.generate_unique_name())
+        self.name_input.setObjectName("generatedLoadoutName")
         self.name_input.selectAll()
         layout.addWidget(self.name_input)
-
-        layout.addWidget(QLabel("Loadout preview:"))
 
         self.preview_scroll_area = QScrollArea()
         self.preview_scroll_area.setWidgetResizable(True)
@@ -71,6 +69,18 @@ class GeneratedLoadoutDialog(OverlayLoadoutsMixin, QDialog):
         buttons.addWidget(cancel)
         buttons.addWidget(confirm)
         layout.addLayout(buttons)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+
+        parent = self.parentWidget()
+        if parent is None:
+            return
+
+        parent_frame = parent.frameGeometry()
+        target_frame_left = parent_frame.left()
+        target_frame_top = parent_frame.bottom() + 11
+        self.move(target_frame_left, target_frame_top)
 
     def generate_unique_name(self):
         base = "New Loadout"

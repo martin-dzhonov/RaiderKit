@@ -264,6 +264,22 @@ QDialog QPlainTextEdit {
     padding: 8px;
 }
 
+QLineEdit#generatedLoadoutName {
+    background: #1b2638;
+    color: #f4f6ff;
+    border: 1px solid #52718c;
+    border-radius: 8px;
+    padding: 9px 11px;
+    min-height: 22px;
+    font-size: 14px;
+    selection-background-color: #35516b;
+}
+
+QLineEdit#generatedLoadoutName:focus {
+    background: #202d40;
+    border-color: #8edbff;
+}
+
 QDialog QPushButton {
     padding: 9px 18px;
 }
