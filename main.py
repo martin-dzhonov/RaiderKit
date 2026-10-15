@@ -400,10 +400,6 @@ def clear_player_inventory():
             # player_augmented is intentionally not unloaded.
             items = main_items + big_items + quickuse_items
 
-            if not items:
-                set_status("Done")
-                return
-
             grid_order = {
                 "player_main": 0,
                 "player_quickuse": 1,
@@ -457,6 +453,25 @@ def clear_player_inventory():
                     time.sleep(BIG_ITEM_CLICK_DELAY)
                 else:
                     time.sleep(AFTER_MOVE_DELAY)
+
+            if not is_cancelled():
+                weapon_slots_image = utils.capture_screen()
+                occupied_weapon_slots = [
+                    (x, y - PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET)
+                    for x, y in PLAYER_INVENTORY_SAVE_SOURCES
+                    if utils.has_item_banner_at_bottom_border(weapon_slots_image, x, y)
+                ]
+
+                logger.info(
+                    "Inventory clearing: found %d occupied draggable weapon slot(s)",
+                    len(occupied_weapon_slots),
+                )
+                for x, y in occupied_weapon_slots:
+                    if is_cancelled():
+                        break
+
+                    pyautogui.doubleClick(x, y, interval=0.06)
+                    time.sleep(BIG_ITEM_CLICK_DELAY)
 
             set_status("Done" if not is_cancelled() else "Ready")
 

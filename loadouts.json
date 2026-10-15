@@ -1,11 +1,11 @@
 {
     "New Loadout": {
+        "light_ammo": 109,
         "heavy_ammo": 46,
-        "light_ammo": 100,
-        "looting_mk2": 1,
+        "looting_mk1": 1,
         "light_shield": 1,
-        "ARPEGGIO II_15": 1,
-        "VENATOR II_03": 1,
+        "HAIRPIN IV_08": 1,
+        "ARPEGGIO II_21": 1,
         "explosive_mine": 1,
         "vita_spray": 1,
         "sterilized_bandage": 3
@@ -15,8 +15,7 @@
         "heavy_ammo": 46,
         "looting_mk1": 1,
         "light_shield": 1,
-        "ARPEGGIO II_16": 1,
-        "VENATOR II_04": 1,
+        "HAIRPIN IV_09": 1,
         "explosive_mine": 1,
         "vita_spray": 1,
         "sterilized_bandage": 3
@@ -26,8 +25,27 @@
         "heavy_ammo": 46,
         "looting_mk1": 1,
         "light_shield": 1,
-        "ARPEGGIO II_17": 1,
-        "VENATOR II_05": 1,
+        "ARPEGGIO II_22": 1,
+        "explosive_mine": 1,
+        "vita_spray": 1,
+        "sterilized_bandage": 3
+    },
+    "New Loadout 4": {
+        "light_ammo": 109,
+        "heavy_ammo": 46,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "explosive_mine": 1,
+        "vita_spray": 1,
+        "sterilized_bandage": 3
+    },
+    "New Loadout 5": {
+        "light_ammo": 109,
+        "heavy_ammo": 46,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "HAIRPIN IV_10": 1,
+        "ARPEGGIO II_23": 1,
         "explosive_mine": 1,
         "vita_spray": 1,
         "sterilized_bandage": 3
