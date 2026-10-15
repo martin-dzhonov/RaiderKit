@@ -27,5 +27,82 @@
         "ARPEGGIO I_01": 1,
         "explosive_mine": 1,
         "showstopper": 4
+    },
+    "New Loadout 4": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN II_04": 1,
+        "BANTAM I_04": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 5": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_02": 1,
+        "BANTAM I_06": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 6": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_03": 1,
+        "BANTAM I_07": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 7": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_04": 1,
+        "BANTAM I_08": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 8": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_05": 1,
+        "BANTAM I_09": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 9": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_06": 1,
+        "BANTAM I_10": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
+    },
+    "New Loadout 10": {
+        "shotgun_ammo": 40,
+        "barricade_kit": 2,
+        "combat_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_09": 1,
+        "BANTAM I_13": 1,
+        "heavy_fuze_grenade": 6,
+        "herbal_bandage": 7,
+        "shield_recharger": 4
     }
 }

@@ -1,4 +1,5 @@
 import copy
+import logging
 import sys
 import threading
 
@@ -15,6 +16,7 @@ from PySide6.QtWidgets import (
 
 import main as automation
 from common import (
+    WINDOW_FIXED_WIDTH,
     flatten_loadout,
     save_loadouts,
     validate_loadout,
@@ -22,6 +24,8 @@ from common import (
 from dialogs import GeneratedLoadoutDialog
 from overlay import InventoryOverlay
 from common import load_stylesheet
+
+logger = logging.getLogger(__name__)
 
 
 class InitializationWorker(QThread):
@@ -63,26 +67,46 @@ class HotkeyListener:
 
 def process_generated_loadout(overlay, inventory_scan):
     """Finish inventory actions, build, validate, and save a generated loadout."""
-    restore_overlay_after_ocr = overlay.isVisible()
+    restore_loadouts_after_ocr = overlay.loadouts_panel.isVisible()
+    restore_divider_after_ocr = overlay.panel_divider.isVisible()
+    restore_window_width_after_ocr = overlay.width()
 
-    def hide_overlay_for_ocr():
-        if restore_overlay_after_ocr:
-            overlay.hide()
+    def hide_loadouts_for_ocr():
+        logger.info(
+            "Inventory save: hiding loadouts panel and shrinking window %d -> %d px",
+            overlay.width(),
+            WINDOW_FIXED_WIDTH,
+        )
+        if restore_loadouts_after_ocr:
+            overlay.loadouts_panel.hide()
+        if restore_divider_after_ocr:
+            overlay.panel_divider.hide()
+        overlay.setFixedWidth(WINDOW_FIXED_WIDTH)
+        if restore_loadouts_after_ocr or restore_divider_after_ocr:
             QApplication.processEvents()
 
-    def restore_overlay_after_ocr_check():
-        if restore_overlay_after_ocr:
-            overlay.show()
-            overlay.raise_()
+    def restore_loadouts_after_ocr_check():
+        overlay.setFixedWidth(restore_window_width_after_ocr)
+        if restore_loadouts_after_ocr:
+            overlay.loadouts_panel.show()
+        if restore_divider_after_ocr:
+            overlay.panel_divider.show()
+        if restore_loadouts_after_ocr or restore_divider_after_ocr:
             QApplication.processEvents()
+        logger.info(
+            "Inventory save: loadouts panel restored; window width is %d px",
+            overlay.width(),
+        )
 
     try:
+        logger.info("Starting final inventory actions for generated loadout")
         weapon_item_ids = automation.perform_player_inventory_save_actions(
             initial_image=inventory_scan["image"],
-            before_ocr=hide_overlay_for_ocr,
-            after_ocr=restore_overlay_after_ocr_check,
+            before_ocr=hide_loadouts_for_ocr,
+            after_ocr=restore_loadouts_after_ocr_check,
         )
     except Exception as exc:
+        logger.exception("Final inventory actions failed; generated loadout was not saved")
         overlay.status.setText("Final inventory actions failed; loadout was not saved.")
         QMessageBox.critical(
             overlay,

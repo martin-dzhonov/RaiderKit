@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 
 import easyocr
@@ -9,6 +10,7 @@ WEAPON_HOVER_DELAY = 0.2
 
 POPUP_BACKGROUND = (249, 238, 223)
 POPUP_CONTENT_OFFSET = 33
+ICON_SEARCH_HALF_WIDTH = 4
 
 ICON_COLORS = {
     (232, 134, 41),
@@ -48,20 +50,37 @@ def find_popup_left_border(image, start_x, y):
 
 def find_icon(image, popup_x, mouse_y):
     """Find the popup icon using its known colors."""
-    x = popup_x + POPUP_CONTENT_OFFSET
+    center_x = popup_x + POPUP_CONTENT_OFFSET
+    left = max(0, center_x - ICON_SEARCH_HALF_WIDTH)
+    right = min(image.width, center_x + ICON_SEARCH_HALF_WIDTH + 1)
 
-    if x < 0 or x >= image.width:
+    if left >= right:
         return None
 
     pixels = image.convert("RGB").load()
 
     for y in range(min(mouse_y, image.height - 1), -1, -1):
-        color = pixels[x, y]
+        for x in range(left, right):
+            color = pixels[x, y]
 
-        if color in ICON_COLORS:
-            return x, y, color
+            if color in ICON_COLORS:
+                return x, y, color
 
     return None
+
+
+def save_icon_diagnostic_image(image, slot_label):
+    diagnostic_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "debug_image",
+    )
+    os.makedirs(diagnostic_dir, exist_ok=True)
+    image_path = os.path.join(
+        diagnostic_dir,
+        f"{slot_label}_failed_screenshot_{time.time_ns()}.png",
+    )
+    image.save(image_path)
+    return image_path
 
 
 def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
@@ -89,10 +108,29 @@ def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
     )
 
     if popup_position is None:
-        logger.warning("[%s] Weapon not recognized: popup not found", slot_label)
+        logger.warning(
+            "[%s] Weapon not recognized: popup not found at cursor (%d, %d)",
+            slot_label,
+            x,
+            y,
+        )
         return None
 
     popup_x, _ = popup_position
+    icon_center_x = popup_x + POPUP_CONTENT_OFFSET
+    icon_left = max(0, icon_center_x - ICON_SEARCH_HALF_WIDTH)
+    icon_right = min(
+        screenshot.width,
+        icon_center_x + ICON_SEARCH_HALF_WIDTH + 1,
+    )
+    logger.info(
+        "[%s] Popup found at x=%d; checking icon x=%d..%d above y=%d",
+        slot_label,
+        popup_x,
+        icon_left,
+        icon_right - 1,
+        y,
+    )
 
     icon_result = find_icon(
         screenshot,
@@ -101,10 +139,29 @@ def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
     )
 
     if icon_result is None:
-        logger.warning("[%s] Weapon not recognized: icon not found", slot_label)
+        logger.warning(
+            "[%s] Weapon not recognized: no known icon color in x=%d..%d, y=0..%d",
+            slot_label,
+            icon_left,
+            icon_right - 1,
+            min(y, screenshot.height - 1),
+        )
+        try:
+            image_path = save_icon_diagnostic_image(screenshot, slot_label)
+        except OSError:
+            logger.exception("[%s] Could not save failed OCR screenshot", slot_label)
+        else:
+            logger.info("[%s] Failed OCR screenshot saved: %s", slot_label, image_path)
         return None
 
-    icon_x, icon_y, _ = icon_result
+    icon_x, icon_y, icon_color = icon_result
+    logger.info(
+        "[%s] Icon found at (%d, %d), color=%s",
+        slot_label,
+        icon_x,
+        icon_y,
+        icon_color,
+    )
 
     left = max(0, icon_x - 5)
     top = max(0, icon_y + 5)
@@ -116,6 +173,14 @@ def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
         return None
 
     ocr_crop = screenshot.crop((left, top, right, bottom))
+    logger.info(
+        "[%s] Reading weapon name from OCR crop (%d, %d, %d, %d)",
+        slot_label,
+        left,
+        top,
+        right,
+        bottom,
+    )
 
     if ocr_reader is None:
         ocr_reader = get_ocr_reader()

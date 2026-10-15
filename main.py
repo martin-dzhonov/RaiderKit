@@ -223,7 +223,7 @@ def perform_player_inventory_save_actions(
     weapon_item_ids = []
 
     try:
-        # Take an initial screenshot to identify empty boxes.
+        logger.info("Player inventory save: analyzing inventory")
         image = initial_image if initial_image is not None else utils.capture_screen()
         grid_result = player_main_scanner.scan_inventory(image)
 
@@ -236,6 +236,11 @@ def perform_player_inventory_save_actions(
         empty_boxes = [
             cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
         ]
+        logger.info(
+            "Player inventory save: found %d occupied source(s) and %d empty slot(s)",
+            len(occupied_sources),
+            len(empty_boxes),
+        )
 
         if len(empty_boxes) < len(occupied_sources):
             raise RuntimeError(
@@ -244,6 +249,7 @@ def perform_player_inventory_save_actions(
             )
 
         if not occupied_sources:
+            logger.info("Player inventory save: no occupied source slots; nothing to save")
             return weapon_item_ids
 
         drag_sources = [
@@ -270,6 +276,11 @@ def perform_player_inventory_save_actions(
             zip(drag_sources, destinations),
             start=1,
         ):
+            logger.info(
+                "[box%d] OCR starting at %s; loadouts panel will be hidden",
+                source_index,
+                source,
+            )
             try:
                 if before_ocr is not None:
                     before_ocr()
@@ -281,6 +292,7 @@ def perform_player_inventory_save_actions(
             finally:
                 if after_ocr is not None:
                     after_ocr()
+                    logger.info("[box%d] OCR finished; loadouts panel restored", source_index)
 
             if not weapon_name:
                 raise RuntimeError(
@@ -294,15 +306,20 @@ def perform_player_inventory_save_actions(
             )
             weapon_item_ids.append(item_id)
 
+            logger.info(
+                "[box%d] Dragging item from %s to empty slot %s",
+                source_index,
+                source,
+                destination,
+            )
             drag_inventory_item(source, destination)
             completed_drags.append((source, destination))
 
-        # Move the mouse away before taking the screenshot.
+        logger.info("Player inventory save: capturing moved items for weapon assets")
         pyautogui.moveTo(1355, 650, duration=0.1)
 
         screenshot = utils.capture_screen()
 
-        # Save cropped images into item_templates/weapons.
         for (x, y), item_id in zip(destinations, weapon_item_ids):
             crop = screenshot.crop(
                 (
@@ -318,11 +335,21 @@ def perform_player_inventory_save_actions(
             logger.info("Saved weapon crop: %s", crop_path)
 
         refresh_weapon_templates()
+        logger.info(
+            "Player inventory save: saved %d weapon asset(s)",
+            len(weapon_item_ids),
+        )
 
     finally:
-        # Restore items in reverse order, even if scanning or saving fails.
         for source, destination in reversed(completed_drags):
+            logger.info(
+                "Player inventory save: restoring item from %s to %s",
+                destination,
+                source,
+            )
             drag_inventory_item(destination, source)
+        if completed_drags:
+            logger.info("Player inventory save: inventory items restored")
 
     return weapon_item_ids
 
