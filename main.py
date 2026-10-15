@@ -729,6 +729,13 @@ def move_items_by_tab(loadout):
     if not remaining:
         return remaining
 
+    weapons_tab_position = (TABS_X, TABS_Y["weapons"])
+    pyautogui.moveTo(*weapons_tab_position, duration=0.1)
+    pyautogui.click(*weapons_tab_position)
+    recognition.set_current_tab("weapons")
+    logger.info("Stash scan: clicked Weapons tab; waiting 0.2s before scanning")
+    time.sleep(0.2)
+
     tab_items = get_tab_items()
 
     eligible_tabs = {

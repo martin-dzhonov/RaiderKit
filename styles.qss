@@ -8,6 +8,10 @@ QDialog {
     font-size: 12px;
 }
 
+QMainWindow {
+    background: transparent;
+}
+
 QLabel {
     color: #e8ecf8;
 }
@@ -16,7 +20,7 @@ QLabel {
 QWidget#centralFrame {
     background: #10131d;
     border: 1px solid #454b5a;
-    border-radius: 7px;
+    border-radius: 10px;
 }
 
 QWidget#loadoutContainer {
@@ -105,7 +109,7 @@ QPushButton:disabled {
 QPushButton#playerScan {
     background: #252b3e;
     color: #8edbff;
-    border: 1px solid #35516b;
+    border: 3px solid #35516b;
     border-radius: 8px;
     font-weight: bold;
     padding: 11px;
@@ -120,13 +124,14 @@ QPushButton#playerScan:hover {
 QPushButton#playerScan:disabled {
     background: #1a1e2b;
     color: #626b83;
-    border-color: #292e40;
+    border: 3px solid #292e40;
 }
 
 /* Clear Loadout Button */
 QPushButton#clearLoadout {
     color: #C46A72;
-    border: 1px solid #9E4F58;
+    border: 3px solid #9E4F58;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: bold;
 }
@@ -135,6 +140,12 @@ QPushButton#clearLoadout:hover {
     color: #D98A91;
     border-color: #C46A72;
     background-color: rgba(196, 106, 114, 18);
+}
+
+QPushButton#clearLoadout:disabled {
+    color: #76545d;
+    border: 3px solid #49303a;
+    background: #1a1e2b;
 }
 
 /* Scan Button */
@@ -495,7 +506,7 @@ QProgressBar#scanProgressIndicator::chunk {
 QLabel#loadoutResultText {
     background: transparent;
     color: #6df5c4;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: bold;
 }
 

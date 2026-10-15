@@ -1,207 +1,35 @@
 {
     "New Loadout": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN II_02": 1,
-        "BANTAM I_02": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 2": {
         "heavy_ammo": 46,
-        "launcher_ammo": 24,
+        "light_ammo": 100,
         "looting_mk2": 1,
         "light_shield": 1,
-        "VENATOR II_01": 1,
-        "ARPEGGIO II_01": 1,
+        "ARPEGGIO II_15": 1,
+        "VENATOR II_03": 1,
+        "explosive_mine": 1,
         "vita_spray": 1,
-        "advanced_camera": 1
+        "sterilized_bandage": 3
+    },
+    "New Loadout 2": {
+        "light_ammo": 109,
+        "heavy_ammo": 46,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "ARPEGGIO II_16": 1,
+        "VENATOR II_04": 1,
+        "explosive_mine": 1,
+        "vita_spray": 1,
+        "sterilized_bandage": 3
     },
     "New Loadout 3": {
-        "shotgun_ammo": 40,
-        "tactical_mk2": 1,
+        "light_ammo": 109,
+        "heavy_ammo": 46,
+        "looting_mk1": 1,
         "light_shield": 1,
-        "ARPEGGIO I_01": 1,
+        "ARPEGGIO II_17": 1,
+        "VENATOR II_05": 1,
         "explosive_mine": 1,
-        "showstopper": 4
-    },
-    "New Loadout 4": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN II_04": 1,
-        "BANTAM I_04": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 5": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_02": 1,
-        "BANTAM I_06": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 6": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_03": 1,
-        "BANTAM I_07": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 7": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_04": 1,
-        "BANTAM I_08": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 8": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_05": 1,
-        "BANTAM I_09": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 9": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_06": 1,
-        "BANTAM I_10": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 10": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_09": 1,
-        "BANTAM I_13": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 11": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_11": 1,
-        "BANTAM I_15": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 12": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_12": 1,
-        "BANTAM I_16": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 13": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_13": 1,
-        "BANTAM I_17": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 14": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_14": 1,
-        "BANTAM I_18": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 15": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_15": 1,
-        "BANTAM I_19": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 16": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_16": 1,
-        "BANTAM I_20": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 17": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_17": 1,
-        "BANTAM I_21": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 18": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_18": 1,
-        "BANTAM I_22": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
-    },
-    "New Loadout 19": {
-        "shotgun_ammo": 40,
-        "barricade_kit": 2,
-        "combat_mk3": 1,
-        "light_shield": 1,
-        "HAIRPIN I_20": 1,
-        "BANTAM I_24": 1,
-        "heavy_fuze_grenade": 6,
-        "herbal_bandage": 7,
-        "shield_recharger": 4
+        "vita_spray": 1,
+        "sterilized_bandage": 3
     }
 }

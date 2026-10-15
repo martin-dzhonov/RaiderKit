@@ -42,6 +42,26 @@ class InitializationWorker(QThread):
             self.initialized.emit()
 
 
+class FinalInventoryActionsWorker(QThread):
+    succeeded = Signal(object)
+    failed = Signal(str)
+
+    def __init__(self, initial_image, parent=None):
+        super().__init__(parent)
+        self.initial_image = initial_image
+
+    def run(self):
+        try:
+            weapon_item_ids = automation.perform_player_inventory_save_actions(
+                initial_image=self.initial_image,
+            )
+        except Exception as exc:
+            logger.exception("Final inventory actions failed")
+            self.failed.emit(str(exc))
+        else:
+            self.succeeded.emit(weapon_item_ids)
+
+
 class HotkeyListener:
     """Listen for Ctrl+R globally and request an overlay visibility toggle."""
 
@@ -65,36 +85,57 @@ class HotkeyListener:
 
 
 def process_generated_loadout(overlay, inventory_scan):
-    """Finish inventory actions, build, validate, and save a generated loadout."""
-    try:
-        logger.info("Starting final inventory actions for generated loadout")
-        weapon_item_ids = automation.perform_player_inventory_save_actions(
-            initial_image=inventory_scan["image"],
-        )
-    except Exception as exc:
-        overlay.restore_after_inventory_save()
-        logger.exception("Final inventory actions failed; generated loadout was not saved")
-        overlay.status.setText("Final inventory actions failed; loadout was not saved.")
-        QMessageBox.critical(
-            overlay,
-            "Inventory Save Failed",
-            f"The final inventory actions or screenshot failed:\n\n{exc}\n\n"
-            "The generated loadout was not saved.",
-        )
+    """Run final inventory actions asynchronously before building the loadout."""
+    if overlay.inventory_save_worker is not None:
         return
 
-    overlay.restore_after_inventory_save()
+    logger.info("Starting final inventory actions for generated loadout")
+    worker = FinalInventoryActionsWorker(inventory_scan["image"], overlay)
+    overlay.inventory_save_worker = worker
+    worker.succeeded.connect(
+        lambda weapon_item_ids: finish_generated_loadout(
+            overlay,
+            inventory_scan,
+            weapon_item_ids,
+        )
+    )
+    worker.failed.connect(
+        lambda error: handle_inventory_actions_failure(overlay, error)
+    )
+    worker.finished.connect(
+        lambda: setattr(overlay, "inventory_save_worker", None)
+    )
+    worker.finished.connect(worker.deleteLater)
+    worker.start()
 
-    weapon_items = [
-        {"name": item_id, "banner_text": "1"}
-        for item_id in weapon_item_ids
-    ]
-    loadout = automation.utils.build_player_loadout(
-        inventory_scan["main_items"] + weapon_items,
-        inventory_scan["quickuse_items"],
+
+def handle_inventory_actions_failure(overlay, error):
+    overlay.restore_after_inventory_save()
+    overlay.hide_scan_progress()
+    overlay.status.setText("Final inventory actions failed; loadout was not saved.")
+    QMessageBox.critical(
+        overlay,
+        "Inventory Save Failed",
+        f"The final inventory actions or screenshot failed:\n\n{error}\n\n"
+        "The generated loadout was not saved.",
     )
 
+
+def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
+    """Restore the overlay, then validate and prompt to save the generated loadout."""
+    overlay.restore_after_inventory_save()
+    overlay.hide_scan_progress()
+
     try:
+        weapon_items = [
+            {"name": item_id, "banner_text": "1"}
+            for item_id in weapon_item_ids
+        ]
+        loadout = automation.utils.build_player_loadout(
+            inventory_scan["main_items"] + weapon_items,
+            inventory_scan["quickuse_items"],
+        )
+
         # Flattening checks that the generated structure can be processed.
         flatten_loadout(loadout)
         validate_loadout("Generated Loadout", loadout)

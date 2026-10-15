@@ -37,6 +37,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             | Qt.WindowType.FramelessWindowHint
             | Qt.WindowType.WindowStaysOnTopHint
         )
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
         self.initialization_complete = False
         self.initialization_failed = False
@@ -44,6 +45,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.compact_mode = False
         self.inventory_save_layout = None
+        self.inventory_save_worker = None
 
         self.loadouts = read_loadouts()
 
@@ -312,13 +314,18 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.update_player_inventory_results()
         self.update_loadout_results()
 
-        self.restore_after_inventory_save()
+        if self.inventory_save_worker is None:
+            self.restore_after_inventory_save()
 
-        if self.scan_progress_visible and not self.loadout_result_visible:
+        if (
+            self.inventory_save_worker is None
+            and self.scan_progress_visible
+            and not self.loadout_result_visible
+        ):
             self.hide_scan_progress()
 
     def update_player_inventory_results(self):
-        if not self.initialization_complete:
+        if not self.initialization_complete or automation.task_running:
             return
 
         for loadout in drain_queue(automation.player_inventory_results):

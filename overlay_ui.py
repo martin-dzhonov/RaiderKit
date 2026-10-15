@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 from common import (
     ACTION_PANEL_BUTTON_WIDTH,
+    ACTION_PANEL_PROGRESS_WIDTH,
     ACTIONS_PANEL_WIDTH,
     LOADOUT_CARD_GAP,
     LOADOUTS_EMPTY_PANEL_WIDTH,
@@ -106,7 +107,7 @@ class OverlayUIMixin:
         actions_layout = QVBoxLayout(actions_content)
         actions_layout.setContentsMargins(0, 0, 0, 0)
         actions_layout.setSpacing(10)
-        actions_layout.addSpacing(5)
+        actions_layout.addSpacing(35)
 
         self.player_scan_button = QPushButton("SAVE LOADOUT")
         self.player_scan_button.setObjectName("playerScan")
@@ -122,7 +123,7 @@ class OverlayUIMixin:
             0,
             Qt.AlignmentFlag.AlignHCenter,
         )
-        actions_layout.addSpacing(5)
+        actions_layout.addSpacing(15)
 
         self.clear_loadout_button = QPushButton("CLEAR INVENTORY")
         self.clear_loadout_button.setObjectName("clearLoadout")
@@ -150,7 +151,7 @@ class OverlayUIMixin:
 
         result_layout = QVBoxLayout(self.loadout_result_widget)
         result_layout.setContentsMargins(0, 0, 0, 60)
-        result_layout.setSpacing(8)
+        result_layout.setSpacing(13)
         result_layout.addStretch(1)
 
         self.scan_progress_bar = QProgressBar()
@@ -158,7 +159,7 @@ class OverlayUIMixin:
         self.scan_progress_bar.setRange(0, 1000)
         self.scan_progress_bar.setValue(0)
         self.scan_progress_bar.setTextVisible(False)
-        self.scan_progress_bar.setFixedSize(ACTION_PANEL_BUTTON_WIDTH, 6)
+        self.scan_progress_bar.setFixedSize(ACTION_PANEL_PROGRESS_WIDTH, 6)
         self.scan_progress_bar.hide()
 
         self.loadout_result_label = QLabel()
@@ -324,7 +325,7 @@ class OverlayUIMixin:
         self.central_frame.setObjectName("centralFrame")
 
         layout = QVBoxLayout(self.central_frame)
-        layout.setContentsMargins(1, 1, 1, 1)
+        layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(0)
 
         layout.addWidget(self.title_bar)
