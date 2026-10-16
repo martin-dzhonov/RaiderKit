@@ -425,6 +425,16 @@ QWidget#loadoutContents QLabel#inventoryItemName {
 }
 
 /* Inventory Quantity */
+QLabel#inventoryAction {
+    color: white;
+    background-color: rgb(15, 19, 30);
+    border: none;
+    border-radius: 3px;
+    padding: 0px 2px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 QLabel#inventoryQuantity {
     color: white;
     background-color: rgb(15, 19, 30);

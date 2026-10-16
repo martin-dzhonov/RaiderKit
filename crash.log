@@ -61,3 +61,9 @@ Qt message [QtWarningMsg]: QPushButton(0x2b156a3d720, name="hideButton")  does n
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
 Qt message [QtWarningMsg]: QPushButton(0x19aaf7a9cf0, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x234b38b7f00, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x1e33dca9f60, name="hideButton")  does not have a property named  "alignment"

@@ -358,23 +358,18 @@ class OverlayLoadoutsMixin:
         sorted_items = list(self._sort_loadout_items(loadout))
         display_items = sorted_items
 
-        if (
-            max_blocks is not None
-            and max_blocks > 1
-            and len(sorted_items) > LOADOUT_BLOCK_ITEMS
-        ):
-            slot_limit = LOADOUT_BLOCK_ITEMS * max_blocks
-            # Reserve the last slot for "LESS <" and, if items remain, one for "MORE >".
-            has_more = len(sorted_items) > slot_limit - 1
-            item_slots = slot_limit - 1 - (1 if has_more else 0)
-            display_items = sorted_items[:item_slots] + ["shrink"]
-
-            if has_more:
-                display_items.append("expand")
-        elif max_blocks is not None:
+        if max_blocks is not None:
             slot_limit = LOADOUT_BLOCK_ITEMS * max_blocks
 
-            if len(sorted_items) > slot_limit:
+            if max_blocks > 1 and len(sorted_items) > LOADOUT_BLOCK_ITEMS:
+                # LESS takes a slot; MORE takes the last slot while items remain.
+                has_more = len(sorted_items) > slot_limit - 1
+                item_slots = slot_limit - 1 - (1 if has_more else 0)
+                display_items = sorted_items[:item_slots] + ["shrink"]
+
+                if has_more:
+                    display_items.append("expand")
+            elif len(sorted_items) > slot_limit:
                 display_items = sorted_items[: slot_limit - 1] + ["expand"]
 
         for column in range(columns * (max_blocks or 1)):
@@ -488,8 +483,9 @@ class OverlayLoadoutsMixin:
             if not is_action_slot and (
                 category not in {"augment", "shields"} or quantity > 1
             ):
+                is_weapon = name in weapon_names
                 quantity_text = f"×{quantity}"
-                if name in weapon_names:
+                if is_weapon:
                     weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)
                     if weapon_tier is not None:
                         quantity_text = weapon_tier.group(1)
@@ -505,8 +501,21 @@ class OverlayLoadoutsMixin:
                     True,
                 )
 
+                quantity_anchor = quantity_label
+
+                if is_weapon:
+                    # Wrapper with a right margin nudges the weapon tier 2px left.
+                    quantity_anchor = QWidget()
+                    quantity_anchor.setAttribute(
+                        Qt.WidgetAttribute.WA_TransparentForMouseEvents,
+                        True,
+                    )
+                    anchor_layout = QHBoxLayout(quantity_anchor)
+                    anchor_layout.setContentsMargins(0, 0, 2, 0)
+                    anchor_layout.addWidget(quantity_label)
+
                 slot_layout.addWidget(
-                    quantity_label,
+                    quantity_anchor,
                     0,
                     0,
                     alignment=(
@@ -516,12 +525,14 @@ class OverlayLoadoutsMixin:
 
             if is_action_slot:
                 action_label = QLabel(ACTION_SLOT_TEXT[display_item])
-                action_label.setObjectName("inventoryQuantity")
+                action_label.setObjectName("inventoryAction")
                 action_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 action_label.setAttribute(
                     Qt.WidgetAttribute.WA_TransparentForMouseEvents,
                     True,
                 )
+                # The bottom margin shifts the centered text 5px up.
+                slot_layout.setContentsMargins(1, 1, 1, 11)
                 slot_layout.addWidget(
                     action_label,
                     0,
