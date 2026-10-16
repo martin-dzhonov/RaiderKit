@@ -120,7 +120,7 @@ QFrame#customDialogHeader {
 
 QLabel#customDialogTitle {
     background: transparent;
-    color: #8edbff;
+    color: #6df5c4;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -179,7 +179,7 @@ QPushButton:disabled {
 /* Player Scan Button */
 QPushButton#playerScan {
     background: #252b3e;
-    color: #8edbff;
+    color: #6df5c4;
     border: 3px solid #35516b;
     border-radius: 8px;
     font-weight: bold;
@@ -189,7 +189,7 @@ QPushButton#playerScan {
 
 QPushButton#playerScan:hover {
     background: #2d3a50;
-    border-color: #8edbff;
+    border-color: #6df5c4;
 }
 
 QPushButton#playerScan:disabled {

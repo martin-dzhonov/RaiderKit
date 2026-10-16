@@ -16,8 +16,10 @@
         "medium_shield"
     ],
     "weapons": [
-        "ANVIL I_01",
-        "BURLETTA III_01"
+        "HULLCRACKER IV_01",
+        "HULLCRACKER IV_02",
+        "TEMPEST II_01",
+        "VULCANO I_01"
     ],
     "ammo": [
         "energy_clip",

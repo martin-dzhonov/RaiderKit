@@ -1,12 +1,13 @@
 {
     "New Loadout": {
-        "light_ammo": 200,
-        "heavy_ammo": 60,
-        "looting_mk2": 1,
+        "shotgun_ammo": 40,
+        "launcher_ammo": 80,
+        "looting_mk3": 1,
         "light_shield": 1,
-        "BURLETTA III_01": 1,
-        "ANVIL I_01": 1,
-        "shield_recharger": 5,
-        "herbal_bandage": 5
+        "VULCANO I_01": 1,
+        "HULLCRACKER IV_02": 1,
+        "showstopper": 5,
+        "heavy_fuze_grenade": 3,
+        "vita_spray": 1
     }
 }

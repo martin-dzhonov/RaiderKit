@@ -224,7 +224,7 @@ class OverlayUIMixin:
         loadouts_layout.setSpacing(8)
 
         self.loadout_list = QHBoxLayout()
-        self.loadout_list.setContentsMargins(0, 2, 0, 6)
+        self.loadout_list.setContentsMargins(0, 2, 0, 14)
         self.loadout_list.setSpacing(LOADOUT_CARD_GAP)
         self.loadout_list.setAlignment(
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
