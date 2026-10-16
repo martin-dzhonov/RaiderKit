@@ -5,15 +5,27 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ITEM_NAMES,
+    LOADOUT_TAB_GROUPS,
     WINDOW_HEIGHT,
     WINDOW_FIXED_WIDTH,
     drain_queue,
     read_loadouts,
+    read_loadout_tab_options,
+    save_loadout_tab_options,
 )
 from overlay_ui import OverlayUIMixin
 from overlay_loadouts import OverlayLoadoutsMixin
 
 logger = logging.getLogger(__name__)
+
+
+def enabled_stash_tabs(options):
+    return {"augment"} | {
+        tab
+        for group, tabs in LOADOUT_TAB_GROUPS.items()
+        if options.get(group, True)
+        for tab in tabs
+    }
 
 
 class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
@@ -50,6 +62,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.loadout_equip_animations = {}
 
         self.loadouts = read_loadouts()
+        self.loadout_tab_options = read_loadout_tab_options(self.loadouts)
 
         # Successful loadout result countdown.
         self.loadout_result_duration = 650
@@ -322,13 +335,36 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         drain_queue(automation.loadout_results)
 
         self._start_scan(
-            lambda: automation.start_scan(copy.deepcopy(loadout)),
+            lambda: automation.start_scan(
+                copy.deepcopy(loadout),
+                enabled_tabs=enabled_stash_tabs(
+                    self.loadout_tab_options.get(name, {})
+                ),
+            ),
             f"Equipping\n{name}",
             f"●  Starting loadout: {name}",
             running_message="●  Please wait for the current task to finish.",
             prepare=lambda: self.set_loadout_equip_progress(name),
             update_progress_message=False,
         )
+
+    def update_loadout_tab_option(self, name, group, enabled):
+        previous_options = self.loadout_tab_options.get(
+            name,
+            {key: True for key in LOADOUT_TAB_GROUPS},
+        )
+        updated_options = {**previous_options, group: enabled}
+        self.loadout_tab_options[name] = updated_options
+        try:
+            save_loadout_tab_options(self.loadout_tab_options)
+        except OSError as exc:
+            self.loadout_tab_options[name] = previous_options
+            QMessageBox.critical(
+                self,
+                "Loadout Options Save Failed",
+                f"Could not save equip options for '{name}':\n\n{exc}",
+            )
+            self.refresh_loadouts()
 
     def check_player_scan_finished(self):
         """Clean up scanning UI when the automation task finishes."""

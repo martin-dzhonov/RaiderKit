@@ -165,16 +165,20 @@ QPushButton#scan:pressed {
     background: #fffcee
 }
 
+QWidget#loadoutRow QPushButton#scan {
+    padding: 0;
+}
+
 /* Quit Button */
 QPushButton#quit {
-    background: #321e2b;
+    background: transparent;
     color: #ff9aaa;
-    border: 1px solid #653044;
+    border: none;
 }
 
 QPushButton#quit:hover {
-    background: #492536;
-    border-color: #ff6b81;
+    background: rgba(255, 107, 129, 35);
+    border: none;
 }
 
 /* Confirm Button */
@@ -305,7 +309,7 @@ QWidget#loadoutEntry {
 }
 
 QWidget#loadoutRow {
-    background: #191e2d;
+    background: #252c40;
     border-radius: 8px;
 }
 
@@ -314,7 +318,7 @@ QWidget#loadoutRowContent {
 }
 
 QProgressBar#loadoutEquipProgress {
-    background: #191e2d;
+    background: transparent;
     border: none;
     border-radius: 8px;
 }
@@ -322,6 +326,12 @@ QProgressBar#loadoutEquipProgress {
 QProgressBar#loadoutEquipProgress::chunk {
     background: rgba(109, 245, 196, 45);
     border-radius: 8px;
+}
+
+QCheckBox#loadoutTabOption {
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 QWidget#loadoutRow QLabel {

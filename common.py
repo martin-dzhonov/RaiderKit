@@ -7,8 +7,16 @@ from PySide6.QtWidgets import QMessageBox
 BASE_DIR = Path(__file__).resolve().parent
 
 LOADOUTS_FILE = BASE_DIR / "loadouts.json"
+LOADOUT_TAB_OPTIONS_FILE = BASE_DIR / "loadout_tab_options.json"
+ICONS_DIR = BASE_DIR / "icons"
 STYLES_FILE = BASE_DIR / "styles.qss"
 TEMPLATE_DIR = BASE_DIR / "item_templates"
+LOADOUT_TAB_GROUPS = {
+    "shields": ("shields",),
+    "weapons": ("weapons",),
+    "ammo": ("ammo",),
+    "quickuse": ("quickuse",),
+}
 
 MAX_WIDGET_SIZE = 16_777_215
 
@@ -256,6 +264,62 @@ def save_loadouts(loadouts):
         encoding="utf-8",
     )
     temporary.replace(LOADOUTS_FILE)
+
+
+def save_loadout_tab_options(options):
+    temporary = LOADOUT_TAB_OPTIONS_FILE.with_suffix(".tmp")
+    temporary.write_text(
+        json.dumps(options, indent=4),
+        encoding="utf-8",
+    )
+    temporary.replace(LOADOUT_TAB_OPTIONS_FILE)
+
+
+def read_loadout_tab_options(loadout_names):
+    options = {
+        name: {group: True for group in LOADOUT_TAB_GROUPS}
+        for name in loadout_names
+    }
+    if not LOADOUT_TAB_OPTIONS_FILE.exists():
+        return options
+
+    try:
+        stored_options = json.loads(
+            LOADOUT_TAB_OPTIONS_FILE.read_text(encoding="utf-8")
+        )
+        if not isinstance(stored_options, dict):
+            raise ValueError("The file must contain a JSON object.")
+
+        loaded_options = {}
+        for name in options:
+            saved = stored_options.get(name, {})
+            if not isinstance(saved, dict):
+                raise ValueError(f"Options for '{name}' must be a JSON object.")
+            loaded_options[name] = {}
+            for group in LOADOUT_TAB_GROUPS:
+                if group == "shields":
+                    value = saved.get(
+                        "shields",
+                        saved.get("augment_shields", True),
+                    )
+                else:
+                    value = saved.get(group, True)
+                if not isinstance(value, bool):
+                    raise ValueError(
+                        f"Option '{group}' for '{name}' must be true or false."
+                    )
+                loaded_options[name][group] = value
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        QMessageBox.warning(
+            None,
+            "Loadout Options",
+            f"Could not read loadout_tab_options.json:\n{exc}\n\n"
+            "All equip tabs will be enabled by default.",
+        )
+    else:
+        options = loaded_options
+
+    return options
 
 
 def read_loadouts():

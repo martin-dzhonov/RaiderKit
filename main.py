@@ -764,10 +764,19 @@ def open_stash_tab(tab_name):
     return not is_cancelled()
 
 
-def move_items_by_tab(loadout):
+def move_items_by_tab(loadout, enabled_tabs=None):
     if not isinstance(loadout, dict) or not recognition.TEMPLATES:
         logger.warning("Cannot process loadout: invalid loadout or no templates loaded")
         return {}
+
+    if enabled_tabs is None:
+        enabled_tabs = set(STASH_TABS)
+    else:
+        enabled_tabs = set(enabled_tabs)
+        invalid_tabs = enabled_tabs.difference(STASH_TABS)
+        if invalid_tabs:
+            logger.warning("Ignoring unknown stash tabs: %s", sorted(invalid_tabs))
+            enabled_tabs.intersection_update(STASH_TABS)
 
     remaining = {}
 
@@ -795,25 +804,40 @@ def move_items_by_tab(loadout):
     if not remaining:
         return remaining
 
-    weapons_tab_position = (TABS_X, TABS_Y["weapons"])
-    pyautogui.moveTo(*weapons_tab_position, duration=0.1)
-    pyautogui.click(*weapons_tab_position)
-    recognition.set_current_tab("weapons")
-    logger.info("Stash scan: clicked Weapons tab; waiting 0.2s before scanning")
-    time.sleep(0.2)
-
     tab_items = get_tab_items()
 
     eligible_tabs = {
         name: {
             tab_name
             for tab_name in STASH_TABS
+            if tab_name in enabled_tabs
             if name in tab_items.get(tab_name, set())
         }
         for name in remaining
     }
 
+    remaining = {
+        name: quantity
+        for name, quantity in remaining.items()
+        if eligible_tabs[name]
+        or not any(name in items for items in tab_items.values())
+    }
+
+    if not remaining:
+        return remaining
+
+    if "weapons" in enabled_tabs:
+        weapons_tab_position = (TABS_X, TABS_Y["weapons"])
+        pyautogui.moveTo(*weapons_tab_position, duration=0.1)
+        pyautogui.click(*weapons_tab_position)
+        recognition.set_current_tab("weapons")
+        logger.info("Stash scan: clicked Weapons tab; waiting 0.2s before scanning")
+        time.sleep(0.2)
+
     for tab_name in STASH_TABS:
+        if tab_name not in enabled_tabs:
+            continue
+
         if is_cancelled():
             return remaining
 
@@ -852,7 +876,7 @@ def move_items_by_tab(loadout):
     return remaining
 
 
-def start_scan(loadout):
+def start_scan(loadout, enabled_tabs=None):
     global task_running
 
     if not isinstance(loadout, dict):
@@ -873,7 +897,10 @@ def start_scan(loadout):
         global task_running
 
         try:
-            remaining = move_items_by_tab(selected_loadout)
+            remaining = move_items_by_tab(
+                selected_loadout,
+                enabled_tabs=enabled_tabs,
+            )
 
             if not is_cancelled():
                 pyautogui.moveTo(1000, 260, duration=0.1)

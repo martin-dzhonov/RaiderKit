@@ -1,8 +1,9 @@
 import re
 
-from PySide6.QtCore import QPropertyAnimation, Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import QPropertyAnimation, QRect, QSize, Qt
+from PySide6.QtGui import QColor, QIcon, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import (
+    QCheckBox,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -10,12 +11,15 @@ from PySide6.QtWidgets import (
     QProgressBar,
     QPushButton,
     QSizePolicy,
+    QStackedLayout,
     QVBoxLayout,
     QWidget,
 )
 from common import (
+    ICONS_DIR,
     LOADOUT_CARD_WIDTH,
     LOADOUT_CARD_GAP,
+    LOADOUT_TAB_GROUPS,
     LOADOUT_ITEM_COLUMNS,
     LOADOUT_ITEM_SLOT_SIZE,
     LOADOUT_ITEM_SIZE,
@@ -26,6 +30,26 @@ from common import (
     WINDOW_FIXED_WIDTH,
     get_item_display_name,
 )
+
+
+class CategoryCheckBox(QCheckBox):
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        if self.underMouse():
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(QColor(255, 255, 255, 10))
+            painter.drawRoundedRect(self.rect(), 4, 4)
+
+        self.icon().paint(
+            painter,
+            QRect(2, 2, 26, 26),
+            Qt.AlignmentFlag.AlignCenter,
+        )
+
+        painter.setPen(QPen(QColor("#191e2d"), 1.5))
+        painter.setBrush(QColor("#6df5c4" if self.isChecked() else "#ff6b81"))
+        painter.drawEllipse(self.width() - 10, self.height() - 10, 8, 8)
 
 
 class OverlayLoadoutsMixin:
@@ -111,6 +135,10 @@ class OverlayLoadoutsMixin:
         else:
 
             for name, loadout in reversed(list(self.loadouts.items())):
+                self.loadout_tab_options.setdefault(
+                    name,
+                    {group: True for group in LOADOUT_TAB_GROUPS},
+                )
 
                 self.loadout_list.addWidget(self._create_loadout_entry(name, loadout))
 
@@ -141,27 +169,33 @@ class OverlayLoadoutsMixin:
 
         entry_layout = QVBoxLayout(entry)
 
-        entry_layout.setContentsMargins(8, 8, 8, 3)
+        entry_layout.setContentsMargins(0, 0, 0, 3)
 
         entry_layout.setSpacing(4)
 
         row = QWidget()
         row.setObjectName("loadoutRow")
-        row_grid = QGridLayout(row)
-        row_grid.setContentsMargins(0, 0, 0, 0)
-        row_grid.setSpacing(0)
+        row_stack = QStackedLayout(row)
+        row_stack.setContentsMargins(0, 0, 0, 0)
+        row_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
 
         progress_bar = QProgressBar(row)
         progress_bar.setObjectName("loadoutEquipProgress")
+        progress_bar.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Expanding,
+        )
         progress_bar.setRange(0, 1000)
         progress_bar.setValue(0)
         progress_bar.setTextVisible(False)
         progress_bar.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         progress_bar.hide()
-        row_grid.addWidget(progress_bar, 0, 0)
+        row_stack.addWidget(progress_bar)
 
         content = QWidget(row)
         content.setObjectName("loadoutRowContent")
+        content.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        content.setAutoFillBackground(False)
         row_layout = QHBoxLayout(content)
 
         row_layout.setContentsMargins(0, 0, 0, 0)
@@ -176,11 +210,15 @@ class OverlayLoadoutsMixin:
 
         label.setWordWrap(True)
 
-        delete = QPushButton("X")
+        delete = QPushButton()
 
         delete.setObjectName("quit")
 
-        delete.setFixedSize(28, 28)
+        delete.setFixedSize(30, 32)
+        delete.setAccessibleName("Delete loadout")
+        delete.setToolTip("Delete loadout")
+        delete.setIcon(QIcon(str(ICONS_DIR / "trash-bin.png")))
+        delete.setIconSize(QSize(27, 27))
 
         delete.clicked.connect(
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)
@@ -190,7 +228,7 @@ class OverlayLoadoutsMixin:
 
         load.setObjectName("scan")
 
-        load.setFixedWidth(64)
+        load.setFixedSize(64, 32)
 
         load.setEnabled(self.initialization_complete)
 
@@ -199,10 +237,34 @@ class OverlayLoadoutsMixin:
         row_layout.addWidget(label, 1)
 
         row_layout.addWidget(delete)
+        for group, label_text, icon_name in (
+            ("shields", "Shields", "Icon_Shield.png"),
+            ("weapons", "Weapons", "Icon_Weapon.png"),
+            ("ammo", "Ammo", "Icon_Ammo.png"),
+            ("quickuse", "Quick Use", "Icon_Quick_Use.png"),
+        ):
+            checkbox = CategoryCheckBox()
+            checkbox.setObjectName("loadoutTabOption")
+            checkbox.setAccessibleName(label_text)
+            checkbox.setToolTip(label_text)
+            checkbox.setIcon(QIcon(str(ICONS_DIR / icon_name)))
+            checkbox.setIconSize(QSize(26, 26))
+            checkbox.setFixedSize(32, 32)
+            checkbox.setChecked(self.loadout_tab_options[name][group])
+            checkbox.toggled.connect(
+                lambda enabled, n=name, g=group: self.update_loadout_tab_option(
+                    n,
+                    g,
+                    enabled,
+                )
+            )
+            row_layout.addWidget(checkbox)
 
+        row_layout.addSpacing(6)
         row_layout.addWidget(load)
 
-        row_grid.addWidget(content, 0, 0)
+        row_stack.addWidget(content)
+        progress_bar.lower()
         entry_layout.addWidget(row)
 
         if not hasattr(self, "loadout_equip_progress_bars"):

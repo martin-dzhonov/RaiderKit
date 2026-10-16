@@ -316,7 +316,7 @@ class OverlayUIMixin:
         self.central_frame.setObjectName("centralFrame")
 
         layout = QVBoxLayout(self.central_frame)
-        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
         layout.addWidget(self.title_bar)

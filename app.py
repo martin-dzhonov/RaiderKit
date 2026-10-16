@@ -18,6 +18,7 @@ import main as automation
 from common import (
     flatten_loadout,
     save_loadouts,
+    save_loadout_tab_options,
     validate_loadout,
 )
 from dialogs import GeneratedLoadoutDialog
@@ -209,12 +210,15 @@ def delete_loadout(overlay, name):
     removed_loadout = overlay.loadouts.pop(name, None)
     if removed_loadout is None:
         return
+    removed_options = overlay.loadout_tab_options.pop(name, None)
 
     try:
         save_loadouts(overlay.loadouts)
     except OSError as exc:
         # Restore the in-memory entry if the file could not be updated.
         overlay.loadouts[name] = removed_loadout
+        if removed_options is not None:
+            overlay.loadout_tab_options[name] = removed_options
         overlay.refresh_loadouts()
         overlay.status.setText("Failed to delete loadout.")
         QMessageBox.critical(
@@ -223,6 +227,16 @@ def delete_loadout(overlay, name):
             f"Could not delete '{name}':\n\n{exc}",
         )
         return
+
+    try:
+        save_loadout_tab_options(overlay.loadout_tab_options)
+    except OSError as exc:
+        logger.exception("Could not remove equip options for deleted loadout '%s'", name)
+        QMessageBox.warning(
+            overlay,
+            "Equip Options Cleanup Failed",
+            f"Deleted '{name}', but its saved equip options could not be removed:\n\n{exc}",
+        )
 
     overlay.refresh_loadouts()
     overlay.status.setText(f"Deleted loadout: {name}")

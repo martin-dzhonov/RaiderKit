@@ -1,70 +1,36 @@
 {
     "New Loadout": {
-        "light_ammo": 200,
-        "heavy_ammo": 60,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "FERRO III_01": 1,
-        "BURLETTA III_01": 1,
-        "vita_spray": 1,
-        "herbal_bandage": 5,
-        "shield_recharger": 5,
-        "smoke_grenade": 2
-    },
-    "New Loadout 6": {
-        "medium_ammo": 234,
-        "bandage": 5,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "ARPEGGIO III_04": 1,
-        "smoke_grenade": 2,
-        "shield_recharger": 5,
-        "herbal_bandage": 5,
-        "adrenaline_shot": 5
-    },
-    "New Loadout 2": {
-        "vita_spray": 3,
-        "wolfpack": 1,
-        "advanced_camera": 1,
-        "blaze_grenade": 14,
-        "trigger_nade": 6,
-        "heavy_shield": 1,
-        "surge_shield_recharger": 5,
-        "smoke_grenade": 1,
-        "smoke_grenade_trap": 3,
-        "sterilized_bandage": 3,
-        "surge_coil": 1,
-        "combat_mk2": 1,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "ANVIL I_03": 1,
-        "ARPEGGIO II_03": 1,
-        "photoelectric_cloak": 1
-    },
-    "New Loadout 3": {
-        "looting_mk2": 1,
-        "light_shield": 1
-    },
-    "New Loadout 4": {
         "medium_ammo": 234,
         "herbal_bandage": 5,
         "bandage": 5,
         "looting_mk2": 1,
         "light_shield": 1,
-        "ARPEGGIO III_05": 1,
+        "ARPEGGIO III_12": 1,
+        "FERRO III_02": 1,
         "smoke_grenade": 3,
         "adrenaline_shot": 5,
         "shield_recharger": 6
     },
-    "New Loadout 5": {
+    "New Loadout 2": {
         "medium_ammo": 234,
         "herbal_bandage": 5,
         "bandage": 5,
-        "yellow_light_stick": 1,
-        "blue_light_stick": 3,
         "looting_mk2": 1,
         "light_shield": 1,
-        "ARPEGGIO III_07": 1,
+        "ARPEGGIO III_13": 1,
+        "FERRO III_03": 1,
+        "smoke_grenade": 3,
+        "adrenaline_shot": 5,
+        "shield_recharger": 6
+    },
+    "New Loadout 3": {
+        "medium_ammo": 234,
+        "herbal_bandage": 5,
+        "bandage": 5,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO III_14": 1,
+        "FERRO III_04": 1,
         "smoke_grenade": 3,
         "adrenaline_shot": 5,
         "shield_recharger": 6
