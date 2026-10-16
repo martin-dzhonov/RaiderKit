@@ -59,5 +59,18 @@
         "jolt_mine": 3,
         "heavy_fuze_grenade": 3,
         "blaze_grenade": 5
+    },
+    "New Loadout 6": {
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_02": 1,
+        "RASCAL I_04": 1,
+        "jolt_mine": 3
+    },
+    "New Loadout 7": {
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "HAIRPIN I_03": 1,
+        "RASCAL I_05": 1
     }
 }

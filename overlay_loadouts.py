@@ -311,6 +311,10 @@ class OverlayLoadoutsMixin:
             return contents
 
         columns = LOADOUT_ITEM_COLUMNS
+
+        # Reserve every column so short grids keep the same slot positions as full ones.
+        for column in range(columns):
+            grid.setColumnStretch(column, 1)
         categories = get_item_categories()
         item_categories = {
             item_name: category
