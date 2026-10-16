@@ -10,9 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent
 LOADOUTS_FILE = BASE_DIR / "loadouts.json"
 LOADOUT_TAB_OPTIONS_FILE = BASE_DIR / "loadout_tab_options.json"
 ITEM_CATEGORIES_FILE = BASE_DIR / "item_categories.json"
-ICONS_DIR = BASE_DIR / "icons"
+ICONS_DIR = BASE_DIR / "assets/icons"
 STYLES_FILE = BASE_DIR / "styles.qss"
-TEMPLATE_DIR = BASE_DIR / "item_templates"
+TEMPLATE_DIR = BASE_DIR / "assets/item_templates"
 TEMPLATE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".webp")
 
 logger = logging.getLogger(__name__)

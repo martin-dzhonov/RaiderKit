@@ -16,22 +16,12 @@
         "medium_shield"
     ],
     "weapons": [
-        "ANVIL I_01",
-        "ARPEGGIO II_01",
-        "ARPEGGIO II_02",
-        "BURLETTA I_01",
-        "BURLETTA I_02",
-        "BURLETTA I_03",
-        "BURLETTA I_04",
-        "HULLCRACKER IV_04",
+        "HAIRPIN I_01",
         "RASCAL I_01",
+        "RASCAL I_02",
+        "RASCAL I_03",
         "STITCHER II_01",
-        "STITCHER II_02",
-        "STITCHER II_03",
-        "STITCHER II_07",
-        "STITCHER I_01",
-        "TEMPEST I_01",
-        "TEMPEST I_02"
+        "STITCHER II_02"
     ],
     "ammo": [
         "energy_clip",

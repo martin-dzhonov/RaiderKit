@@ -6,7 +6,7 @@ import threading
 from pathlib import Path
 
 from pynput import keyboard
-from PySide6.QtCore import QThread, Signal, QTimer
+from PySide6.QtCore import Qt, QThread, Signal, QTimer
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -121,8 +121,13 @@ def process_generated_loadout(overlay, inventory_scan):
             lambda error: handle_inventory_actions_failure(overlay, error)
         )
         worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
-        worker.finished.connect(lambda: setattr(overlay, "inventory_save_worker", None))
-        worker.finished.connect(worker.deleteLater)
+        def release_worker():
+            # finished fires from inside the thread; wait for it to fully exit
+            # before dropping the last reference, or Qt aborts the process.
+            worker.wait()
+            overlay.inventory_save_worker = None
+
+        worker.finished.connect(release_worker, Qt.QueuedConnection)
         worker.start()
     except Exception:
         overlay.inventory_save_worker = None

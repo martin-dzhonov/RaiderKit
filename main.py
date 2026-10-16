@@ -21,7 +21,7 @@ from common import (
     refresh_item_categories,
 )
 
-BIG_TEMPLATE_DIR = "item_templates_big"
+BIG_TEMPLATE_DIR = "assets/item_templates_big"
 
 TABS_X = 132
 TABS_Y = {

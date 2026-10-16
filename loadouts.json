@@ -1,63 +1,63 @@
 {
-    "New Loadout 7": {
-        "light_ammo": 129,
-        "launcher_ammo": 24,
-        "heavy_ammo": 18,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "TEMPEST I_01": 1,
-        "ANVIL I_01": 1,
-        "heavy_fuze_grenade": 3
-    },
     "New Loadout": {
-        "light_ammo": 129,
-        "heavy_ammo": 18,
-        "launcher_ammo": 24,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "TEMPEST I_02": 1,
-        "BURLETTA I_01": 1,
-        "heavy_fuze_grenade": 3
-    },
-    "New Loadout 2": {
-        "launcher_ammo": 24,
         "looting_mk3": 2,
-        "medium_shield": 1,
-        "light_shield": 2,
-        "BURLETTA I_02": 1,
-        "STITCHER II_02": 1,
-        "heavy_fuze_grenade": 3,
-        "powered_descender": 1,
-        "jolt_mine": 3
-    },
-    "New Loadout 3": {
         "light_shield": 2,
         "medium_shield": 1,
         "launcher_ammo": 24,
-        "BURLETTA I_03": 1,
+        "STITCHER II_01": 1,
+        "RASCAL I_01": 1,
         "jolt_mine": 3,
         "heavy_fuze_grenade": 3,
         "powered_descender": 1
+    },
+    "New Loadout 2": {
+        "looting_mk3": 2,
+        "light_shield": 2,
+        "medium_shield": 1,
+        "launcher_ammo": 24,
+        "sterilized_bandage": 3,
+        "trailblazer": 1,
+        "STITCHER II_02": 1,
+        "RASCAL I_02": 1,
+        "jolt_mine": 3,
+        "heavy_fuze_grenade": 3,
+        "powered_descender": 1,
+        "blaze_grenade": 5,
+        "surge_coil": 1
+    },
+    "New Loadout 3": {
+        "looting_mk3": 2,
+        "light_shield": 2,
+        "medium_shield": 1,
+        "launcher_ammo": 24,
+        "sterilized_bandage": 3,
+        "trailblazer": 1,
+        "jolt_mine": 3,
+        "heavy_fuze_grenade": 3,
+        "powered_descender": 1,
+        "blaze_grenade": 5,
+        "surge_coil": 1
     },
     "New Loadout 4": {
         "looting_mk3": 2,
         "light_shield": 2,
         "medium_shield": 1,
         "launcher_ammo": 24,
-        "BURLETTA I_04": 1,
+        "sterilized_bandage": 3,
+        "trailblazer": 1,
         "jolt_mine": 3,
         "heavy_fuze_grenade": 3,
-        "powered_descender": 1
+        "powered_descender": 1,
+        "blaze_grenade": 5,
+        "surge_coil": 1
     },
     "New Loadout 5": {
-        "looting_mk3": 2,
-        "light_shield": 2,
-        "medium_shield": 1,
-        "launcher_ammo": 24,
-        "STITCHER II_03": 1,
-        "RASCAL I_01": 1,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "RASCAL I_03": 1,
+        "HAIRPIN I_01": 1,
         "jolt_mine": 3,
         "heavy_fuze_grenade": 3,
-        "powered_descender": 1
+        "blaze_grenade": 5
     }
 }
