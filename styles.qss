@@ -501,7 +501,6 @@ QLabel#loadoutResult {
    THREE-SECOND COUNTDOWN BAR
    ========================================================= */
 
-QProgressBar#loadoutResultProgress,
 QProgressBar#scanProgressIndicator {
     background-color: #252b3e;
     border: none;
@@ -512,7 +511,6 @@ QProgressBar#scanProgressIndicator {
 }
 
 /* Countdown Fill */
-QProgressBar#loadoutResultProgress::chunk,
 QProgressBar#scanProgressIndicator::chunk {
     background-color: #6df5c4;
     border-radius: 3px;

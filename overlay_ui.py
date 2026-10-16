@@ -177,21 +177,6 @@ class OverlayUIMixin:
             Qt.AlignmentFlag.AlignHCenter,
         )
 
-        # Completed-result countdown bar.
-        self.loadout_result_progress = QProgressBar()
-        self.loadout_result_progress.setObjectName("loadoutResultProgress")
-        self.loadout_result_progress.setRange(0, 2500)
-        self.loadout_result_progress.setValue(2500)
-        self.loadout_result_progress.setTextVisible(False)
-        self.loadout_result_progress.setFixedHeight(6)
-        self.loadout_result_progress.hide()
-
-        result_layout.addWidget(
-            self.loadout_result_progress,
-            0,
-            Qt.AlignmentFlag.AlignHCenter,
-        )
-
         # OK appears underneath the missing-items message.
         self.loadout_result_ok_button = QPushButton("OK")
         self.loadout_result_ok_button.setObjectName("loadoutResultOkButton")

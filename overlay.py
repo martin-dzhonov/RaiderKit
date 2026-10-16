@@ -168,7 +168,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         """Show the repeating progress bar while a scan is running."""
 
         self.loadout_result_timer.stop()
-        self.loadout_result_progress.hide()
         self.loadout_result_ok_button.hide()
 
         self.loadout_result_visible = False
@@ -180,6 +179,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.clear_loadout_button.hide()
 
         self.scan_progress_bar.setValue(0)
+        self.scan_progress_bar.setRange(0, 1000)
         self.scan_progress_bar.show()
 
         self.loadout_result_label.setProperty("resultType", "progress")
@@ -205,7 +205,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         if not self.loadout_result_visible:
             self.scan_progress_bar.hide()
             self.loadout_result_widget.hide()
-            self.loadout_result_progress.hide()
             self.loadout_result_ok_button.hide()
 
             if self.initialization_complete:
@@ -380,7 +379,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
     def show_loadout_result(self, message, result_type=None):
         """Show success briefly, or missing items until OK is clicked."""
 
-        self.scan_progress_animation.stop()
         self.scan_progress_visible = False
         self.scan_status_message = ""
 
@@ -389,7 +387,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.player_scan_button.hide()
         self.clear_loadout_button.hide()
-        self.scan_progress_bar.hide()
 
         if result_type is not None:
             self.loadout_result_label.setProperty("resultType", result_type)
@@ -402,21 +399,21 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.loadout_result_label.style().polish(self.loadout_result_label)
 
         if result_type == "success":
-            # Success: show the progress bar and start the countdown.
+            # Keep the active scan animation visible while showing success.
             self.loadout_result_ok_button.hide()
 
             self.loadout_result_remaining = self.loadout_result_duration
 
-            self.loadout_result_progress.setRange(0, self.loadout_result_duration)
-            self.loadout_result_progress.setValue(self.loadout_result_duration)
-            self.loadout_result_progress.show()
+            self.scan_progress_bar.setRange(0, 1000)
+            self.scan_progress_bar.show()
 
             self.loadout_result_timer.start()
 
         else:
             # Missing items: remain visible until OK is clicked.
+            self.scan_progress_animation.stop()
             self.loadout_result_remaining = 0
-            self.loadout_result_progress.hide()
+            self.scan_progress_bar.hide()
             self.loadout_result_ok_button.show()
 
     def _advance_loadout_result(self):
@@ -431,8 +428,6 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             self.loadout_result_remaining - self.loadout_result_tick,
         )
 
-        self.loadout_result_progress.setValue(self.loadout_result_remaining)
-
         if self.loadout_result_remaining <= 0:
             self.hide_loadout_result()
 
@@ -440,13 +435,13 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         """Hide the result message and restore the main overlay controls."""
 
         self.loadout_result_timer.stop()
+        self.scan_progress_animation.stop()
         self.loadout_result_visible = False
         self.loadout_result_remaining = 0
 
         if not hasattr(self, "loadout_result_label"):
             return
 
-        self.loadout_result_progress.hide()
         self.loadout_result_ok_button.hide()
 
         if self.scan_progress_visible:
