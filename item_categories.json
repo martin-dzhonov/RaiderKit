@@ -19,13 +19,15 @@
         "HAIRPIN I_01",
         "HAIRPIN I_02",
         "HAIRPIN I_03",
+        "HULLCRACKER IV_01",
         "RASCAL I_01",
         "RASCAL I_02",
         "RASCAL I_03",
         "RASCAL I_04",
         "RASCAL I_05",
         "STITCHER II_01",
-        "STITCHER II_02"
+        "STITCHER II_02",
+        "TEMPEST I_01"
     ],
     "ammo": [
         "energy_clip",

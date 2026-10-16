@@ -33,6 +33,7 @@ from common import (
 
 LOADOUT_BLOCK_ITEMS = LOADOUT_ITEM_COLUMNS * 2
 EXPAND_ITEM_ICON = BASE_DIR / "assets/blank/item_blank.png"
+ACTION_SLOT_TEXT = {"expand": "MORE", "shrink": "LESS"}
 
 CATEGORY_PRESENTATION = {
     "augment": ("Augment", "Icon_Augment.png"),
@@ -150,15 +151,15 @@ class OverlayLoadoutsMixin:
     def _resize_for_loadout_count(self):
         visible_widths = [
             self._loadout_card_width(name)
-            for name in list(reversed(list(self.loadouts)))[
-                :LOADOUTS_MAX_VISIBLE_CARDS
-            ]
+            for name in list(reversed(list(self.loadouts)))[:LOADOUTS_MAX_VISIBLE_CARDS]
         ]
 
         if not visible_widths:
             panel_width = LOADOUTS_EMPTY_PANEL_WIDTH
         else:
-            panel_width = sum(visible_widths) + (len(visible_widths) - 1) * LOADOUT_CARD_GAP
+            panel_width = (
+                sum(visible_widths) + (len(visible_widths) - 1) * LOADOUT_CARD_GAP
+            )
             panel_width = max(
                 panel_width,
                 max(self._loadout_card_width(name) for name in self.loadouts),
@@ -171,11 +172,11 @@ class OverlayLoadoutsMixin:
         pages = getattr(self, "loadout_pages", {}).get(name, 1)
         return LOADOUT_CARD_WIDTH * pages + LOADOUT_CARD_GAP * (pages - 1)
 
-    def expand_loadout(self, name):
-        """Show the next block of items for a loadout card."""
+    def expand_loadout(self, name, step=1):
+        """Show the next (or previous) block of items for a loadout card."""
         if not hasattr(self, "loadout_pages"):
             self.loadout_pages = {}
-        self.loadout_pages[name] = self.loadout_pages.get(name, 1) + 1
+        self.loadout_pages[name] = max(1, self.loadout_pages.get(name, 1) + step)
 
         scrollbar = self.scroll_area.horizontalScrollBar()
         position = scrollbar.value()
@@ -311,13 +312,18 @@ class OverlayLoadoutsMixin:
                 on_expand=lambda n=name: QTimer.singleShot(
                     0, lambda: self.expand_loadout(n)
                 ),
+                on_shrink=lambda n=name: QTimer.singleShot(
+                    0, lambda: self.expand_loadout(n, -1)
+                ),
             ),
             1,
         )
 
         return entry
 
-    def _create_loadout_contents(self, loadout, max_blocks=None, on_expand=None):
+    def _create_loadout_contents(
+        self, loadout, max_blocks=None, on_expand=None, on_shrink=None
+    ):
         """Create a grid of item icons and quantities.
 
         With max_blocks, items fill blocks of LOADOUT_BLOCK_ITEMS slots laid out
@@ -352,11 +358,24 @@ class OverlayLoadoutsMixin:
         sorted_items = list(self._sort_loadout_items(loadout))
         display_items = sorted_items
 
-        if max_blocks is not None:
+        if (
+            max_blocks is not None
+            and max_blocks > 1
+            and len(sorted_items) > LOADOUT_BLOCK_ITEMS
+        ):
+            slot_limit = LOADOUT_BLOCK_ITEMS * max_blocks
+            # Reserve the last slot for "LESS <" and, if items remain, one for "MORE >".
+            has_more = len(sorted_items) > slot_limit - 1
+            item_slots = slot_limit - 1 - (1 if has_more else 0)
+            display_items = sorted_items[:item_slots] + ["shrink"]
+
+            if has_more:
+                display_items.append("expand")
+        elif max_blocks is not None:
             slot_limit = LOADOUT_BLOCK_ITEMS * max_blocks
 
             if len(sorted_items) > slot_limit:
-                display_items = sorted_items[: slot_limit - 1] + [None]
+                display_items = sorted_items[: slot_limit - 1] + ["expand"]
 
         for column in range(columns * (max_blocks or 1)):
             grid.setColumnStretch(column, 1)
@@ -370,8 +389,8 @@ class OverlayLoadoutsMixin:
 
         for index, display_item in enumerate(display_items):
 
-            is_expand_slot = display_item is None
-            name, quantity = ("", 0) if is_expand_slot else display_item
+            is_action_slot = isinstance(display_item, str)
+            name, quantity = ("", 0) if is_action_slot else display_item
 
             if max_blocks is None:
                 row_index = index // columns
@@ -405,10 +424,15 @@ class OverlayLoadoutsMixin:
                 LOADOUT_ITEM_SLOT_SIZE,
             )
 
-            if is_expand_slot:
-                slot.setToolTip("Show more items")
+            if is_action_slot:
+                callback = on_expand if display_item == "expand" else on_shrink
+                slot.setToolTip(
+                    "Show more items"
+                    if display_item == "expand"
+                    else "Show fewer items"
+                )
                 slot.setCursor(Qt.CursorShape.PointingHandCursor)
-                slot.mousePressEvent = lambda event, callback=on_expand: callback()
+                slot.mousePressEvent = lambda event, callback=callback: callback()
             else:
                 slot.setToolTip(get_item_display_name(name))
 
@@ -420,7 +444,7 @@ class OverlayLoadoutsMixin:
 
             category = item_categories.get(name)
             image_path = None
-            if is_expand_slot:
+            if is_action_slot:
                 image_path = EXPAND_ITEM_ICON
             elif category is not None:
                 for extension in ("webp", "png"):
@@ -461,7 +485,7 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            if not is_expand_slot and (
+            if not is_action_slot and (
                 category not in {"augment", "shields"} or quantity > 1
             ):
                 quantity_text = f"×{quantity}"
@@ -488,6 +512,21 @@ class OverlayLoadoutsMixin:
                     alignment=(
                         Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight
                     ),
+                )
+
+            if is_action_slot:
+                action_label = QLabel(ACTION_SLOT_TEXT[display_item])
+                action_label.setObjectName("inventoryQuantity")
+                action_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                action_label.setAttribute(
+                    Qt.WidgetAttribute.WA_TransparentForMouseEvents,
+                    True,
+                )
+                slot_layout.addWidget(
+                    action_label,
+                    0,
+                    0,
+                    alignment=Qt.AlignmentFlag.AlignCenter,
                 )
 
             item_layout.addWidget(
