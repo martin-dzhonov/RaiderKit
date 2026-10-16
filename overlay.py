@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def enabled_stash_tabs(options):
-    return {"augment"} | {
+    return {
         tab
         for group, tabs in LOADOUT_TAB_GROUPS.items()
         if options.get(group, True)

@@ -43,7 +43,10 @@ QWidget#panelDivider {
     );
 }
 
-/* Title Bar */
+/* =========================================================
+   TITLE BAR
+   ========================================================= */
+
 QWidget#titleBar {
     background: #191e2d;
     border: none;
@@ -77,6 +80,54 @@ QLabel#emptyLoadoutsMessage {
     color: rgba(190, 220, 255, 25);
     font-size: 20px;
     font-weight: 700;
+}
+
+/* =========================================================
+   CUSTOM DIALOG HEADER
+   Used by GeneratedLoadoutDialog / CustomDialogHeader
+   ========================================================= */
+
+QDialog#GeneratedLoadoutDialog {
+    background: #10131d;
+    border: 1px solid #454b5a;
+}
+
+QFrame#customDialogHeader {
+    background: #191e2d;
+    border: none;
+    border-bottom: 1px solid #353d57;
+}
+
+QLabel#customDialogTitle {
+    background: transparent;
+    color: #8edbff;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: none;
+}
+
+QPushButton#customDialogClose {
+    background: transparent;
+    color: #8992ad;
+    border: none;
+    border-radius: 6px;
+    font-family: "Segoe UI";
+    font-size: 23px;
+    font-weight: normal;
+    padding: 0px;
+}
+
+QPushButton#customDialogClose:hover {
+    background: #e5485d;
+    color: #ffffff;
+    border: none;
+}
+
+QPushButton#customDialogClose:pressed {
+    background: #b93249;
+    color: #ffffff;
+    border: none;
 }
 
 /* =========================================================
@@ -162,7 +213,7 @@ QPushButton#scan:hover {
 }
 
 QPushButton#scan:pressed {
-    background: #fffcee
+    background: #fffcee;
 }
 
 QWidget#loadoutRow QPushButton#scan {
@@ -297,6 +348,12 @@ QLineEdit#generatedLoadoutName:focus {
 
 QDialog QPushButton {
     padding: 9px 18px;
+}
+
+/* Preserve the custom close button's compact dimensions.
+   This rule overrides the general dialog button padding. */
+QDialog QPushButton#customDialogClose {
+    padding: 0px;
 }
 
 /* =========================================================

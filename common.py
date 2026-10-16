@@ -12,6 +12,7 @@ ICONS_DIR = BASE_DIR / "icons"
 STYLES_FILE = BASE_DIR / "styles.qss"
 TEMPLATE_DIR = BASE_DIR / "item_templates"
 LOADOUT_TAB_GROUPS = {
+    "augment": ("augment",),
     "shields": ("shields",),
     "weapons": ("weapons",),
     "ammo": ("ammo",),

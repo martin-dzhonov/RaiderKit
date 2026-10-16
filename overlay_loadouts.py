@@ -38,18 +38,15 @@ class CategoryCheckBox(QCheckBox):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         if self.underMouse():
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QColor(255, 255, 255, 10))
+            painter.setBrush(QColor(255, 255, 255, 20))
             painter.drawRoundedRect(self.rect(), 4, 4)
 
-        self.icon().paint(
-            painter,
-            QRect(2, 2, 26, 26),
-            Qt.AlignmentFlag.AlignCenter,
-        )
+        icon_rect = QRect(4, 8, 24, 20)
+        self.icon().paint(painter, icon_rect, Qt.AlignmentFlag.AlignCenter)
 
         painter.setPen(QPen(QColor("#191e2d"), 1.5))
         painter.setBrush(QColor("#6df5c4" if self.isChecked() else "#ff6b81"))
-        painter.drawEllipse(self.width() - 10, self.height() - 10, 8, 8)
+        painter.drawEllipse(icon_rect.right() - 5, icon_rect.bottom() - 5, 8, 8)
 
 
 class OverlayLoadoutsMixin:
@@ -175,6 +172,7 @@ class OverlayLoadoutsMixin:
 
         row = QWidget()
         row.setObjectName("loadoutRow")
+        row.setFixedHeight(37)
         row_stack = QStackedLayout(row)
         row_stack.setContentsMargins(0, 0, 0, 0)
         row_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
@@ -202,23 +200,25 @@ class OverlayLoadoutsMixin:
 
         row_layout.setSpacing(6)
 
-        label = QLabel(name)
+        title = f"{name[:23]}.." if len(name) > 23 else name
+        label = QLabel(title)
 
         label.setObjectName("loadoutName")
 
         label.setContentsMargins(12, 0, 0, 0)
 
-        label.setWordWrap(True)
+        label.setToolTip(name)
+        label.setWordWrap(False)
 
         delete = QPushButton()
 
         delete.setObjectName("quit")
 
-        delete.setFixedSize(30, 32)
+        delete.setFixedSize(30, 37)
         delete.setAccessibleName("Delete loadout")
         delete.setToolTip("Delete loadout")
         delete.setIcon(QIcon(str(ICONS_DIR / "trash-bin.png")))
-        delete.setIconSize(QSize(27, 27))
+        delete.setIconSize(QSize(22, 22))
 
         delete.clicked.connect(
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)
@@ -228,16 +228,18 @@ class OverlayLoadoutsMixin:
 
         load.setObjectName("scan")
 
-        load.setFixedSize(64, 32)
+        load.setFixedSize(64, 37)
 
         load.setEnabled(self.initialization_complete)
 
         load.clicked.connect(lambda checked=False, n=name: self.load_loadout(n))
 
-        row_layout.addWidget(label, 1)
-
+        row_layout.addWidget(label)
         row_layout.addWidget(delete)
+        row_layout.addStretch(1)
+
         for group, label_text, icon_name in (
+            ("augment", "Augment", "Icon_Augment.png"),
             ("shields", "Shields", "Icon_Shield.png"),
             ("weapons", "Weapons", "Icon_Weapon.png"),
             ("ammo", "Ammo", "Icon_Ammo.png"),
@@ -249,7 +251,7 @@ class OverlayLoadoutsMixin:
             checkbox.setToolTip(label_text)
             checkbox.setIcon(QIcon(str(ICONS_DIR / icon_name)))
             checkbox.setIconSize(QSize(26, 26))
-            checkbox.setFixedSize(32, 32)
+            checkbox.setFixedSize(32, 37)
             checkbox.setChecked(self.loadout_tab_options[name][group])
             checkbox.toggled.connect(
                 lambda enabled, n=name, g=group: self.update_loadout_tab_option(
@@ -291,7 +293,7 @@ class OverlayLoadoutsMixin:
 
         grid = QGridLayout(contents)
 
-        grid.setContentsMargins(8, 4, 8, 4)
+        grid.setContentsMargins(8, 9, 8, 4)
 
         grid.setHorizontalSpacing(7)
 
