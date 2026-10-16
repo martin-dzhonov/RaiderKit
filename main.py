@@ -245,7 +245,6 @@ def perform_player_inventory_save_actions(initial_image=None):
 
     try:
         raise_if_cancelled()
-        logger.info("Player inventory save: analyzing inventory")
         image = initial_image if initial_image is not None else utils.capture_screen()
         grid_result = player_main_scanner.scan_inventory(image)
         raise_if_cancelled()
@@ -260,11 +259,6 @@ def perform_player_inventory_save_actions(initial_image=None):
             cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
         ]
         empty_boxes.sort(key=lambda cell: (cell["column_index"], cell["row_index"]))
-        logger.info(
-            "Player inventory save: found %d occupied source(s) and %d empty slot(s)",
-            len(occupied_sources),
-            len(empty_boxes),
-        )
 
         if len(empty_boxes) < len(occupied_sources):
             raise RuntimeError(

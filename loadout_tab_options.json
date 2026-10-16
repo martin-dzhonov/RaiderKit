@@ -1,4 +1,11 @@
 {
+    "New Loadout 4": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
     "New Loadout": {
         "augment": true,
         "shields": true,
@@ -7,6 +14,104 @@
         "quickuse": true
     },
     "New Loadout 2": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 3": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 5": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 6": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 7": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 8": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 9": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 10": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 11": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 12": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 13": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 14": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 16": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": false
+    },
+    "New Loadout 15": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 17": {
         "augment": true,
         "shields": true,
         "weapons": true,

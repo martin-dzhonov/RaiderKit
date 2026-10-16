@@ -1,7 +1,9 @@
 import copy
+import faulthandler
 import logging
 import sys
 import threading
+from pathlib import Path
 
 from pynput import keyboard
 from PySide6.QtCore import QThread, Signal, QTimer
@@ -29,6 +31,8 @@ from overlay import InventoryOverlay
 from common import load_stylesheet
 
 logger = logging.getLogger(__name__)
+
+ENABLE_GLOBAL_HOTKEYS = False
 
 
 class InitializationWorker(QThread):
@@ -230,9 +234,7 @@ def delete_weapon_assets(deleted_loadout):
     try:
         weapon_names = get_item_categories().get("weapons", set())
         deleted_weapons = {
-            item
-            for item in flatten_loadout(deleted_loadout)
-            if item in weapon_names
+            item for item in flatten_loadout(deleted_loadout) if item in weapon_names
         }
 
         if not deleted_weapons:
@@ -350,6 +352,16 @@ def create_tray_icon(app, overlay):
 
 
 def main():
+    # Native crashes print no Python traceback unless faulthandler is enabled.
+    # Also write to a file, since the console can close with the process.
+    crash_log = open(Path(__file__).with_name("crash.log"), "a", buffering=1)
+    faulthandler.enable(file=crash_log, all_threads=True)
+    threading.excepthook = lambda args: logger.error(
+        "Unhandled exception in thread %s",
+        args.thread.name if args.thread else "?",
+        exc_info=(args.exc_type, args.exc_value, args.exc_traceback),
+    )
+
     app = QApplication(sys.argv)
     app.setApplicationName("RaiderKit")
     app.setQuitOnLastWindowClosed(False)
@@ -386,12 +398,17 @@ def main():
     hotkey_bridge.toggle_requested.connect(overlay.toggle_visibility)
     hotkey_bridge.cancel_requested.connect(overlay.cancel_current_task)
 
-    hotkey = HotkeyListener(
-        hotkey_bridge.toggle_requested.emit,
-        hotkey_bridge.cancel_requested.emit,
-    )
+    # Set ENABLE_GLOBAL_HOTKEYS to False to run without the global keyboard hook.
+    hotkey = None
+    if ENABLE_GLOBAL_HOTKEYS:
+        hotkey = HotkeyListener(
+            hotkey_bridge.toggle_requested.emit,
+            hotkey_bridge.cancel_requested.emit,
+        )
+        app.aboutToQuit.connect(hotkey.stop)
+    else:
+        logger.warning("Global hotkeys disabled (ENABLE_GLOBAL_HOTKEYS is False)")
 
-    app.aboutToQuit.connect(hotkey.stop)
     app.aboutToQuit.connect(tray.hide)
 
     # Stop any overlay-owned timers or initialization work during shutdown.

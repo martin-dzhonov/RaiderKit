@@ -73,8 +73,7 @@ class OverlayLoadoutsMixin:
 
         categories = get_item_categories()
         tab_priority = {
-            category: priority
-            for priority, category in enumerate(categories)
+            category: priority for priority, category in enumerate(categories)
         }
         item_tab = {
             item_name: category
@@ -399,7 +398,7 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            if category not in {"augment", "shields"}:
+            if category not in {"augment", "shields"} or quantity > 1:
                 quantity_text = f"×{quantity}"
                 if name in weapon_names:
                     weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)

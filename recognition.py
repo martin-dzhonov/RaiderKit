@@ -598,6 +598,14 @@ def recognize_big_inventory(image):
         #     )
 
         if best_name is None or best_score < MIN_SIMILARITY:
+            logger.info(
+                "Big inventory box '%s' not recognized: best=%s score=%.2f "
+                "threshold=%.2f",
+                box_name,
+                best_name,
+                best_score,
+                MIN_SIMILARITY,
+            )
             continue
 
         if best_name.casefold() == "empty":
