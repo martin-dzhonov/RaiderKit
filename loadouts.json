@@ -191,5 +191,15 @@
         "heavy_fuze_grenade": 6,
         "vita_spray": 1,
         "snap_hook": 1
+    },
+    "New Loadout 23": {
+        "light_ammo": 129,
+        "heavy_ammo": 18,
+        "launcher_ammo": 24,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "TEMPEST I_04": 1,
+        "ARPEGGIO III_03": 1,
+        "heavy_fuze_grenade": 3
     }
 }

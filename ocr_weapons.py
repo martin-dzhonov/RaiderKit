@@ -7,6 +7,7 @@ import numpy as np
 import pyautogui
 
 WEAPON_HOVER_DELAY = 0.2
+VALID_TIERS = {"I", "II", "III", "IV", "V"}
 
 POPUP_BACKGROUND = (249, 238, 223)
 POPUP_CONTENT_OFFSET = 33
@@ -81,6 +82,30 @@ def save_icon_diagnostic_image(image, slot_label):
     )
     image.save(image_path)
     return image_path
+
+
+def normalize_weapon_tier(weapon_name, slot_label="weapon"):
+    """Default the tier to I when OCR doesn't read a valid roman numeral (I-V)."""
+    parts = weapon_name.split()
+    if len(parts) > 1 and parts[-1].upper() in VALID_TIERS:
+        parts[-1] = parts[-1].upper()
+        return " ".join(parts)
+
+    if len(parts) > 1:
+        logger.warning(
+            "[%s] Unreadable tier '%s' in '%s'; defaulting to I",
+            slot_label,
+            parts[-1],
+            weapon_name,
+        )
+        parts[-1] = "I"
+    else:
+        logger.warning(
+            "[%s] No tier read in '%s'; defaulting to I", slot_label, weapon_name
+        )
+        parts.append("I")
+
+    return " ".join(parts)
 
 
 def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
@@ -204,6 +229,7 @@ def recognize_weapon_at(x, y, slot_label="weapon", ocr_reader=None):
     weapon_name = " ".join(text.strip() for text in results if text.strip())
 
     if weapon_name:
+        weapon_name = normalize_weapon_tier(weapon_name, slot_label)
         logger.info("[%s] Weapon recognized: %s", slot_label, weapon_name)
         return weapon_name
 
