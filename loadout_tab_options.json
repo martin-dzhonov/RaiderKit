@@ -1,1 +1,16 @@
-{}
+{
+    "New Loadout 2": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 3": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    }
+}

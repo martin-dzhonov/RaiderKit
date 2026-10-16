@@ -29,7 +29,9 @@ class HorizontalWheelScrollArea(QScrollArea):
         super().__init__(parent)
 
         self._scroll_target = None
-        self._scroll_animation = QPropertyAnimation(self.horizontalScrollBar(), b"value", self)
+        self._scroll_animation = QPropertyAnimation(
+            self.horizontalScrollBar(), b"value", self
+        )
         self._scroll_animation.setDuration(400)
         self._scroll_animation.setEasingCurve(QEasingCurve.Type.InOutQuart)
         self._scroll_animation.finished.connect(self._on_scroll_animation_finished)
@@ -181,6 +183,8 @@ class OverlayUIMixin:
         self.scan_cancel_hint.setObjectName("scanCancelHint")
         self.scan_cancel_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.scan_cancel_hint.hide()
+
+        result_layout.addStretch(1)
         result_layout.addWidget(self.scan_cancel_hint)
 
         # OK appears underneath the missing-items message.

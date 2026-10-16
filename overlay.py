@@ -410,7 +410,11 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.set_loadout_equip_progress(None)
         result = results[-1]
 
-        if result.get("success"):
+        if result.get("error"):
+            message = f"Equip failed:\n{result['error']}"
+            result_type = "missing"
+
+        elif result.get("success"):
             message = "LOADOUT EQUIPPED"
             result_type = "success"
 

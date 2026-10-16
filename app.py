@@ -99,25 +99,33 @@ def process_generated_loadout(overlay, inventory_scan):
     if overlay.inventory_save_worker is not None:
         return
 
-    logger.info("Starting final inventory actions for generated loadout")
-    worker = FinalInventoryActionsWorker(inventory_scan["image"], overlay)
-    overlay.inventory_save_worker = worker
-    worker.succeeded.connect(
-        lambda weapon_item_ids: finish_generated_loadout(
-            overlay,
-            inventory_scan,
-            weapon_item_ids,
+    try:
+        logger.info("Starting final inventory actions for generated loadout")
+        worker = FinalInventoryActionsWorker(inventory_scan["image"], overlay)
+        overlay.inventory_save_worker = worker
+        worker.succeeded.connect(
+            lambda weapon_item_ids: finish_generated_loadout(
+                overlay,
+                inventory_scan,
+                weapon_item_ids,
+            )
         )
-    )
-    worker.failed.connect(
-        lambda error: handle_inventory_actions_failure(overlay, error)
-    )
-    worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
-    worker.finished.connect(
-        lambda: setattr(overlay, "inventory_save_worker", None)
-    )
-    worker.finished.connect(worker.deleteLater)
-    worker.start()
+        worker.failed.connect(
+            lambda error: handle_inventory_actions_failure(overlay, error)
+        )
+        worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
+        worker.finished.connect(
+            lambda: setattr(overlay, "inventory_save_worker", None)
+        )
+        worker.finished.connect(worker.deleteLater)
+        worker.start()
+    except Exception:
+        overlay.inventory_save_worker = None
+        logger.exception("Could not start final inventory actions")
+        handle_inventory_actions_failure(
+            overlay,
+            "The background task could not be started. See the application log.",
+        )
 
 
 def handle_inventory_actions_failure(overlay, error):
@@ -164,24 +172,36 @@ def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
             f"The generated loadout could not be saved:\n\n{exc}",
         )
         return
-
-    dialog = GeneratedLoadoutDialog(
-        loadout,
-        overlay.loadouts.keys(),
-        overlay,
-    )
-
-    if dialog.exec() != GeneratedLoadoutDialog.DialogCode.Accepted:
-        overlay.status.setText("Generated loadout discarded.")
+    except Exception:
+        logger.exception("Could not build generated loadout")
+        overlay.status.setText("Could not build generated loadout.")
+        QMessageBox.critical(
+            overlay,
+            "Loadout Generation Failed",
+            "The generated loadout could not be prepared. "
+            "See the application log for details.",
+        )
         return
 
-    name = dialog.loadout_name
-    overlay.loadouts[name] = copy.deepcopy(dialog.loadout_data)
-
     try:
-        save_loadouts(overlay.loadouts)
-    except OSError as exc:
-        overlay.loadouts.pop(name, None)
+        dialog = GeneratedLoadoutDialog(
+            loadout,
+            overlay.loadouts.keys(),
+            overlay,
+        )
+
+        if dialog.exec() != GeneratedLoadoutDialog.DialogCode.Accepted:
+            overlay.status.setText("Generated loadout discarded.")
+            return
+
+        name = dialog.loadout_name
+        updated_loadouts = {
+            **overlay.loadouts,
+            name: copy.deepcopy(dialog.loadout_data),
+        }
+        save_loadouts(updated_loadouts)
+    except (OSError, TypeError, ValueError) as exc:
+        logger.exception("Could not save generated loadout")
         overlay.status.setText("Failed to save generated loadout.")
         QMessageBox.critical(
             overlay,
@@ -189,7 +209,18 @@ def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
             f"Could not save the generated loadout:\n\n{exc}",
         )
         return
+    except Exception:
+        logger.exception("Unexpected failure while saving generated loadout")
+        overlay.status.setText("Failed to save generated loadout.")
+        QMessageBox.critical(
+            overlay,
+            "Save Failed",
+            "An unexpected error occurred while saving the generated loadout. "
+            "See the application log for details.",
+        )
+        return
 
+    overlay.loadouts = updated_loadouts
     overlay.refresh_loadouts()
     overlay.status.setText(f"Saved generated loadout: {name}")
 
@@ -207,19 +238,18 @@ def delete_loadout(overlay, name):
     if answer != QMessageBox.StandardButton.Yes:
         return
 
-    removed_loadout = overlay.loadouts.pop(name, None)
-    if removed_loadout is None:
+    if name not in overlay.loadouts:
         return
-    removed_options = overlay.loadout_tab_options.pop(name, None)
 
+    updated_loadouts = {
+        loadout_name: loadout
+        for loadout_name, loadout in overlay.loadouts.items()
+        if loadout_name != name
+    }
     try:
-        save_loadouts(overlay.loadouts)
-    except OSError as exc:
-        # Restore the in-memory entry if the file could not be updated.
-        overlay.loadouts[name] = removed_loadout
-        if removed_options is not None:
-            overlay.loadout_tab_options[name] = removed_options
-        overlay.refresh_loadouts()
+        save_loadouts(updated_loadouts)
+    except (OSError, TypeError, ValueError) as exc:
+        logger.exception("Could not delete loadout '%s'", name)
         overlay.status.setText("Failed to delete loadout.")
         QMessageBox.critical(
             overlay,
@@ -227,10 +257,24 @@ def delete_loadout(overlay, name):
             f"Could not delete '{name}':\n\n{exc}",
         )
         return
+    except Exception:
+        logger.exception("Unexpected failure deleting loadout '%s'", name)
+        overlay.status.setText("Failed to delete loadout.")
+        QMessageBox.critical(
+            overlay,
+            "Delete Failed",
+            "An unexpected error occurred while deleting this loadout. "
+            "See the application log for details.",
+        )
+        return
 
+    overlay.loadouts = updated_loadouts
+    updated_options = dict(overlay.loadout_tab_options)
+    updated_options.pop(name, None)
+    overlay.loadout_tab_options = updated_options
     try:
-        save_loadout_tab_options(overlay.loadout_tab_options)
-    except OSError as exc:
+        save_loadout_tab_options(updated_options)
+    except (OSError, TypeError, ValueError) as exc:
         logger.exception("Could not remove equip options for deleted loadout '%s'", name)
         QMessageBox.warning(
             overlay,

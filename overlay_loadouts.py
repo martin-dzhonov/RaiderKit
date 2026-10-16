@@ -214,11 +214,11 @@ class OverlayLoadoutsMixin:
 
         delete.setObjectName("quit")
 
-        delete.setFixedSize(30, 37)
+        delete.setFixedSize(26, 32)
         delete.setAccessibleName("Delete loadout")
         delete.setToolTip("Delete loadout")
         delete.setIcon(QIcon(str(ICONS_DIR / "trash-bin.png")))
-        delete.setIconSize(QSize(22, 22))
+        delete.setIconSize(QSize(23, 23))
 
         delete.clicked.connect(
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)

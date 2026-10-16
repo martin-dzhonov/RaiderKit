@@ -68,8 +68,7 @@ class ScanCancelled(Exception):
 
 def set_status(message):
     message = str(message)
-    if message in ("Ready", "Done", "Saving Loadout\nHold On"):
-        status_queue.put(message)
+    status_queue.put(message)
 
 
 def is_cancelled():
@@ -79,6 +78,20 @@ def is_cancelled():
 def raise_if_cancelled():
     if is_cancelled():
         raise ScanCancelled("Operation cancelled.")
+
+
+def _start_task_worker(worker, operation):
+    """Start a task thread and restore shared state if startup fails."""
+    global task_running
+
+    try:
+        thread = threading.Thread(target=worker, daemon=True)
+        thread.start()
+    except Exception:
+        with task_lock:
+            task_running = False
+        logger.exception("Could not start %s worker", operation)
+        raise
 
 
 def scan_player_inventory():
@@ -154,13 +167,13 @@ def scan_player_inventory():
 
         except Exception:
             logger.exception("Player inventory scan failed")
-            set_status("Ready")
+            set_status("Player inventory scan failed. Check the application log.")
 
         finally:
             with task_lock:
                 task_running = False
 
-    threading.Thread(target=worker, daemon=True).start()
+    _start_task_worker(worker, "player inventory scan")
 
 
 def drag_inventory_item(start, destination):
@@ -509,13 +522,13 @@ def clear_player_inventory():
 
         except Exception:
             logger.exception("Player inventory clearing failed")
-            set_status("Ready")
+            set_status("Player inventory clearing failed. Check the application log.")
 
         finally:
             with task_lock:
                 task_running = False
 
-    threading.Thread(target=worker, daemon=True).start()
+    _start_task_worker(worker, "player inventory clearing")
 
 
 def click_down_from_saved_bounds(saved_bounds):
@@ -925,15 +938,22 @@ def start_scan(loadout, enabled_tabs=None):
 
             set_status("Done" if not is_cancelled() else "Ready")
 
-        except Exception:
+        except Exception as exc:
             logger.exception("Stash item scan/move failed")
+            loadout_results.put(
+                {
+                    "success": False,
+                    "missing": {},
+                    "error": str(exc) or type(exc).__name__,
+                }
+            )
             set_status("Ready")
 
         finally:
             with task_lock:
                 task_running = False
 
-    threading.Thread(target=worker, daemon=True).start()
+    _start_task_worker(worker, "loadout equip")
 
 
 def get_tab_items():

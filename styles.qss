@@ -592,8 +592,9 @@ QLabel#loadoutResultText {
 
 QLabel#scanCancelHint {
     background: transparent;
-    color: #8992ad;
-    font-size: 11px;
+    color: #6df5c4;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 QWidget#loadoutResultContainer {

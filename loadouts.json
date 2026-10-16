@@ -1,19 +1,28 @@
 {
-    "New Loadout": {
-        "medium_ammo": 80,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "ARPEGGIO II_01": 1,
-        "BURLETTA III_01": 1,
-        "advanced_camera": 1,
-        "barricade_kit": 2
-    },
     "New Loadout 2": {
         "medium_ammo": 114,
         "looting_mk2": 1,
         "light_shield": 1,
-        "ARPEGGIO II_02": 1,
-        "IL TORO II_01": 1,
+        "ARPEGGIO II_11": 1,
+        "FERRO III_02": 1,
+        "advanced_camera": 1,
+        "barricade_kit": 2
+    },
+    "New Loadout 3": {
+        "medium_ammo": 114,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO II_12": 1,
+        "FERRO III_03": 1,
+        "advanced_camera": 1,
+        "barricade_kit": 2
+    },
+    "New Loadout": {
+        "medium_ammo": 114,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO II_13": 1,
+        "FERRO III_04": 1,
         "advanced_camera": 1,
         "barricade_kit": 2
     }
