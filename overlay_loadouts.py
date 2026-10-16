@@ -149,20 +149,16 @@ class OverlayLoadoutsMixin:
         self._resize_for_loadout_count()
 
     def _resize_for_loadout_count(self):
-        visible_widths = [
-            self._loadout_card_width(name)
-            for name in list(reversed(list(self.loadouts)))[:LOADOUTS_MAX_VISIBLE_CARDS]
-        ]
+        # Sized from collapsed cards only, so expanding a card scrolls instead of
+        # growing the window.
+        visible_count = min(len(self.loadouts), LOADOUTS_MAX_VISIBLE_CARDS)
 
-        if not visible_widths:
+        if visible_count == 0:
             panel_width = LOADOUTS_EMPTY_PANEL_WIDTH
         else:
             panel_width = (
-                sum(visible_widths) + (len(visible_widths) - 1) * LOADOUT_CARD_GAP
-            )
-            panel_width = max(
-                panel_width,
-                max(self._loadout_card_width(name) for name in self.loadouts),
+                visible_count * LOADOUT_CARD_WIDTH
+                + (visible_count - 1) * LOADOUT_CARD_GAP
             )
 
         self.loadouts_panel.setFixedWidth(panel_width)
