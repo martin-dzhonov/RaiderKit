@@ -15,7 +15,12 @@
         "light_shield",
         "medium_shield"
     ],
-    "weapons": [],
+    "weapons": [
+        "ANVIL I_01",
+        "ANVIL I_02",
+        "BURLETTA III_01",
+        "BURLETTA III_02"
+    ],
     "ammo": [
         "energy_clip",
         "heavy_ammo",

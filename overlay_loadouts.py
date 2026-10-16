@@ -119,6 +119,8 @@ class OverlayLoadoutsMixin:
                 QSizePolicy.Policy.Expanding,
             )
 
+            empty_state.setObjectName("emptyLoadoutsState")
+            empty_state.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
             empty_state_layout = QVBoxLayout(empty_state)
             empty_state_layout.setContentsMargins(0, 0, 0, 0)
             empty_state_layout.setSpacing(0)
@@ -129,7 +131,7 @@ class OverlayLoadoutsMixin:
             empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
             empty.setWordWrap(True)
             empty_state_layout.addWidget(empty)
-            empty_state_layout.addSpacing(60)
+            empty_state_layout.addSpacing(20)
             empty_state_layout.addStretch(1)
 
             self.loadout_list.addWidget(empty_state, 1)
@@ -246,7 +248,7 @@ class OverlayLoadoutsMixin:
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)
         )
 
-        load = QPushButton("Equip")
+        load = QPushButton("EQUIP")
 
         load.setObjectName("scan")
 
