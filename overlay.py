@@ -8,6 +8,8 @@ from common import (
     ITEM_NAMES,
     WINDOW_HEIGHT,
     WINDOW_FIXED_WIDTH,
+    ACTIONS_PANEL_WIDTH,
+    SAVE_STATE_EXTRA_WIDTH,
     drain_queue,
     get_item_categories,
     read_loadouts,
@@ -151,7 +153,8 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         )
         self.loadouts_panel.hide()
         self.panel_divider.hide()
-        self.setFixedWidth(WINDOW_FIXED_WIDTH)
+        self.setFixedWidth(WINDOW_FIXED_WIDTH + SAVE_STATE_EXTRA_WIDTH)
+        self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH + SAVE_STATE_EXTRA_WIDTH)
         QApplication.processEvents()
         logger.info(
             "Inventory save: collapsed overlay to %d px before inventory scans",
@@ -166,6 +169,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             self.inventory_save_layout
         )
         self.setFixedWidth(previous_width)
+        self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH)
         if loadouts_were_visible:
             self.loadouts_panel.show()
         if divider_was_visible:

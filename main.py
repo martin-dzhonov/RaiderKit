@@ -110,7 +110,7 @@ def scan_player_inventory():
         global task_running
 
         try:
-            set_status("Saving Loadout\nHold On")
+            set_status("Saving Loadout\nHold Still")
 
             if not recognition.TEMPLATES or is_cancelled():
                 set_status("Ready")
