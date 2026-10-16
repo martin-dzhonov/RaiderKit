@@ -1,140 +1,26 @@
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x235504e5750, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: QPushButton(0x1ef53c84180, name="hideButton")  does not have a property named  "alignment"
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x16b84859910, name="hideButton")  does not have a property named  "alignment"
-Fatal Python error: Aborted
-
-Thread 0x00005878 (most recent call first):
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 189 in __iter__
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 356 in _run
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\__init__.py", line 216 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Current thread 0x000079d8 (most recent call first):
-  File "D:\RaiderKit\app.py", line 114 in <lambda>
-  File "D:\RaiderKit\app.py", line 441 in main
-  File "D:\RaiderKit\app.py", line 445 in <module>
-
-Extension modules: shiboken6.Shiboken, PySide6.QtCore, PySide6.QtGui, PySide6.QtWidgets, _wmi, PIL._imaging, PIL._imagingft, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, _cyutility, scipy._cyutility, scipy._lib._ccallback_c, charset_normalizer.md, charset_normalizer.cd, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._generator, numpy.random._mt19937, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, scipy.ndimage._nd_image, scipy.ndimage._rank_filter_1d, scipy.special._ufuncs_cxx, scipy.linalg._fblas, scipy.linalg._flapack, scipy.linalg._batched_linalg, scipy.linalg._cythonized_array_utils, scipy.linalg._solve_toeplitz, scipy.linalg._internal_matfuncs, scipy.linalg._linalg_pythran, scipy.linalg.cython_blas, scipy.linalg.cython_lapack, scipy.linalg._decomp_update, scipy.special._ellip_harm_2, scipy.special._special_ufuncs, scipy.special._gufuncs, scipy.special._ufuncs, scipy.special._specfun, scipy.special._comb, _ni_label, scipy.ndimage._ni_label, PIL._imagingmath (total: 45)
-Qt message [QtWarningMsg]: QThreadStorage: entry 1 destroyed before end of thread 0x16b843b8640
-Qt message [QtWarningMsg]: QThreadStorage: entry 0 destroyed before end of thread 0x16b843b8640
-Windows fatal exception: access violation
-
-Thread 0x00005878 (most recent call first):
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 189 in __iter__
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 356 in _run
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\__init__.py", line 216 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Current thread 0x000079d8 (most recent call first):
-  File "D:\RaiderKit\app.py", line 114 in <lambda>
-  File "D:\RaiderKit\app.py", line 441 in main
-  File "D:\RaiderKit\app.py", line 445 in <module>
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1fc70f7d300, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x2cb2dc02060, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1437d9cebc0, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x2981b75ad20, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1bf98a58190, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1fe8bda4a10, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1e3455eb320, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x2b156a3d720, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x19aaf7a9cf0, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x234b38b7f00, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x1e33dca9f60, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x185e3b7d760, name="hideButton")  does not have a property named  "alignment"
-Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
-Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x2a0ab3fc6b0, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: QPushButton(0x22e93919430, name="hideButton")  does not have a property named  "alignment"
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x240534f85f0, name="hideButton")  does not have a property named  "alignment"
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x2b9c0a10260, name="hideButton")  does not have a property named  "alignment"
 Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
 Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
-Qt message [QtWarningMsg]: QPushButton(0x17ad3fb7220, name="hideButton")  does not have a property named  "alignment"
-Fatal Python error: Aborted
-
-Thread 0x00007784 (most recent call first):
-  File "D:\RaiderKit\ocr_service.py", line 25 in _read_exact
-  File "D:\RaiderKit\ocr_service.py", line 35 in _receive
-  File "D:\RaiderKit\ocr_service.py", line 70 in readtext
-  File "D:\RaiderKit\recognition.py", line 413 in read_banner_text
-  File "D:\RaiderKit\recognition.py", line 786 in recognize_slot
-  File "D:\RaiderKit\recognition.py", line 848 in recognize_current_grid
-  File "D:\RaiderKit\main.py", line 125 in worker
-  File "C:\Python312\Lib\threading.py", line 1012 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Thread 0x00007174 (most recent call first):
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 189 in __iter__
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 356 in _run
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\__init__.py", line 216 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Current thread 0x00002460 (most recent call first):
-  File "D:\RaiderKit\overlay.py", line 537 in update_status
-  File "D:\RaiderKit\app.py", line 446 in main
-  File "D:\RaiderKit\app.py", line 450 in <module>
-
-Extension modules: shiboken6.Shiboken, PySide6.QtCore, PySide6.QtGui, PySide6.QtWidgets, _wmi, PIL._imaging, PIL._imagingft, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, _cyutility, scipy._cyutility, scipy._lib._ccallback_c, charset_normalizer.md, charset_normalizer.cd, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._generator, numpy.random._mt19937, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, scipy.ndimage._nd_image, scipy.ndimage._rank_filter_1d, scipy.special._ufuncs_cxx, scipy.linalg._fblas, scipy.linalg._flapack, scipy.linalg._batched_linalg, scipy.linalg._cythonized_array_utils, scipy.linalg._solve_toeplitz, scipy.linalg._internal_matfuncs, scipy.linalg._linalg_pythran, scipy.linalg.cython_blas, scipy.linalg.cython_lapack, scipy.linalg._decomp_update, scipy.special._ellip_harm_2, scipy.special._special_ufuncs, scipy.special._gufuncs, scipy.special._ufuncs, scipy.special._specfun, scipy.special._comb, _ni_label, scipy.ndimage._ni_label, PIL._imagingmath (total: 45)
-Qt message [QtWarningMsg]: QThreadStorage: entry 1 destroyed before end of thread 0x17ad3ef96c0
-Qt message [QtWarningMsg]: QThreadStorage: entry 0 destroyed before end of thread 0x17ad3ef96c0
-Windows fatal exception: access violation
-
-Thread 0x00007784 (most recent call first):
-  File "D:\RaiderKit\ocr_service.py", line 25 in _read_exact
-  File "D:\RaiderKit\ocr_service.py", line 35 in _receive
-  File "D:\RaiderKit\ocr_service.py", line 70 in readtext
-  File "D:\RaiderKit\recognition.py", line 413 in read_banner_text
-  File "D:\RaiderKit\recognition.py", line 786 in recognize_slot
-  File "D:\RaiderKit\recognition.py", line 848 in recognize_current_grid
-  File "D:\RaiderKit\main.py", line 125 in worker
-  File "C:\Python312\Lib\threading.py", line 1012 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Thread 0x00007174 (most recent call first):
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 189 in __iter__
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\win32.py", line 356 in _run
-  File "C:\Users\Martin\AppData\Roaming\Python\Python312\site-packages\pynput\_util\__init__.py", line 216 in run
-  File "C:\Python312\Lib\threading.py", line 1075 in _bootstrap_inner
-  File "C:\Python312\Lib\threading.py", line 1032 in _bootstrap
-
-Current thread 0x00002460 (most recent call first):
-  File "D:\RaiderKit\overlay.py", line 537 in update_status
-  File "D:\RaiderKit\app.py", line 446 in main
-  File "D:\RaiderKit\app.py", line 450 in <module>
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x22f47172d80, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x24a34bb6c40, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x1d21ee64a90, name="hideButton")  does not have a property named  "alignment"
+Qt message [QtWarningMsg]: SetProcessDpiAwarenessContext() failed: Access is denied.
+Qt's default DPI awareness context is DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2. If you know what you are doing, you can overwrite this default using qt.conf (https://doc.qt.io/qt-6/highdpi.html#configuring-windows).
+Qt message [QtWarningMsg]: QPushButton(0x1fe58c5b6a0, name="hideButton")  does not have a property named  "alignment"

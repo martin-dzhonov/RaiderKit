@@ -250,7 +250,7 @@ class OverlayLoadoutsMixin:
 
         load.setObjectName("scan")
 
-        load.setFixedSize(64, 37)
+        load.setFixedSize(64, 27)
 
         load.setEnabled(self.initialization_complete)
 

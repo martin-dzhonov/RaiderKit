@@ -136,7 +136,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         geometry = screen.availableGeometry()
 
         self.move(
-            geometry.left() + 150,
+            geometry.left() + 157,
             geometry.top(),
         )
 

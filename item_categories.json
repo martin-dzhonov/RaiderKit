@@ -16,8 +16,18 @@
         "medium_shield"
     ],
     "weapons": [
+        "BANTAM I_01",
+        "BANTAM I_02",
+        "BANTAM I_03",
+        "BANTAM I_04",
         "BURLETTA III_01",
-        "RASCAL I_01"
+        "FERRO III_01",
+        "HAIRPIN IV_01",
+        "RASCAL I_01",
+        "STITCHER I_01",
+        "STITCHER I_02",
+        "STITCHER I_03",
+        "TORRENTE I_01"
     ],
     "ammo": [
         "energy_clip",

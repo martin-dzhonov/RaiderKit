@@ -100,7 +100,7 @@ class OverlayUIMixin:
         self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH)
 
         actions_panel_layout = QGridLayout(self.actions_panel)
-        actions_panel_layout.setContentsMargins(0, 0, 0, 0)
+        actions_panel_layout.setContentsMargins(8, 0, 0, 0)
         actions_panel_layout.setSpacing(0)
 
         actions_content = QWidget()
@@ -224,7 +224,7 @@ class OverlayUIMixin:
         loadouts_layout.setSpacing(8)
 
         self.loadout_list = QHBoxLayout()
-        self.loadout_list.setContentsMargins(0, 0, 0, 0)
+        self.loadout_list.setContentsMargins(0, 2, 0, 6)
         self.loadout_list.setSpacing(LOADOUT_CARD_GAP)
         self.loadout_list.setAlignment(
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
@@ -267,6 +267,7 @@ class OverlayUIMixin:
 
         layout.addWidget(self.actions_panel, 0)
         layout.addWidget(self.panel_divider, 0)
+        layout.addSpacing(8)
         layout.addWidget(self.loadouts_panel, 1)
         actions_panel_layout.addWidget(self.loadout_result_widget, 0, 0)
 
