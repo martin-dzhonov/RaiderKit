@@ -4,7 +4,7 @@ import re
 import warnings
 from pathlib import Path
 
-import easyocr
+import ocr_service
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
@@ -46,6 +46,8 @@ TAB_TEMPLATES = {}
 BIG_TEMPLATES = []
 OCR_READER = None
 CURRENT_TAB = None
+# Stash tabs whose items never stack, so no quantity OCR is needed.
+SINGLE_ITEM_TABS = ("weapons", "augment", "shields")
 
 _set_status = None
 _is_cancelled = None
@@ -332,11 +334,8 @@ def initialize(
         )
 
     try:
-        OCR_READER = easyocr.Reader(
-            ["en"],
-            gpu=False,
-            verbose=False,
-        )
+        OCR_READER = ocr_service.get_service()
+        OCR_READER.start()
     except Exception:
         OCR_READER = None
         logger.exception("Failed to initialize EasyOCR")
@@ -775,7 +774,9 @@ def recognize_slot(
     if grid_config is utils.GRID_CONFIGS["stash"] and name.casefold() == "empty":
         return None
 
-    if is_weapon_tab:
+    if is_weapon_tab or (
+        grid_config is utils.GRID_CONFIGS["stash"] and CURRENT_TAB in SINGLE_ITEM_TABS
+    ):
         banner_text = "1"
     else:
         should_read_quantity = requested_names is None or name in requested_names

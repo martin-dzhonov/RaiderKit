@@ -1,35 +1,4 @@
 {
-    "New Loadout 4": {
-        "light_ammo": 104,
-        "ARPEGGIO II_04": 1,
-        "STITCHER I_02": 1,
-        "heavy_fuze_grenade": 3
-    },
-    "New Loadout": {
-        "light_ammo": 104,
-        "ARPEGGIO II_03": 1,
-        "STITCHER II_02": 1,
-        "heavy_fuze_grenade": 3
-    },
-    "New Loadout 2": {
-        "light_ammo": 104,
-        "ARPEGGIO II_05": 1,
-        "STITCHER II_03": 1,
-        "heavy_fuze_grenade": 3
-    },
-    "New Loadout 3": {
-        "light_ammo": 104,
-        "ARPEGGIO II_06": 1,
-        "STITCHER II_04": 1,
-        "heavy_fuze_grenade": 3
-    },
-    "New Loadout 5": {
-        "light_ammo": 4
-    },
-    "New Loadout 6": {
-        "looting_mk3": 1,
-        "light_shield": 1
-    },
     "New Loadout 7": {
         "light_ammo": 129,
         "launcher_ammo": 24,
@@ -40,166 +9,55 @@
         "ANVIL I_01": 1,
         "heavy_fuze_grenade": 3
     },
-    "New Loadout 8": {
+    "New Loadout": {
         "light_ammo": 129,
-        "launcher_ammo": 24,
         "heavy_ammo": 18,
+        "launcher_ammo": 24,
         "looting_mk3": 1,
         "light_shield": 1,
         "TEMPEST I_02": 1,
-        "ANVIL I_02": 1,
+        "BURLETTA I_01": 1,
         "heavy_fuze_grenade": 3
     },
-    "New Loadout 9": {
-        "light_ammo": 129,
+    "New Loadout 2": {
         "launcher_ammo": 24,
-        "heavy_ammo": 18,
         "looting_mk3": 2,
+        "medium_shield": 1,
         "light_shield": 2,
-        "TEMPEST I_03": 1,
-        "ANVIL I_03": 1,
-        "heavy_fuze_grenade": 3
+        "BURLETTA I_02": 1,
+        "STITCHER II_02": 1,
+        "heavy_fuze_grenade": 3,
+        "powered_descender": 1,
+        "jolt_mine": 3
     },
-    "New Loadout 10": {
-        "launcher_ammo": 24,
-        "medium_ammo": 80,
-        "looting_mk3": 2,
+    "New Loadout 3": {
         "light_shield": 2,
-        "TORRENTE I_01": 1,
-        "HAIRPIN I_01": 1,
-        "vita_spray": 1,
+        "medium_shield": 1,
+        "launcher_ammo": 24,
+        "BURLETTA I_03": 1,
+        "jolt_mine": 3,
+        "heavy_fuze_grenade": 3,
         "powered_descender": 1
     },
-    "New Loadout 11": {
-        "light_ammo": 29,
-        "medium_ammo": 160,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "BURLETTA A_01": 1,
-        "ARPEGGIO II_07": 1,
-        "showstopper": 4,
-        "zipline": 3,
-        "herbal_bandage": 5,
-        "shrapnel_grenade": 1
-    },
-    "New Loadout 12": {
-        "light_ammo": 29,
-        "medium_ammo": 160,
-        "light_shield": 2,
-        "noisemaker": 3,
-        "yellow_light_stick": 1,
-        "showstopper": 4,
-        "looting_mk2": 1,
-        "BURLETTA A_02": 1,
-        "ARPEGGIO II_08": 1,
-        "snap_hook": 1,
-        "deadline": 1,
-        "shrapnel_grenade": 1
-    },
-    "New Loadout 13": {
-        "light_ammo": 29,
-        "medium_ammo": 160,
-        "light_shield": 2,
-        "noisemaker": 3,
-        "yellow_light_stick": 1,
-        "showstopper": 4,
-        "looting_mk2": 1,
-        "BURLETTA A_03": 1,
-        "ARPEGGIO II_09": 1,
-        "snap_hook": 1,
-        "deadline": 1,
-        "shrapnel_grenade": 1
-    },
-    "New Loadout 14": {
-        "light_shield": 2,
-        "medium_ammo": 194,
-        "light_ammo": 29,
-        "adrenaline_shot": 4,
-        "looting_mk2": 1,
-        "HULLCRACKER IV_01": 1,
-        "STITCHER I_03": 1,
-        "showstopper": 4,
-        "deadline": 1
-    },
-    "New Loadout 16": {
-        "light_shield": 2,
-        "medium_ammo": 194,
-        "light_ammo": 29,
-        "looting_mk2": 1,
-        "HULLCRACKER IV_03": 1,
-        "STITCHER II_05": 1,
-        "showstopper": 4,
-        "deadline": 1,
-        "adrenaline_shot": 5
-    },
-    "New Loadout 15": {
-        "light_shield": 2,
-        "medium_ammo": 194,
-        "light_ammo": 29,
-        "looting_mk2": 1,
-        "HULLCRACKER IV_02": 1,
-        "STITCHER II_06": 1
-    },
-    "New Loadout 17": {
-        "light_shield": 2,
-        "medium_ammo": 194,
-        "light_ammo": 29,
-        "looting_mk2": 1,
-        "HULLCRACKER IV_05": 1,
-        "STITCHER II_08": 1
-    },
-    "New Loadout 18": {
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "TORRENTE I_02": 1,
-        "RASCAL I_01": 1,
-        "wolfpack": 1,
-        "blaze_grenade": 5
-    },
-    "New Loadout 19": {
+    "New Loadout 4": {
         "looting_mk3": 2,
         "light_shield": 2,
-        "RASCAL I_02": 1,
-        "VENATOR II_01": 1,
-        "blaze_grenade": 6,
-        "wolfpack": 1
-    },
-    "New Loadout 20": {
-        "tactical_mk3": 1,
-        "light_shield": 2,
-        "combat_mk3": 1,
-        "RASCAL I_03": 1,
-        "ARPEGGIO II_10": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 21": {
-        "combat_mk2": 1,
-        "light_shield": 2,
-        "heavy_shield": 1,
-        "combat_mk3": 1,
-        "RASCAL I_04": 1,
-        "ARPEGGIO III_01": 1,
-        "heavy_fuze_grenade": 6
-    },
-    "New Loadout 22": {
-        "combat_mk2": 1,
-        "light_shield": 2,
-        "heavy_shield": 1,
-        "combat_mk3": 1,
-        "RASCAL I_05": 1,
-        "ARPEGGIO III_02": 1,
-        "heavy_fuze_grenade": 6,
-        "vita_spray": 1,
-        "snap_hook": 1
-    },
-    "New Loadout 23": {
-        "light_ammo": 129,
-        "heavy_ammo": 18,
+        "medium_shield": 1,
         "launcher_ammo": 24,
-        "looting_mk3": 1,
-        "light_shield": 1,
-        "TEMPEST I_04": 1,
-        "ARPEGGIO III_03": 1,
-        "heavy_fuze_grenade": 3
+        "BURLETTA I_04": 1,
+        "jolt_mine": 3,
+        "heavy_fuze_grenade": 3,
+        "powered_descender": 1
+    },
+    "New Loadout 5": {
+        "looting_mk3": 2,
+        "light_shield": 2,
+        "medium_shield": 1,
+        "launcher_ammo": 24,
+        "STITCHER II_03": 1,
+        "RASCAL I_01": 1,
+        "jolt_mine": 3,
+        "heavy_fuze_grenade": 3,
+        "powered_descender": 1
     }
 }

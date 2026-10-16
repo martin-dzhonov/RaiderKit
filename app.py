@@ -32,7 +32,7 @@ from common import load_stylesheet
 
 logger = logging.getLogger(__name__)
 
-ENABLE_GLOBAL_HOTKEYS = False
+ENABLE_GLOBAL_HOTKEYS = True
 
 
 class InitializationWorker(QThread):
@@ -351,11 +351,29 @@ def create_tray_icon(app, overlay):
     return tray
 
 
+def _install_qt_message_handler():
+    """Route Qt's own warnings/fatal messages into the log and crash.log."""
+    from PySide6.QtCore import qInstallMessageHandler
+
+    def handler(mode, context, message):
+        logger.error("Qt message [%s]: %s", mode.name, message)
+        if crash_log_file is not None:
+            crash_log_file.write(f"Qt message [{mode.name}]: {message}\n")
+
+    qInstallMessageHandler(handler)
+
+
+crash_log_file = None
+
+
 def main():
+    global crash_log_file
+
     # Native crashes print no Python traceback unless faulthandler is enabled.
     # Also write to a file, since the console can close with the process.
-    crash_log = open(Path(__file__).with_name("crash.log"), "a", buffering=1)
-    faulthandler.enable(file=crash_log, all_threads=True)
+    crash_log_file = open(Path(__file__).with_name("crash.log"), "a", buffering=1)
+    faulthandler.enable(file=crash_log_file, all_threads=True)
+    _install_qt_message_handler()
     threading.excepthook = lambda args: logger.error(
         "Unhandled exception in thread %s",
         args.thread.name if args.thread else "?",

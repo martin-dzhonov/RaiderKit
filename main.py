@@ -581,6 +581,53 @@ def alt_shift_click(x, y):
         pyautogui.keyUp("alt")
 
 
+def _item_stack_size(item):
+    if recognition.CURRENT_TAB in recognition.SINGLE_ITEM_TABS:
+        return 1
+
+    banner_text = item.get("banner_text")
+    if banner_text is None or not str(banner_text).strip():
+        return 1
+
+    try:
+        return int(str(banner_text).strip())
+    except (TypeError, ValueError):
+        return 0
+
+
+def _select_best_matches(items, remaining):
+    """Pick the highest-SSIM matches per item until the requested amount is covered."""
+    by_name = {}
+    for item in items:
+        by_name.setdefault(item["name"], []).append(item)
+
+    selected = []
+    for name, candidates in by_name.items():
+        needed = remaining.get(name, 0)
+        candidates.sort(key=lambda item: -item["score"])
+
+        for item in candidates:
+            if needed <= 0:
+                break
+
+            stack_size = _item_stack_size(item)
+            if stack_size <= 0:
+                continue
+
+            selected.append(item)
+            needed -= stack_size
+
+        if len(selected) < len(items):
+            logger.info(
+                "Stash viewport: selected best %s matches for '%s' (top SSIM %.2f)",
+                recognition.CURRENT_TAB,
+                name,
+                candidates[0]["score"],
+            )
+
+    return selected
+
+
 def move_requested_items(
     requested_items,
     remaining=None,
@@ -654,24 +701,14 @@ def move_requested_items(
 
         found_stacks += len(items)
 
-        if recognition.CURRENT_TAB in ("augment", "weapons"):
-            items.sort(
-                key=lambda item: (
-                    -item["score"],
-                    item.get("row_top", 0),
-                    item.get("slot_index", 0),
-                )
-            )
-            if len(items) > 1:
-                logger.info(
-                    "Stash viewport: processing %d %s matches from highest SSIM %.2f first",
-                    len(items),
-                    recognition.CURRENT_TAB,
-                    items[0]["score"],
-                )
-            items_to_process = items
-        else:
-            items_to_process = reversed(items)
+        if recognition.CURRENT_TAB in recognition.SINGLE_ITEM_TABS:
+            # Keep only the best-scoring matches needed to fill each request.
+            items = _select_best_matches(items, remaining)
+
+        # Always move from the last slot to the first: the grid compacts
+        # toward the start, so removing front-first shifts later items.
+        items.sort(key=lambda item: (item.get("row_top", 0), item.get("slot_index", 0)))
+        items_to_process = reversed(items)
 
         for item in items_to_process:
             if is_cancelled():
@@ -684,8 +721,8 @@ def move_requested_items(
 
             banner_text = item["banner_text"]
 
-            # Weapons in the weapons stash tab are always single items.
-            if recognition.CURRENT_TAB == "weapons":
+            # Single-item tabs are always one item per slot.
+            if recognition.CURRENT_TAB in recognition.SINGLE_ITEM_TABS:
                 stack_size = 1
             elif banner_text is None or not str(banner_text).strip():
                 stack_size = 1

@@ -2,7 +2,7 @@ import logging
 import os
 import time
 
-import easyocr
+import ocr_service
 import numpy as np
 import pyautogui
 
@@ -27,12 +27,7 @@ _OCR_READER = None
 
 
 def get_ocr_reader():
-    global _OCR_READER
-
-    if _OCR_READER is None:
-        _OCR_READER = easyocr.Reader(["en"], gpu=False)
-
-    return _OCR_READER
+    return ocr_service.get_service()
 
 
 def find_popup_left_border(image, start_x, y):
