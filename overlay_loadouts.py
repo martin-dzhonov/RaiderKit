@@ -1,6 +1,6 @@
 import re
 
-from PySide6.QtCore import QPropertyAnimation, QRect, QSize, Qt
+from PySide6.QtCore import QPropertyAnimation, QRect, QSize, Qt, QTimer
 from PySide6.QtGui import QColor, QIcon, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from common import (
+    BASE_DIR,
     ICONS_DIR,
     LOADOUT_CARD_WIDTH,
     LOADOUT_CARD_GAP,
@@ -29,6 +30,9 @@ from common import (
     get_item_categories,
     get_item_display_name,
 )
+
+LOADOUT_BLOCK_ITEMS = LOADOUT_ITEM_COLUMNS * 2
+EXPAND_ITEM_ICON = BASE_DIR / "assets/blank/item_blank.png"
 
 CATEGORY_PRESENTATION = {
     "augment": ("Augment", "Icon_Augment.png"),
@@ -144,25 +148,46 @@ class OverlayLoadoutsMixin:
         self._resize_for_loadout_count()
 
     def _resize_for_loadout_count(self):
-        visible_count = min(len(self.loadouts), LOADOUTS_MAX_VISIBLE_CARDS)
+        visible_widths = [
+            self._loadout_card_width(name)
+            for name in list(reversed(list(self.loadouts)))[
+                :LOADOUTS_MAX_VISIBLE_CARDS
+            ]
+        ]
 
-        if visible_count == 0:
+        if not visible_widths:
             panel_width = LOADOUTS_EMPTY_PANEL_WIDTH
         else:
-            panel_width = (
-                visible_count * LOADOUT_CARD_WIDTH
-                + (visible_count - 1) * LOADOUT_CARD_GAP
+            panel_width = sum(visible_widths) + (len(visible_widths) - 1) * LOADOUT_CARD_GAP
+            panel_width = max(
+                panel_width,
+                max(self._loadout_card_width(name) for name in self.loadouts),
             )
 
         self.loadouts_panel.setFixedWidth(panel_width)
         self.setFixedWidth(WINDOW_FIXED_WIDTH + panel_width)
+
+    def _loadout_card_width(self, name):
+        pages = getattr(self, "loadout_pages", {}).get(name, 1)
+        return LOADOUT_CARD_WIDTH * pages + LOADOUT_CARD_GAP * (pages - 1)
+
+    def expand_loadout(self, name):
+        """Show the next block of items for a loadout card."""
+        if not hasattr(self, "loadout_pages"):
+            self.loadout_pages = {}
+        self.loadout_pages[name] = self.loadout_pages.get(name, 1) + 1
+
+        scrollbar = self.scroll_area.horizontalScrollBar()
+        position = scrollbar.value()
+        self.refresh_loadouts()
+        scrollbar.setValue(position)
 
     def _create_loadout_entry(self, name, loadout):
 
         entry = QWidget()
 
         entry.setObjectName("loadoutEntry")
-        entry.setFixedWidth(LOADOUT_CARD_WIDTH)
+        entry.setFixedWidth(self._loadout_card_width(name))
 
         entry_layout = QVBoxLayout(entry)
 
@@ -279,12 +304,25 @@ class OverlayLoadoutsMixin:
         animation.setLoopCount(-1)
         self.loadout_equip_animations[name] = animation
 
-        entry_layout.addWidget(self._create_loadout_contents(loadout), 1)
+        entry_layout.addWidget(
+            self._create_loadout_contents(
+                loadout,
+                max_blocks=getattr(self, "loadout_pages", {}).get(name, 1),
+                on_expand=lambda n=name: QTimer.singleShot(
+                    0, lambda: self.expand_loadout(n)
+                ),
+            ),
+            1,
+        )
 
         return entry
 
-    def _create_loadout_contents(self, loadout):
-        """Create a grid of item icons and quantities."""
+    def _create_loadout_contents(self, loadout, max_blocks=None, on_expand=None):
+        """Create a grid of item icons and quantities.
+
+        With max_blocks, items fill blocks of LOADOUT_BLOCK_ITEMS slots laid out
+        side by side; the last slot becomes an expand button if items remain.
+        """
 
         contents = QWidget()
 
@@ -311,9 +349,16 @@ class OverlayLoadoutsMixin:
             return contents
 
         columns = LOADOUT_ITEM_COLUMNS
+        sorted_items = list(self._sort_loadout_items(loadout))
+        display_items = sorted_items
 
-        # Reserve every column so short grids keep the same slot positions as full ones.
-        for column in range(columns):
+        if max_blocks is not None:
+            slot_limit = LOADOUT_BLOCK_ITEMS * max_blocks
+
+            if len(sorted_items) > slot_limit:
+                display_items = sorted_items[: slot_limit - 1] + [None]
+
+        for column in range(columns * (max_blocks or 1)):
             grid.setColumnStretch(column, 1)
         categories = get_item_categories()
         item_categories = {
@@ -323,11 +368,18 @@ class OverlayLoadoutsMixin:
         }
         weapon_names = categories.get("weapons", set())
 
-        for index, (name, quantity) in enumerate(self._sort_loadout_items(loadout)):
+        for index, display_item in enumerate(display_items):
 
-            row_index = index // columns
+            is_expand_slot = display_item is None
+            name, quantity = ("", 0) if is_expand_slot else display_item
 
-            column_index = index % columns
+            if max_blocks is None:
+                row_index = index // columns
+                column_index = index % columns
+            else:
+                block, offset = divmod(index, LOADOUT_BLOCK_ITEMS)
+                row_index = offset // columns
+                column_index = block * columns + offset % columns
 
             item_widget = QWidget()
 
@@ -353,7 +405,12 @@ class OverlayLoadoutsMixin:
                 LOADOUT_ITEM_SLOT_SIZE,
             )
 
-            slot.setToolTip(get_item_display_name(name))
+            if is_expand_slot:
+                slot.setToolTip("Show more items")
+                slot.setCursor(Qt.CursorShape.PointingHandCursor)
+                slot.mousePressEvent = lambda event, callback=on_expand: callback()
+            else:
+                slot.setToolTip(get_item_display_name(name))
 
             slot_layout = QGridLayout(slot)
 
@@ -363,7 +420,9 @@ class OverlayLoadoutsMixin:
 
             category = item_categories.get(name)
             image_path = None
-            if category is not None:
+            if is_expand_slot:
+                image_path = EXPAND_ITEM_ICON
+            elif category is not None:
                 for extension in ("webp", "png"):
                     candidate = TEMPLATE_DIR / category / f"{name}.{extension}"
                     if candidate.is_file():
@@ -402,7 +461,9 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            if category not in {"augment", "shields"} or quantity > 1:
+            if not is_expand_slot and (
+                category not in {"augment", "shields"} or quantity > 1
+            ):
                 quantity_text = f"×{quantity}"
                 if name in weapon_names:
                     weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)

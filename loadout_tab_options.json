@@ -1,1 +1,51 @@
-{}
+{
+    "New Loadout": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 2": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 3": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 4": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 5": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 6": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    },
+    "New Loadout 7": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    }
+}
