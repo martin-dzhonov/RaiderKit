@@ -1,1 +1,9 @@
-{}
+{
+    "New Loadout 4": {
+        "augment": true,
+        "shields": true,
+        "weapons": true,
+        "ammo": true,
+        "quickuse": true
+    }
+}

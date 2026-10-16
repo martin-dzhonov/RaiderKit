@@ -69,7 +69,7 @@ class FinalInventoryActionsWorker(QThread):
 
 
 class HotkeyListener:
-    """Listen for F5 visibility toggles and Escape cancellation globally."""
+    """Listen for F5 visibility toggles and Space cancellation globally."""
 
     def __init__(self, callback, cancel_callback):
         self.callback = callback
@@ -77,7 +77,7 @@ class HotkeyListener:
         self.listener = keyboard.GlobalHotKeys(
             {
                 "<f5>": self._on_f5,
-                "<esc>": self._on_escape,
+                "<space>": self._on_cancel,
             }
         )
         self.listener.start()
@@ -86,7 +86,7 @@ class HotkeyListener:
         # pynput invokes this from its listener thread.
         self.callback()
 
-    def _on_escape(self):
+    def _on_cancel(self):
         self.cancel_callback()
 
     def stop(self):

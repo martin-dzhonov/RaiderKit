@@ -114,6 +114,8 @@ ITEM_NAMES = {
     "yank_grenade": "Yank Grenade",
     "yellow_light_stick": "Yellow Light Stick",
     "zipline": "Zipline",
+    "powered_descender": "Powered Descender",
+    "gas_mine": "Gas Mine",
 }
 
 
@@ -162,14 +164,9 @@ def refresh_item_categories():
             and path.stem.casefold() != "empty"
         }
 
-    category_order = [
-        category for category in existing_order if category in discovered
-    ]
+    category_order = [category for category in existing_order if category in discovered]
     category_order.extend(sorted(set(discovered).difference(category_order)))
-    categories = {
-        category: discovered[category]
-        for category in category_order
-    }
+    categories = {category: discovered[category] for category in category_order}
     if not categories:
         raise ValueError(f"No item category folders found in '{TEMPLATE_DIR}'.")
 
@@ -284,8 +281,7 @@ def save_loadout_tab_options(options):
 def read_loadout_tab_options(loadout_names):
     category_names = get_item_categories()
     options = {
-        name: {category: True for category in category_names}
-        for name in loadout_names
+        name: {category: True for category in category_names} for name in loadout_names
     }
     if not LOADOUT_TAB_OPTIONS_FILE.exists():
         return options

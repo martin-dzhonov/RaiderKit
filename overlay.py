@@ -198,7 +198,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_progress_bar.setValue(0)
         self.scan_progress_bar.setRange(0, 1000)
         self.scan_progress_bar.show()
-        self.scan_cancel_hint.setVisible(show_cancel_hint)
+        self.scan_cancel_hint.show()
 
         self.loadout_result_label.setProperty("resultType", "progress")
         self.loadout_result_label.setText(self.scan_status_message)
@@ -306,7 +306,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         ):
             return
 
-        logger.info("Escape pressed: cancelling the current save/load operation")
+        logger.info("Space pressed: cancelling the current save/load operation")
         automation.scan_cancel_event.set()
 
     def clear_player_inventory(self):

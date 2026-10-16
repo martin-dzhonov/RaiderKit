@@ -96,6 +96,7 @@ class OverlayUIMixin:
 
         self.actions_panel = QWidget()
         self.actions_panel.setObjectName("actionsPanel")
+
         self.actions_panel.setFixedWidth(ACTIONS_PANEL_WIDTH)
 
         actions_panel_layout = QGridLayout(self.actions_panel)
@@ -146,13 +147,14 @@ class OverlayUIMixin:
 
         self.loadout_result_widget = QWidget()
         self.loadout_result_widget.setObjectName("loadoutResultContainer")
+
         self.loadout_result_widget.setSizePolicy(
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Expanding,
         )
 
         result_layout = QVBoxLayout(self.loadout_result_widget)
-        result_layout.setContentsMargins(0, 0, 0, 60)
+        result_layout.setContentsMargins(0, 0, 0, 0)
         result_layout.setSpacing(13)
         result_layout.addStretch(1)
 
@@ -168,7 +170,7 @@ class OverlayUIMixin:
         self.loadout_result_label.setObjectName("loadoutResultText")
         self.loadout_result_label.setWordWrap(True)
         self.loadout_result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.loadout_result_label.setMinimumHeight(40)
+        self.loadout_result_label.setMinimumHeight(45)
         self.loadout_result_label.setContentsMargins(0, 0, 0, 0)
         self.loadout_result_label.hide()
 
@@ -179,7 +181,7 @@ class OverlayUIMixin:
             Qt.AlignmentFlag.AlignHCenter,
         )
 
-        self.scan_cancel_hint = QLabel("[ESC] to cancel")
+        self.scan_cancel_hint = QLabel("[SPACE] to cancel")
         self.scan_cancel_hint.setObjectName("scanCancelHint")
         self.scan_cancel_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.scan_cancel_hint.hide()
