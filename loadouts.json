@@ -1,21 +1,11 @@
 {
-    "Pistols": {
+    "New Loadout": {
         "light_ammo": 200,
         "heavy_ammo": 60,
         "looting_mk2": 1,
         "light_shield": 1,
         "BURLETTA III_01": 1,
         "ANVIL I_01": 1,
-        "shield_recharger": 5,
-        "herbal_bandage": 5
-    },
-    "New Loadout": {
-        "light_ammo": 200,
-        "heavy_ammo": 60,
-        "looting_mk2": 1,
-        "light_shield": 1,
-        "BURLETTA III_02": 1,
-        "ANVIL I_02": 1,
         "shield_recharger": 5,
         "herbal_bandage": 5
     }

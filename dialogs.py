@@ -134,7 +134,9 @@ class GeneratedLoadoutDialog(OverlayLoadoutsMixin, QDialog):
 
     def showEvent(self, event):
         super().showEvent(event)
-
+        self.activateWindow()
+        self.name_input.setFocus()
+        self.name_input.selectAll()
         parent = self.parentWidget()
         if parent is None:
             return

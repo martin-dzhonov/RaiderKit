@@ -97,7 +97,7 @@ QWidget#emptyLoadoutsState {
 
 QLabel#emptyLoadoutsMessage {
     background: transparent;
-    color: rgba(190, 220, 255, 25);
+    color: rgba(190, 220, 255, 40);
     font-size: 20px;
     font-weight: 700;
 }

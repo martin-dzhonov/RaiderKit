@@ -248,7 +248,7 @@ class OverlayLoadoutsMixin:
             lambda checked=False, n=name: self.delete_loadout_operation(self, n)
         )
 
-        load = QPushButton("EQUIP")
+        load = QPushButton("Equip")
 
         load.setObjectName("scan")
 
