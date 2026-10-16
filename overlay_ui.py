@@ -177,6 +177,12 @@ class OverlayUIMixin:
             Qt.AlignmentFlag.AlignHCenter,
         )
 
+        self.scan_cancel_hint = QLabel("[ESC] to cancel")
+        self.scan_cancel_hint.setObjectName("scanCancelHint")
+        self.scan_cancel_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.scan_cancel_hint.hide()
+        result_layout.addWidget(self.scan_cancel_hint)
+
         # OK appears underneath the missing-items message.
         self.loadout_result_ok_button = QPushButton("OK")
         self.loadout_result_ok_button.setObjectName("loadoutResultOkButton")
@@ -196,11 +202,6 @@ class OverlayUIMixin:
 
         actions_layout.setSpacing(8)
         actions_layout.addStretch(1)
-
-        self.hint = QLabel("Ctrl+R  ·  Show / Hide")
-        self.hint.setObjectName("hint")
-        self.hint.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        actions_layout.addWidget(self.hint)
 
         # LOADOUTS PANEL
 
@@ -285,14 +286,19 @@ class OverlayUIMixin:
         layout.addStretch()
 
         for text, name, tip, callback in (
-            ("Hide", "hideButton", "Hide overlay to tray", self.hide),
+            (
+                "Hide · F5",
+                "hideButton",
+                "Hide overlay; press F5 to show or hide it",
+                self.hide,
+            ),
             ("Shut Down", "closeButton", "Quit RaiderKit", self.quit_app),
         ):
 
             button = QPushButton(text)
             button.setObjectName(name)
             button.setFixedSize(
-                70 if name == "closeButton" else 50,
+                70 if name == "closeButton" else 82,
                 28,
             )
             button.setToolTip(tip)

@@ -62,6 +62,10 @@ loadout_results = Queue()
 scan_cancel_event = threading.Event()
 
 
+class ScanCancelled(Exception):
+    """Raised when the active inventory or stash operation is cancelled."""
+
+
 def set_status(message):
     message = str(message)
     if message in ("Ready", "Done", "Saving Loadout\nHold On"):
@@ -70,6 +74,11 @@ def set_status(message):
 
 def is_cancelled():
     return scan_cancel_event.is_set()
+
+
+def raise_if_cancelled():
+    if is_cancelled():
+        raise ScanCancelled("Operation cancelled.")
 
 
 def scan_player_inventory():
@@ -217,11 +226,14 @@ def unique_weapon_item_id(name, slot_label, used_item_ids):
 def perform_player_inventory_save_actions(initial_image=None):
     completed_drags = []
     weapon_item_ids = []
+    generated_crop_paths = []
 
     try:
+        raise_if_cancelled()
         logger.info("Player inventory save: analyzing inventory")
         image = initial_image if initial_image is not None else utils.capture_screen()
         grid_result = player_main_scanner.scan_inventory(image)
+        raise_if_cancelled()
 
         occupied_sources = [
             (x, y)
@@ -275,6 +287,7 @@ def perform_player_inventory_save_actions(initial_image=None):
             zip(drag_sources, destinations),
             start=1,
         ):
+            raise_if_cancelled()
             logger.info(
                 "[box%d] Starting hover and OCR at %s",
                 source_index,
@@ -285,6 +298,7 @@ def perform_player_inventory_save_actions(initial_image=None):
                 slot_label=f"box{source_index}",
                 ocr_reader=recognition.OCR_READER,
             )
+            raise_if_cancelled()
 
             if not weapon_name:
                 raise RuntimeError(
@@ -306,13 +320,16 @@ def perform_player_inventory_save_actions(initial_image=None):
             )
             drag_inventory_item(source, destination)
             completed_drags.append((source, destination))
+            raise_if_cancelled()
 
+        raise_if_cancelled()
         logger.info("Player inventory save: capturing moved items for weapon assets")
         pyautogui.moveTo(1355, 650, duration=0.1)
 
         screenshot = utils.capture_screen()
 
         for (x, y), item_id in zip(destinations, weapon_item_ids):
+            raise_if_cancelled()
             crop = screenshot.crop(
                 (
                     x - 64,
@@ -324,14 +341,26 @@ def perform_player_inventory_save_actions(initial_image=None):
 
             crop_path = os.path.join(weapons_dir, f"{item_id}.png")
             crop.save(crop_path)
+            generated_crop_paths.append(crop_path)
             logger.info("Saved weapon crop: %s", crop_path)
 
+        raise_if_cancelled()
         refresh_weapon_templates()
         logger.info(
             "Player inventory save: saved %d weapon asset(s)",
             len(weapon_item_ids),
         )
 
+    except ScanCancelled:
+        for crop_path in generated_crop_paths:
+            try:
+                os.remove(crop_path)
+            except OSError:
+                logger.exception(
+                    "Could not remove weapon crop after cancellation: %s",
+                    crop_path,
+                )
+        raise
     finally:
         for source, destination in reversed(completed_drags):
             logger.info(

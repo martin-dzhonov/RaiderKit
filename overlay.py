@@ -164,7 +164,12 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             self.width(),
         )
 
-    def show_scan_progress(self, message, update_from_status=True):
+    def show_scan_progress(
+        self,
+        message,
+        update_from_status=True,
+        show_cancel_hint=False,
+    ):
         """Show the repeating progress bar while a scan is running."""
 
         self.loadout_result_timer.stop()
@@ -181,6 +186,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.scan_progress_bar.setValue(0)
         self.scan_progress_bar.setRange(0, 1000)
         self.scan_progress_bar.show()
+        self.scan_cancel_hint.setVisible(show_cancel_hint)
 
         self.loadout_result_label.setProperty("resultType", "progress")
         self.loadout_result_label.setText(self.scan_status_message)
@@ -204,6 +210,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         if not self.loadout_result_visible:
             self.scan_progress_bar.hide()
+            self.scan_cancel_hint.hide()
             self.loadout_result_widget.hide()
             self.loadout_result_ok_button.hide()
 
@@ -219,6 +226,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         running_message="●  A scan is already running.",
         prepare=None,
         update_progress_message=True,
+        show_cancel_hint=False,
     ):
         if not self.initialization_complete:
             self.status.setText("●  Assets are still loading.")
@@ -233,7 +241,11 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.hide_loadout_result()
         self.status.setText(status)
-        self.show_scan_progress(label, update_progress_message)
+        self.show_scan_progress(
+            label,
+            update_progress_message,
+            show_cancel_hint=show_cancel_hint,
+        )
 
         try:
             start()
@@ -267,11 +279,23 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             "●  Scanning visible inventory grid...",
             running_message="●  Please wait for the current task to finish.",
             prepare=self._prepare_player_inventory_scan,
+            show_cancel_hint=True,
         )
 
     def _prepare_player_inventory_scan(self):
         drain_queue(automation.player_inventory_results)
         self.collapse_for_inventory_save()
+
+    def cancel_current_task(self):
+        if not (
+            automation.task_running
+            or self.inventory_save_worker is not None
+            or self.scan_progress_visible
+        ):
+            return
+
+        logger.info("Escape pressed: cancelling the current save/load operation")
+        automation.scan_cancel_event.set()
 
     def clear_player_inventory(self):
         if not hasattr(automation, "clear_player_inventory"):
@@ -387,6 +411,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         self.player_scan_button.hide()
         self.clear_loadout_button.hide()
+        self.scan_cancel_hint.hide()
 
         if result_type is not None:
             self.loadout_result_label.setProperty("resultType", result_type)
@@ -414,6 +439,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             self.scan_progress_animation.stop()
             self.loadout_result_remaining = 0
             self.scan_progress_bar.hide()
+            self.scan_cancel_hint.hide()
             self.loadout_result_ok_button.show()
 
     def _advance_loadout_result(self):
@@ -448,6 +474,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             return
 
         self.scan_progress_bar.hide()
+        self.scan_cancel_hint.hide()
         self.loadout_result_widget.hide()
 
         if self.initialization_complete:

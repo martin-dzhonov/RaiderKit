@@ -45,6 +45,7 @@ class InitializationWorker(QThread):
 class FinalInventoryActionsWorker(QThread):
     succeeded = Signal(object)
     failed = Signal(str)
+    cancelled = Signal()
 
     def __init__(self, initial_image, parent=None):
         super().__init__(parent)
@@ -55,6 +56,9 @@ class FinalInventoryActionsWorker(QThread):
             weapon_item_ids = automation.perform_player_inventory_save_actions(
                 initial_image=self.initial_image,
             )
+        except automation.ScanCancelled:
+            logger.info("Final inventory actions cancelled")
+            self.cancelled.emit()
         except Exception as exc:
             logger.exception("Final inventory actions failed")
             self.failed.emit(str(exc))
@@ -63,20 +67,25 @@ class FinalInventoryActionsWorker(QThread):
 
 
 class HotkeyListener:
-    """Listen for Ctrl+R globally and request an overlay visibility toggle."""
+    """Listen for F5 visibility toggles and Escape cancellation globally."""
 
-    def __init__(self, callback):
+    def __init__(self, callback, cancel_callback):
         self.callback = callback
+        self.cancel_callback = cancel_callback
         self.listener = keyboard.GlobalHotKeys(
             {
-                "<ctrl>+r": self._on_ctrl_r,
+                "<f5>": self._on_f5,
+                "<esc>": self._on_escape,
             }
         )
         self.listener.start()
 
-    def _on_ctrl_r(self):
+    def _on_f5(self):
         # pynput invokes this from its listener thread.
         self.callback()
+
+    def _on_escape(self):
+        self.cancel_callback()
 
     def stop(self):
         if self.listener is not None:
@@ -102,6 +111,7 @@ def process_generated_loadout(overlay, inventory_scan):
     worker.failed.connect(
         lambda error: handle_inventory_actions_failure(overlay, error)
     )
+    worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
     worker.finished.connect(
         lambda: setattr(overlay, "inventory_save_worker", None)
     )
@@ -119,6 +129,12 @@ def handle_inventory_actions_failure(overlay, error):
         f"The final inventory actions or screenshot failed:\n\n{error}\n\n"
         "The generated loadout was not saved.",
     )
+
+
+def handle_inventory_actions_cancelled(overlay):
+    overlay.restore_after_inventory_save()
+    overlay.hide_scan_progress()
+    overlay.status.setText("Inventory save cancelled.")
 
 
 def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
@@ -264,11 +280,16 @@ def main():
     # Bridge the background hotkey thread to Qt's main thread.
     class HotkeyBridge(QThread):
         toggle_requested = Signal()
+        cancel_requested = Signal()
 
     hotkey_bridge = HotkeyBridge()
     hotkey_bridge.toggle_requested.connect(overlay.toggle_visibility)
+    hotkey_bridge.cancel_requested.connect(overlay.cancel_current_task)
 
-    hotkey = HotkeyListener(hotkey_bridge.toggle_requested.emit)
+    hotkey = HotkeyListener(
+        hotkey_bridge.toggle_requested.emit,
+        hotkey_bridge.cancel_requested.emit,
+    )
 
     app.aboutToQuit.connect(hotkey.stop)
     app.aboutToQuit.connect(tray.hide)

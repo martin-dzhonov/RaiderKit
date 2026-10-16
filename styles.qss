@@ -523,6 +523,12 @@ QLabel#loadoutResultText {
     font-weight: bold;
 }
 
+QLabel#scanCancelHint {
+    background: transparent;
+    color: #8992ad;
+    font-size: 11px;
+}
+
 QWidget#loadoutResultContainer {
     background: transparent;
 }

@@ -483,15 +483,15 @@ def find_best_match(
                 * 100.0
             )
 
-            save_ssim_debug_pair(
-                candidate_array,
-                template_icon,
-                template["name"],
-                debug_row,
-                debug_column,
-                score,
-                row_directories=row_directories,
-            )
+            # save_ssim_debug_pair(
+            #     candidate_array,
+            #     template_icon,
+            #     template["name"],
+            #     debug_row,
+            #     debug_column,
+            #     score,
+            #     row_directories=row_directories,
+            # )
 
             template_validation_score = None
             template_attachment_score = None
@@ -586,16 +586,16 @@ def recognize_big_inventory(image):
             except Exception:
                 continue
 
-        if best_template is not None:
-            save_ssim_debug_pair(
-                candidate_array,
-                best_template["image"],
-                best_template["name"],
-                1,
-                box_index,
-                best_score,
-                row_directories=row_directories,
-            )
+        # if best_template is not None:
+        #     save_ssim_debug_pair(
+        #         candidate_array,
+        #         best_template["image"],
+        #         best_template["name"],
+        #         1,
+        #         box_index,
+        #         best_score,
+        #         row_directories=row_directories,
+        #     )
 
         if best_name is None or best_score < MIN_SIMILARITY:
             continue
