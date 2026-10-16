@@ -16,26 +16,12 @@
         "medium_shield"
     ],
     "weapons": [
-        "ANVIL I_01",
-        "ANVIL I_02",
-        "ANVIL I_03",
-        "ANVIL I_04",
-        "ANVIL I_05",
-        "ANVIL I_06",
-        "ANVIL I_07",
-        "ANVIL I_08",
-        "ANVIL I_09",
-        "ANVIL I_10",
-        "BURLETTA A_01",
-        "BURLETTA III_01",
-        "BURLETTA III_02",
-        "BURLETTA III_03",
-        "BURLETTA III_04",
-        "BURLETTA III_05",
-        "BURLETTA III_06",
-        "BURLETTA III_07",
-        "BURLETTA III_08",
-        "BURLETTA III_09"
+        "ARPEGGIO II_01",
+        "ARPEGGIO II_02",
+        "ARPEGGIO II_03",
+        "HAIRPIN IV_01",
+        "HAIRPIN IV_02",
+        "STITCHER I_01"
     ],
     "ammo": [
         "energy_clip",

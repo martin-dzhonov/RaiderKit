@@ -16,7 +16,9 @@ from PySide6.QtWidgets import (
 
 import main as automation
 from common import (
+    TEMPLATE_DIR,
     flatten_loadout,
+    get_item_categories,
     refresh_item_categories,
     save_loadouts,
     save_loadout_tab_options,
@@ -115,9 +117,7 @@ def process_generated_loadout(overlay, inventory_scan):
             lambda error: handle_inventory_actions_failure(overlay, error)
         )
         worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
-        worker.finished.connect(
-            lambda: setattr(overlay, "inventory_save_worker", None)
-        )
+        worker.finished.connect(lambda: setattr(overlay, "inventory_save_worker", None))
         worker.finished.connect(worker.deleteLater)
         worker.start()
     except Exception:
@@ -154,8 +154,7 @@ def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
 
     try:
         weapon_items = [
-            {"name": item_id, "banner_text": "1"}
-            for item_id in weapon_item_ids
+            {"name": item_id, "banner_text": "1"} for item_id in weapon_item_ids
         ]
         loadout = automation.utils.build_player_loadout(
             inventory_scan["main_items"] + weapon_items,
@@ -226,6 +225,30 @@ def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
     overlay.status.setText(f"Saved generated loadout: {name}")
 
 
+def delete_weapon_assets(deleted_loadout):
+    """Remove the weapon template images used by the deleted loadout."""
+    try:
+        weapon_names = get_item_categories().get("weapons", set())
+        deleted_weapons = {
+            item
+            for item in flatten_loadout(deleted_loadout)
+            if item in weapon_names
+        }
+
+        if not deleted_weapons:
+            return
+
+        weapons_dir = TEMPLATE_DIR / "weapons"
+        for path in weapons_dir.iterdir():
+            if path.is_file() and path.stem in deleted_weapons:
+                path.unlink()
+                logger.info("Deleted weapon asset: %s", path)
+
+        refresh_item_categories()
+    except Exception:
+        logger.exception("Could not delete weapon assets for deleted loadout")
+
+
 def delete_loadout(overlay, name):
     """Ask for confirmation and delete a saved loadout."""
     answer = QMessageBox.question(
@@ -242,11 +265,14 @@ def delete_loadout(overlay, name):
     if name not in overlay.loadouts:
         return
 
+    deleted_loadout = overlay.loadouts[name]
+
     updated_loadouts = {
         loadout_name: loadout
         for loadout_name, loadout in overlay.loadouts.items()
         if loadout_name != name
     }
+
     try:
         save_loadouts(updated_loadouts)
     except (OSError, TypeError, ValueError) as exc:
@@ -276,12 +302,16 @@ def delete_loadout(overlay, name):
     try:
         save_loadout_tab_options(updated_options)
     except (OSError, TypeError, ValueError) as exc:
-        logger.exception("Could not remove equip options for deleted loadout '%s'", name)
+        logger.exception(
+            "Could not remove equip options for deleted loadout '%s'", name
+        )
         QMessageBox.warning(
             overlay,
             "Equip Options Cleanup Failed",
             f"Deleted '{name}', but its saved equip options could not be removed:\n\n{exc}",
         )
+
+    delete_weapon_assets(deleted_loadout)
 
     overlay.refresh_loadouts()
     overlay.status.setText(f"Deleted loadout: {name}")

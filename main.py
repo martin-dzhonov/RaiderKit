@@ -34,7 +34,7 @@ TABS_Y = {
 
 AFTER_MOVE_DELAY = 0.05
 POPUP_DISMISS_DELAY = 0.05
-TAB_SWITCH_DELAY = 0.3
+TAB_SWITCH_DELAY = 0.25
 MAX_SCROLL_ATTEMPTS = 50
 SCROLLBAR_CLICK_OFFSET = 10
 MAX_CLEAR_CLICKS = 50
@@ -259,9 +259,7 @@ def perform_player_inventory_save_actions(initial_image=None):
         empty_boxes = [
             cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
         ]
-        empty_boxes.sort(
-            key=lambda cell: (cell["column_index"], cell["row_index"])
-        )
+        empty_boxes.sort(key=lambda cell: (cell["column_index"], cell["row_index"]))
         logger.info(
             "Player inventory save: found %d occupied source(s) and %d empty slot(s)",
             len(occupied_sources),
@@ -275,7 +273,9 @@ def perform_player_inventory_save_actions(initial_image=None):
             )
 
         if not occupied_sources:
-            logger.info("Player inventory save: no occupied source slots; nothing to save")
+            logger.info(
+                "Player inventory save: no occupied source slots; nothing to save"
+            )
             return weapon_item_ids
 
         drag_sources = [
@@ -780,11 +780,6 @@ def open_stash_tab(tab_name):
     if is_cancelled():
         return False
 
-    time.sleep(0.1)
-
-    if is_cancelled():
-        return False
-
     pyautogui.click(x, y)
     recognition.set_current_tab(tab_name)
     time.sleep(TAB_SWITCH_DELAY)
@@ -847,20 +842,11 @@ def move_items_by_tab(loadout, enabled_tabs=None):
     remaining = {
         name: quantity
         for name, quantity in remaining.items()
-        if eligible_tabs[name]
-        or not any(name in items for items in tab_items.values())
+        if eligible_tabs[name] or not any(name in items for items in tab_items.values())
     }
 
     if not remaining:
         return remaining
-
-    if "weapons" in enabled_tabs:
-        weapons_tab_position = (TABS_X, TABS_Y["weapons"])
-        pyautogui.moveTo(*weapons_tab_position, duration=0.1)
-        pyautogui.click(*weapons_tab_position)
-        recognition.set_current_tab("weapons")
-        logger.info("Stash scan: clicked Weapons tab; waiting 0.2s before scanning")
-        time.sleep(0.2)
 
     for tab_name in stash_tabs:
         if tab_name not in enabled_tabs:
@@ -884,6 +870,12 @@ def move_items_by_tab(loadout, enabled_tabs=None):
 
             if not open_stash_tab(tab_name):
                 return remaining
+
+            if tab_name == "weapons":
+                # Weapons > Shields > Weapons refresh before scanning weapons.
+                for refresh_tab in ("shields", "weapons"):
+                    if not open_stash_tab(refresh_tab):
+                        return remaining
 
             found_stacks = move_requested_items(
                 remaining,

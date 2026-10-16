@@ -1,32 +1,21 @@
 {
-    "New Loadout 4": {
-        "light_ammo": 29,
-        "launcher_ammo": 24,
-        "blaze_grenade": 4,
-        "combat_mk2": 1,
-        "light_shield": 1,
-        "BURLETTA III_04": 1,
-        "ANVIL I_05": 1,
-        "fireworks_box": 1,
-        "wolfpack": 1
-    },
     "New Loadout": {
-        "light_ammo": 29,
-        "launcher_ammo": 24,
-        "combat_mk2": 1,
+        "heavy_ammo": 60,
+        "looting_mk3": 1,
         "light_shield": 1,
-        "BURLETTA III_08": 1,
-        "ANVIL I_09": 1,
-        "powered_descender": 1
+        "ARPEGGIO II_01": 1,
+        "HAIRPIN IV_01": 1
     },
     "New Loadout 2": {
-        "light_ammo": 29,
-        "launcher_ammo": 24,
-        "combat_mk2": 1,
+        "light_ammo": 100,
+        "looting_mk3": 1,
         "light_shield": 1,
-        "BURLETTA III_09": 1,
-        "ANVIL I_10": 1,
-        "powered_descender": 1,
-        "gas_mine": 1
+        "ARPEGGIO II_02": 1,
+        "HAIRPIN IV_02": 1
+    },
+    "New Loadout 3": {
+        "heavy_ammo": 63,
+        "ARPEGGIO II_03": 1,
+        "STITCHER I_01": 1
     }
 }

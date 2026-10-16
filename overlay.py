@@ -1,5 +1,6 @@
 import copy
 import logging
+import re
 import main as automation
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
@@ -422,7 +423,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
             if missing:
                 missing_lines = "\n".join(
-                    f"• {ITEM_NAMES.get(name, name)} x{quantity}"
+                    self._format_missing_item(name, quantity)
                     for name, quantity in missing.items()
                     if quantity > 0
                 )
@@ -438,6 +439,16 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             result_type = "missing"
 
         self.show_loadout_result(message, result_type)
+
+    @staticmethod
+    def _format_missing_item(name, quantity):
+        display_name = ITEM_NAMES.get(name, name)
+
+        if name in get_item_categories().get("weapons", set()):
+            # Weapon keys look like "STITCHER IV_02"; drop the "_02" suffix.
+            display_name = re.sub(r"_\d+$", "", display_name)
+
+        return f"• {display_name}" + (f" x{quantity}" if quantity != 1 else "")
 
     def show_loadout_result(self, message, result_type=None):
         """Show success briefly, or missing items until OK is clicked."""
