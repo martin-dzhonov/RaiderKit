@@ -504,14 +504,14 @@ class OverlayLoadoutsMixin:
                 quantity_anchor = quantity_label
 
                 if is_weapon:
-                    # Wrapper with a right margin nudges the weapon tier 2px left.
+                    # Wrapper with a right margin nudges the weapon tier 3px left.
                     quantity_anchor = QWidget()
                     quantity_anchor.setAttribute(
                         Qt.WidgetAttribute.WA_TransparentForMouseEvents,
                         True,
                     )
                     anchor_layout = QHBoxLayout(quantity_anchor)
-                    anchor_layout.setContentsMargins(0, 0, 2, 0)
+                    anchor_layout.setContentsMargins(0, 0, 3, 0)
                     anchor_layout.addWidget(quantity_label)
 
                 slot_layout.addWidget(

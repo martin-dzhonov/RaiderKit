@@ -147,5 +147,17 @@
         "heavy_fuze_grenade": 6,
         "blaze_grenade": 6,
         "vita_spray": 1
+    },
+    "New Loadout 11": {
+        "launcher_ammo": 24,
+        "heavy_ammo": 18,
+        "ANVIL I_01": 1,
+        "ARPEGGIO II_01": 1
+    },
+    "New Loadout 12": {
+        "launcher_ammo": 24,
+        "heavy_ammo": 18,
+        "BURLETTA III_01": 1,
+        "HAIRPIN IV_01": 1
     }
 }
