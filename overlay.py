@@ -5,10 +5,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from common import (
     ITEM_NAMES,
-    LOADOUT_TAB_GROUPS,
     WINDOW_HEIGHT,
     WINDOW_FIXED_WIDTH,
     drain_queue,
+    get_item_categories,
     read_loadouts,
     read_loadout_tab_options,
     save_loadout_tab_options,
@@ -21,10 +21,9 @@ logger = logging.getLogger(__name__)
 
 def enabled_stash_tabs(options):
     return {
-        tab
-        for group, tabs in LOADOUT_TAB_GROUPS.items()
-        if options.get(group, True)
-        for tab in tabs
+        category
+        for category in get_item_categories()
+        if options.get(category, True)
     }
 
 
@@ -348,12 +347,12 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             update_progress_message=False,
         )
 
-    def update_loadout_tab_option(self, name, group, enabled):
+    def update_loadout_tab_option(self, name, category, enabled):
         previous_options = self.loadout_tab_options.get(
             name,
-            {key: True for key in LOADOUT_TAB_GROUPS},
+            {category: True for category in get_item_categories()},
         )
-        updated_options = {**previous_options, group: enabled}
+        updated_options = {**previous_options, category: enabled}
         self.loadout_tab_options[name] = updated_options
         try:
             save_loadout_tab_options(self.loadout_tab_options)

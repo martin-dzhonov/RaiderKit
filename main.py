@@ -14,10 +14,14 @@ import main_config
 import player_main_scanner
 import recognition
 import ocr_weapons
+from common import (
+    TEMPLATE_DIR,
+    TEMPLATE_EXTENSIONS,
+    get_item_categories,
+    refresh_item_categories,
+)
 
-TEMPLATE_DIR = "item_templates"
 BIG_TEMPLATE_DIR = "item_templates_big"
-TEMPLATE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".webp")
 
 TABS_X = 132
 TABS_Y = {
@@ -27,8 +31,6 @@ TABS_Y = {
     "ammo": 660,
     "quickuse": 795,
 }
-
-STASH_TABS = recognition.STASH_TABS
 
 AFTER_MOVE_DELAY = 0.05
 POPUP_DISMISS_DELAY = 0.05
@@ -284,16 +286,11 @@ def perform_player_inventory_save_actions(initial_image=None):
             (cell["x"] + 64, cell["y"] + 64)
             for cell in empty_boxes[: len(occupied_sources)]
         ]
-        weapons_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "item_templates",
-            "weapons",
-        )
+        weapons_dir = str(TEMPLATE_DIR / "weapons")
         os.makedirs(weapons_dir, exist_ok=True)
         used_item_ids = {
-            os.path.splitext(filename)[0].casefold()
-            for filename in os.listdir(weapons_dir)
-            if filename.lower().endswith(TEMPLATE_EXTENSIONS)
+            item_name.casefold()
+            for item_name in get_item_categories().get("weapons", set())
         }
 
         for source_index, (source, destination) in enumerate(
@@ -353,11 +350,12 @@ def perform_player_inventory_save_actions(initial_image=None):
             )
 
             crop_path = os.path.join(weapons_dir, f"{item_id}.png")
-            crop.save(crop_path)
             generated_crop_paths.append(crop_path)
+            crop.save(crop_path)
             logger.info("Saved weapon crop: %s", crop_path)
 
         raise_if_cancelled()
+        refresh_item_categories()
         refresh_weapon_templates()
         logger.info(
             "Player inventory save: saved %d weapon asset(s)",
@@ -365,14 +363,10 @@ def perform_player_inventory_save_actions(initial_image=None):
         )
 
     except ScanCancelled:
-        for crop_path in generated_crop_paths:
-            try:
-                os.remove(crop_path)
-            except OSError:
-                logger.exception(
-                    "Could not remove weapon crop after cancellation: %s",
-                    crop_path,
-                )
+        _remove_generated_weapon_crops(generated_crop_paths)
+        raise
+    except Exception:
+        _remove_generated_weapon_crops(generated_crop_paths)
         raise
     finally:
         for source, destination in reversed(completed_drags):
@@ -386,6 +380,27 @@ def perform_player_inventory_save_actions(initial_image=None):
             logger.info("Player inventory save: inventory items restored")
 
     return weapon_item_ids
+
+
+def _remove_generated_weapon_crops(crop_paths):
+    removed_any = False
+    for crop_path in crop_paths:
+        try:
+            os.remove(crop_path)
+            removed_any = True
+        except FileNotFoundError:
+            continue
+        except OSError:
+            logger.exception(
+                "Could not remove weapon crop after failed save: %s",
+                crop_path,
+            )
+
+    if removed_any:
+        try:
+            refresh_item_categories()
+        except Exception:
+            logger.exception("Could not refresh item category index after cleanup")
 
 
 def clear_player_inventory():
@@ -782,14 +797,16 @@ def move_items_by_tab(loadout, enabled_tabs=None):
         logger.warning("Cannot process loadout: invalid loadout or no templates loaded")
         return {}
 
+    tab_items = get_item_categories()
+    stash_tabs = tuple(tab_items)
     if enabled_tabs is None:
-        enabled_tabs = set(STASH_TABS)
+        enabled_tabs = set(stash_tabs)
     else:
         enabled_tabs = set(enabled_tabs)
-        invalid_tabs = enabled_tabs.difference(STASH_TABS)
+        invalid_tabs = enabled_tabs.difference(stash_tabs)
         if invalid_tabs:
             logger.warning("Ignoring unknown stash tabs: %s", sorted(invalid_tabs))
-            enabled_tabs.intersection_update(STASH_TABS)
+            enabled_tabs.intersection_update(stash_tabs)
 
     remaining = {}
 
@@ -817,12 +834,10 @@ def move_items_by_tab(loadout, enabled_tabs=None):
     if not remaining:
         return remaining
 
-    tab_items = get_tab_items()
-
     eligible_tabs = {
         name: {
             tab_name
-            for tab_name in STASH_TABS
+            for tab_name in stash_tabs
             if tab_name in enabled_tabs
             if name in tab_items.get(tab_name, set())
         }
@@ -847,7 +862,7 @@ def move_items_by_tab(loadout, enabled_tabs=None):
         logger.info("Stash scan: clicked Weapons tab; waiting 0.2s before scanning")
         time.sleep(0.2)
 
-    for tab_name in STASH_TABS:
+    for tab_name in stash_tabs:
         if tab_name not in enabled_tabs:
             continue
 
@@ -956,27 +971,8 @@ def start_scan(loadout, enabled_tabs=None):
     _start_task_worker(worker, "loadout equip")
 
 
-def get_tab_items():
-    tab_items = {}
-
-    for tab_name in STASH_TABS:
-        tab_dir = os.path.join(TEMPLATE_DIR, tab_name)
-
-        if not os.path.isdir(tab_dir):
-            tab_items[tab_name] = set()
-            continue
-
-        tab_items[tab_name] = {
-            os.path.splitext(filename)[0]
-            for filename in os.listdir(tab_dir)
-            if filename.lower().endswith(TEMPLATE_EXTENSIONS)
-            and os.path.splitext(filename)[0].casefold() != "empty"
-        }
-
-    return tab_items
-
-
 def initialize():
+    get_item_categories()
     recognition.initialize(
         TEMPLATE_DIR,
         BIG_TEMPLATE_DIR,

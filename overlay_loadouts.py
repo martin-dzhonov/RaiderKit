@@ -19,17 +19,24 @@ from common import (
     ICONS_DIR,
     LOADOUT_CARD_WIDTH,
     LOADOUT_CARD_GAP,
-    LOADOUT_TAB_GROUPS,
     LOADOUT_ITEM_COLUMNS,
     LOADOUT_ITEM_SLOT_SIZE,
     LOADOUT_ITEM_SIZE,
     LOADOUTS_EMPTY_PANEL_WIDTH,
     LOADOUTS_MAX_VISIBLE_CARDS,
-    TAB_ITEMS,
     TEMPLATE_DIR,
     WINDOW_FIXED_WIDTH,
+    get_item_categories,
     get_item_display_name,
 )
+
+CATEGORY_PRESENTATION = {
+    "augment": ("Augment", "Icon_Augment.png"),
+    "shields": ("Shields", "Icon_Shield.png"),
+    "weapons": ("Weapons", "Icon_Weapon.png"),
+    "ammo": ("Ammo", "Icon_Ammo.png"),
+    "quickuse": ("Quick Use", "Icon_Quick_Use.png"),
+}
 
 
 class CategoryCheckBox(QCheckBox):
@@ -64,22 +71,16 @@ class OverlayLoadoutsMixin:
     def _sort_loadout_items(self, loadout):
         """Sort items by tab priority, preserving order within each tab."""
 
+        categories = get_item_categories()
         tab_priority = {
-            "augment": 0,
-            "shields": 1,
-            "weapons": 2,
-            "ammo": 3,
-            "quickuse": 4,
+            category: priority
+            for priority, category in enumerate(categories)
         }
-
         item_tab = {
-            item_name: tab for tab, items in TAB_ITEMS.items() for item_name in items
+            item_name: category
+            for category, items in categories.items()
+            for item_name in items
         }
-        weapon_names = {
-            path.stem for path in TEMPLATE_DIR.glob("weapons/*") if path.is_file()
-        }
-        for weapon_name in weapon_names:
-            item_tab[weapon_name] = "weapons"
 
         return sorted(
             loadout.items(),
@@ -134,7 +135,7 @@ class OverlayLoadoutsMixin:
             for name, loadout in reversed(list(self.loadouts.items())):
                 self.loadout_tab_options.setdefault(
                     name,
-                    {group: True for group in LOADOUT_TAB_GROUPS},
+                    {category: True for category in get_item_categories()},
                 )
 
                 self.loadout_list.addWidget(self._create_loadout_entry(name, loadout))
@@ -238,25 +239,24 @@ class OverlayLoadoutsMixin:
         row_layout.addWidget(delete)
         row_layout.addStretch(1)
 
-        for group, label_text, icon_name in (
-            ("augment", "Augment", "Icon_Augment.png"),
-            ("shields", "Shields", "Icon_Shield.png"),
-            ("weapons", "Weapons", "Icon_Weapon.png"),
-            ("ammo", "Ammo", "Icon_Ammo.png"),
-            ("quickuse", "Quick Use", "Icon_Quick_Use.png"),
-        ):
+        for category in get_item_categories():
+            label_text, icon_name = CATEGORY_PRESENTATION.get(
+                category,
+                (category.replace("_", " ").title(), ""),
+            )
             checkbox = CategoryCheckBox()
             checkbox.setObjectName("loadoutTabOption")
             checkbox.setAccessibleName(label_text)
             checkbox.setToolTip(label_text)
-            checkbox.setIcon(QIcon(str(ICONS_DIR / icon_name)))
+            if icon_name:
+                checkbox.setIcon(QIcon(str(ICONS_DIR / icon_name)))
             checkbox.setIconSize(QSize(26, 26))
             checkbox.setFixedSize(32, 37)
-            checkbox.setChecked(self.loadout_tab_options[name][group])
+            checkbox.setChecked(self.loadout_tab_options[name][category])
             checkbox.toggled.connect(
-                lambda enabled, n=name, g=group: self.update_loadout_tab_option(
+                lambda enabled, n=name, c=category: self.update_loadout_tab_option(
                     n,
-                    g,
+                    c,
                     enabled,
                 )
             )
@@ -312,9 +312,13 @@ class OverlayLoadoutsMixin:
             return contents
 
         columns = LOADOUT_ITEM_COLUMNS
-        weapon_names = {
-            path.stem for path in TEMPLATE_DIR.glob("weapons/*") if path.is_file()
+        categories = get_item_categories()
+        item_categories = {
+            item_name: category
+            for category, item_names in categories.items()
+            for item_name in item_names
         }
+        weapon_names = categories.get("weapons", set())
 
         for index, (name, quantity) in enumerate(self._sort_loadout_items(loadout)):
 
@@ -354,14 +358,14 @@ class OverlayLoadoutsMixin:
 
             slot_layout.setSpacing(0)
 
-            image_path = next(
-                (
-                    path
-                    for extension in ("webp", "png")
-                    for path in sorted(TEMPLATE_DIR.glob(f"*/{name}.{extension}"))
-                ),
-                None,
-            )
+            category = item_categories.get(name)
+            image_path = None
+            if category is not None:
+                for extension in ("webp", "png"):
+                    candidate = TEMPLATE_DIR / category / f"{name}.{extension}"
+                    if candidate.is_file():
+                        image_path = candidate
+                        break
 
             if image_path is not None:
 
@@ -395,7 +399,7 @@ class OverlayLoadoutsMixin:
                         alignment=Qt.AlignmentFlag.AlignCenter,
                     )
 
-            if name not in TAB_ITEMS["augment"] and name not in TAB_ITEMS["shields"]:
+            if category not in {"augment", "shields"}:
                 quantity_text = f"×{quantity}"
                 if name in weapon_names:
                     weapon_tier = re.search(r"([IVXLCDM]+)_\d+$", name, re.IGNORECASE)

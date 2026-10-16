@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 import utils
+from common import get_item_categories
 
 warnings.filterwarnings(
     "ignore",
@@ -32,7 +33,6 @@ WEAPON_TIER_TOP_LEFT_INSET = 0
 WEAPON_TIER_BOTTOM_RIGHT_INSET = 2
 WEAPON_ATTACHMENT_REGION_SIZE = 30
 WEAPON_ATTACHMENT_RIGHT_INSET = 50
-STASH_TABS = ("augment", "shields", "weapons", "ammo", "quickuse")
 BOXES = {
     "box1": (923, 363, 1115, 491),
     "box2": (1136, 363, 1328, 491),
@@ -300,7 +300,7 @@ def initialize(
     TAB_TEMPLATES = {}
     TEMPLATES = []
 
-    for tab_name in STASH_TABS:
+    for tab_name in get_item_categories():
         tab_dir = os.path.join(template_dir, tab_name)
         loaded_templates = utils.load_templates(
             tab_dir,

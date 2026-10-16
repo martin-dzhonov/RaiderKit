@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 from queue import Empty
 
@@ -8,16 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent
 
 LOADOUTS_FILE = BASE_DIR / "loadouts.json"
 LOADOUT_TAB_OPTIONS_FILE = BASE_DIR / "loadout_tab_options.json"
+ITEM_CATEGORIES_FILE = BASE_DIR / "item_categories.json"
 ICONS_DIR = BASE_DIR / "icons"
 STYLES_FILE = BASE_DIR / "styles.qss"
 TEMPLATE_DIR = BASE_DIR / "item_templates"
-LOADOUT_TAB_GROUPS = {
-    "augment": ("augment",),
-    "shields": ("shields",),
-    "weapons": ("weapons",),
-    "ammo": ("ammo",),
-    "quickuse": ("quickuse",),
-}
+TEMPLATE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".webp")
+
+logger = logging.getLogger(__name__)
+_item_categories = None
 
 MAX_WIDGET_SIZE = 16_777_215
 
@@ -118,82 +117,88 @@ ITEM_NAMES = {
 }
 
 
-TAB_ITEMS = {
-    "augment": {
-        "combat_mk1",
-        "combat_mk2",
-        "combat_mk3",
-        "looting_mk1",
-        "looting_mk2",
-        "looting_mk3",
-        "tactical_mk1",
-        "tactical_mk2",
-        "tactical_mk3",
-    },
-    "shields": {"heavy_shield", "light_shield", "medium_shield"},
-    "weapons": {"stg"},
-    "ammo": {
-        "energy_clip",
-        "heavy_ammo",
-        "launcher_ammo",
-        "light_ammo",
-        "medium_ammo",
-        "shotgun_ammo",
-    },
-    "quickuse": {
-        "adrenaline_shot",
-        "advanced_camera",
-        "bandage",
-        "barricade_kit",
-        "basic_camera",
-        "binoculars",
-        "blaze_grenade",
-        "blue_light_stick",
-        "crash_mat",
-        "deadline",
-        "defibrillator",
-        "dockmasters_detector",
-        "door_blocker",
-        "explosive_mine",
-        "firecracker",
-        "fireworks_box",
-        "flame_spray",
-        "gas_grenade",
-        "grappling_hook",
-        "green_light_stick",
-        "heavy_fuze_grenade",
-        "herbal_bandage",
-        "jolt_mine",
-        "light_impact_grenade",
-        "lil_smoke_grenade",
-        "lure_grenade",
-        "noisemaker",
-        "photoelectric_cloak",
-        "pulse_mine",
-        "red_light_stick",
-        "remote_raider_flare",
-        "seeker_grenade",
-        "shield_recharger",
-        "showstopper",
-        "shrapnel_grenade",
-        "smoke_grenade",
-        "smoke_grenade_trap",
-        "snap_blast_grenade",
-        "snap_hook",
-        "sterilized_bandage",
-        "surge_coil",
-        "surge_shield_recharger",
-        "tagging_grenade",
-        "trailblazer",
-        "trigger_nade",
-        "vita_shot",
-        "vita_spray",
-        "wolfpack",
-        "yank_grenade",
-        "yellow_light_stick",
-        "zipline",
-    },
-}
+def _read_item_categories():
+    data = json.loads(ITEM_CATEGORIES_FILE.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("The item category index must contain a JSON object.")
+
+    categories = {}
+    for category, item_names in data.items():
+        if (
+            not isinstance(category, str)
+            or not category
+            or not isinstance(item_names, list)
+            or not all(isinstance(item_name, str) for item_name in item_names)
+        ):
+            raise ValueError("The item category index has an invalid structure.")
+        categories[category] = set(item_names)
+    return categories
+
+
+def refresh_item_categories():
+    """Rebuild and persist the item/category index from template assets."""
+    global _item_categories
+
+    existing_order = []
+    if ITEM_CATEGORIES_FILE.exists():
+        try:
+            existing_order = list(_read_item_categories())
+        except (OSError, json.JSONDecodeError, ValueError):
+            logger.warning(
+                "Rebuilding invalid item category index: %s",
+                ITEM_CATEGORIES_FILE,
+                exc_info=True,
+            )
+
+    discovered = {}
+    for category_dir in TEMPLATE_DIR.iterdir():
+        if not category_dir.is_dir():
+            continue
+        discovered[category_dir.name] = {
+            path.stem
+            for path in category_dir.iterdir()
+            if path.is_file()
+            and path.suffix.lower() in TEMPLATE_EXTENSIONS
+            and path.stem.casefold() != "empty"
+        }
+
+    category_order = [
+        category for category in existing_order if category in discovered
+    ]
+    category_order.extend(sorted(set(discovered).difference(category_order)))
+    categories = {
+        category: discovered[category]
+        for category in category_order
+    }
+    if not categories:
+        raise ValueError(f"No item category folders found in '{TEMPLATE_DIR}'.")
+
+    temporary = ITEM_CATEGORIES_FILE.with_suffix(".tmp")
+    temporary.write_text(
+        json.dumps(
+            {
+                category: sorted(item_names)
+                for category, item_names in categories.items()
+            },
+            indent=4,
+        ),
+        encoding="utf-8",
+    )
+    temporary.replace(ITEM_CATEGORIES_FILE)
+    _item_categories = categories
+    return categories
+
+
+def get_item_categories():
+    """Return the cached category index, loading the persisted index if needed."""
+    global _item_categories
+
+    if _item_categories is None:
+        if ITEM_CATEGORIES_FILE.exists():
+            _item_categories = _read_item_categories()
+        else:
+            return refresh_item_categories()
+    return _item_categories
 
 
 def get_item_display_name(item_key):
@@ -277,8 +282,9 @@ def save_loadout_tab_options(options):
 
 
 def read_loadout_tab_options(loadout_names):
+    category_names = get_item_categories()
     options = {
-        name: {group: True for group in LOADOUT_TAB_GROUPS}
+        name: {category: True for category in category_names}
         for name in loadout_names
     }
     if not LOADOUT_TAB_OPTIONS_FILE.exists():
@@ -297,19 +303,19 @@ def read_loadout_tab_options(loadout_names):
             if not isinstance(saved, dict):
                 raise ValueError(f"Options for '{name}' must be a JSON object.")
             loaded_options[name] = {}
-            for group in LOADOUT_TAB_GROUPS:
-                if group == "shields":
+            for category in category_names:
+                if category == "shields":
                     value = saved.get(
                         "shields",
                         saved.get("augment_shields", True),
                     )
                 else:
-                    value = saved.get(group, True)
+                    value = saved.get(category, True)
                 if not isinstance(value, bool):
                     raise ValueError(
-                        f"Option '{group}' for '{name}' must be true or false."
+                        f"Option '{category}' for '{name}' must be true or false."
                     )
-                loaded_options[name][group] = value
+                loaded_options[name][category] = value
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         QMessageBox.warning(
             None,

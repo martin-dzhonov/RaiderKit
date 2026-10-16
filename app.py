@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 import main as automation
 from common import (
     flatten_loadout,
+    refresh_item_categories,
     save_loadouts,
     save_loadout_tab_options,
     validate_loadout,
@@ -324,6 +325,17 @@ def main():
     app.setQuitOnLastWindowClosed(False)
 
     app.setStyleSheet(load_stylesheet())
+
+    try:
+        refresh_item_categories()
+    except Exception as exc:
+        logger.exception("Could not initialize item category index")
+        QMessageBox.critical(
+            None,
+            "Item Categories",
+            f"Could not build the item category index:\n\n{exc}",
+        )
+        return 1
 
     overlay = InventoryOverlay(
         process_generated_loadout=process_generated_loadout,
