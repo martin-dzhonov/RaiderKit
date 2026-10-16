@@ -1,25 +1,12 @@
 {
-    "asdas": {
-        "medium_ammo": 154,
-        "heavy_ammo": 60,
-        "blaze_grenade": 4,
-        "combat_mk2": 1,
-        "medium_shield": 1,
-        "ANVIL I_01": 1,
-        "ARPEGGIO III_01": 1,
-        "deadline": 1,
-        "herbal_bandage": 5,
-        "shield_recharger": 4,
-        "smoke_grenade": 1
-    },
     "New Loadout": {
+        "heavy_ammo": 63,
         "launcher_ammo": 24,
-        "heavy_ammo": 60,
         "smoke_grenade": 1,
         "combat_mk2": 1,
         "medium_shield": 1,
-        "RASCAL I_01": 1,
         "BURLETTA III_01": 1,
+        "RASCAL I_01": 1,
         "blaze_grenade": 4,
         "deadline": 1,
         "shield_recharger": 4,

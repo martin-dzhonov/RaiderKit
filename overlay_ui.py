@@ -271,6 +271,7 @@ class OverlayUIMixin:
         actions_panel_layout.addWidget(self.loadout_result_widget, 0, 0)
 
         self.ui_stack = QStackedWidget()
+        self.ui_stack.setObjectName("uiStack")
         self.ui_stack.setContentsMargins(0, 0, 0, 0)
         self.ui_stack.addWidget(root)
         self.ui_stack.setCurrentWidget(root)
@@ -322,7 +323,8 @@ class OverlayUIMixin:
         self.central_frame.setObjectName("centralFrame")
 
         layout = QVBoxLayout(self.central_frame)
-        layout.setContentsMargins(0, 0, 0, 0)
+        # Keep children inside the 2px frame border.
+        layout.setContentsMargins(2, 2, 2, 2)
         layout.setSpacing(0)
 
         layout.addWidget(self.title_bar)

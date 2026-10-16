@@ -18,9 +18,22 @@ QLabel {
 
 /* Main Frame */
 QWidget#centralFrame {
-    background: #10131d;
-    border: 1px solid #454b5a;
+    background: rgb(8, 10, 20);
+    border: 2px solid #454b5a;
     border-radius: 10px;
+}
+
+QWidget#mainPanel,
+QWidget#uiStack {
+    background: rgb(8, 10, 20);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+QWidget#actionsPanel,
+QWidget#actionsContent,
+QWidget#loadoutsPanel {
+    background: rgb(8, 10, 20);
 }
 
 QWidget#loadoutContainer {
@@ -50,6 +63,8 @@ QWidget#panelDivider {
 QWidget#titleBar {
     background: #191e2d;
     border: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 QLabel#windowTitle {

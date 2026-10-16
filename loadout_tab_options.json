@@ -1,9 +1,1 @@
-{
-    "asdas": {
-        "augment": true,
-        "shields": true,
-        "weapons": false,
-        "ammo": false,
-        "quickuse": true
-    }
-}
+{}
