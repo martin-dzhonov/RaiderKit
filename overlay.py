@@ -46,6 +46,8 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         self.compact_mode = False
         self.inventory_save_layout = None
         self.inventory_save_worker = None
+        self.loadout_equip_progress_bars = {}
+        self.loadout_equip_animations = {}
 
         self.loadouts = read_loadouts()
 
@@ -239,6 +241,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
 
         except Exception as exc:
             self.scan_restore_timer.stop()
+            self.set_loadout_equip_progress(None)
             self.restore_after_inventory_save()
             self.hide_scan_progress()
 
@@ -254,6 +257,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         if automation.task_running:
             self.scan_restore_timer.start()
         else:
+            self.set_loadout_equip_progress(None)
             self.restore_after_inventory_save()
             self.hide_scan_progress()
 
@@ -299,6 +303,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             f"Equipping\n{name}",
             f"●  Starting loadout: {name}",
             running_message="●  Please wait for the current task to finish.",
+            prepare=lambda: self.set_loadout_equip_progress(name),
             update_progress_message=False,
         )
 
@@ -309,6 +314,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
             return
 
         self.scan_restore_timer.stop()
+        self.set_loadout_equip_progress(None)
 
         self.update_status()
         self.update_player_inventory_results()
@@ -342,6 +348,7 @@ class InventoryOverlay(OverlayUIMixin, OverlayLoadoutsMixin, QMainWindow):
         if not results:
             return
 
+        self.set_loadout_equip_progress(None)
         result = results[-1]
 
         if result.get("success"):

@@ -1,53 +1,44 @@
 {
     "New Loadout": {
-        "light_ammo": 109,
-        "heavy_ammo": 46,
-        "looting_mk1": 1,
+        "light_ammo": 200,
+        "heavy_ammo": 60,
+        "looting_mk2": 1,
         "light_shield": 1,
-        "HAIRPIN IV_08": 1,
-        "ARPEGGIO II_21": 1,
-        "explosive_mine": 1,
+        "FERRO III_01": 1,
+        "BURLETTA III_01": 1,
         "vita_spray": 1,
-        "sterilized_bandage": 3
+        "herbal_bandage": 5,
+        "shield_recharger": 5,
+        "smoke_grenade": 2
+    },
+    "New Loadout 6": {
+        "medium_ammo": 234,
+        "bandage": 5,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO III_04": 1,
+        "smoke_grenade": 2,
+        "shield_recharger": 5,
+        "herbal_bandage": 5,
+        "adrenaline_shot": 5
     },
     "New Loadout 2": {
-        "light_ammo": 109,
-        "heavy_ammo": 46,
-        "looting_mk1": 1,
+        "vita_spray": 3,
+        "wolfpack": 1,
+        "advanced_camera": 1,
+        "blaze_grenade": 14,
+        "trigger_nade": 6,
+        "heavy_shield": 1,
+        "surge_shield_recharger": 5,
+        "smoke_grenade": 1,
+        "smoke_grenade_trap": 3,
+        "sterilized_bandage": 3,
+        "surge_coil": 1,
+        "combat_mk2": 1,
+        "looting_mk3": 1,
         "light_shield": 1,
-        "HAIRPIN IV_09": 1,
-        "explosive_mine": 1,
-        "vita_spray": 1,
-        "sterilized_bandage": 3
-    },
-    "New Loadout 3": {
-        "light_ammo": 109,
-        "heavy_ammo": 46,
-        "looting_mk1": 1,
-        "light_shield": 1,
-        "ARPEGGIO II_22": 1,
-        "explosive_mine": 1,
-        "vita_spray": 1,
-        "sterilized_bandage": 3
-    },
-    "New Loadout 4": {
-        "light_ammo": 109,
-        "heavy_ammo": 46,
-        "looting_mk1": 1,
-        "light_shield": 1,
-        "explosive_mine": 1,
-        "vita_spray": 1,
-        "sterilized_bandage": 3
-    },
-    "New Loadout 5": {
-        "light_ammo": 109,
-        "heavy_ammo": 46,
-        "looting_mk1": 1,
-        "light_shield": 1,
-        "HAIRPIN IV_10": 1,
-        "ARPEGGIO II_23": 1,
-        "explosive_mine": 1,
-        "vita_spray": 1,
-        "sterilized_bandage": 3
+        "ANVIL I_03": 1,
+        "ARPEGGIO II_03": 1,
+        "photoelectric_cloak": 1
     }
 }

@@ -1,12 +1,13 @@
 import re
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QPropertyAnimation, Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QProgressBar,
     QPushButton,
     QSizePolicy,
     QVBoxLayout,
@@ -28,6 +29,16 @@ from common import (
 
 
 class OverlayLoadoutsMixin:
+
+    def set_loadout_equip_progress(self, active_name):
+        for name, progress_bar in self.loadout_equip_progress_bars.items():
+            animation = self.loadout_equip_animations[name]
+            animation.stop()
+            progress_bar.setValue(0)
+            progress_bar.setVisible(name == active_name)
+
+            if name == active_name:
+                animation.start()
 
     def _sort_loadout_items(self, loadout):
         """Sort items by tab priority, preserving order within each tab."""
@@ -58,6 +69,11 @@ class OverlayLoadoutsMixin:
         )
 
     def refresh_loadouts(self):
+        if hasattr(self, "loadout_equip_animations"):
+            for animation in self.loadout_equip_animations.values():
+                animation.stop()
+            self.loadout_equip_progress_bars.clear()
+            self.loadout_equip_animations.clear()
 
         while self.loadout_list.count():
 
@@ -130,10 +146,23 @@ class OverlayLoadoutsMixin:
         entry_layout.setSpacing(4)
 
         row = QWidget()
-
         row.setObjectName("loadoutRow")
+        row_grid = QGridLayout(row)
+        row_grid.setContentsMargins(0, 0, 0, 0)
+        row_grid.setSpacing(0)
 
-        row_layout = QHBoxLayout(row)
+        progress_bar = QProgressBar(row)
+        progress_bar.setObjectName("loadoutEquipProgress")
+        progress_bar.setRange(0, 1000)
+        progress_bar.setValue(0)
+        progress_bar.setTextVisible(False)
+        progress_bar.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        progress_bar.hide()
+        row_grid.addWidget(progress_bar, 0, 0)
+
+        content = QWidget(row)
+        content.setObjectName("loadoutRowContent")
+        row_layout = QHBoxLayout(content)
 
         row_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -173,7 +202,19 @@ class OverlayLoadoutsMixin:
 
         row_layout.addWidget(load)
 
+        row_grid.addWidget(content, 0, 0)
         entry_layout.addWidget(row)
+
+        if not hasattr(self, "loadout_equip_progress_bars"):
+            self.loadout_equip_progress_bars = {}
+            self.loadout_equip_animations = {}
+        self.loadout_equip_progress_bars[name] = progress_bar
+        animation = QPropertyAnimation(progress_bar, b"value", progress_bar)
+        animation.setStartValue(0)
+        animation.setEndValue(1000)
+        animation.setDuration(2000)
+        animation.setLoopCount(-1)
+        self.loadout_equip_animations[name] = animation
 
         entry_layout.addWidget(self._create_loadout_contents(loadout), 1)
 

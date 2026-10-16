@@ -309,6 +309,21 @@ QWidget#loadoutRow {
     border-radius: 8px;
 }
 
+QWidget#loadoutRowContent {
+    background: transparent;
+}
+
+QProgressBar#loadoutEquipProgress {
+    background: #191e2d;
+    border: none;
+    border-radius: 8px;
+}
+
+QProgressBar#loadoutEquipProgress::chunk {
+    background: rgba(109, 245, 196, 45);
+    border-radius: 8px;
+}
+
 QWidget#loadoutRow QLabel {
     background: transparent;
     border: none;

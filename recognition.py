@@ -483,16 +483,16 @@ def find_best_match(
                 * 100.0
             )
 
-            # if is_weapon_stash:
-            #     save_ssim_debug_pair(
-            #         candidate_array,
-            #         template_icon,
-            #         template["name"],
-            #         debug_row,
-            #         debug_column,
-            #         score,
-            #         row_directories=row_directories,
-            #     )
+            if is_weapon_stash:
+                save_ssim_debug_pair(
+                    candidate_array,
+                    template_icon,
+                    template["name"],
+                    debug_row,
+                    debug_column,
+                    score,
+                    row_directories=row_directories,
+                )
 
             template_validation_score = None
             template_attachment_score = None

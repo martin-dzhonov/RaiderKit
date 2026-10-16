@@ -8,7 +8,7 @@ START_X = 1392
 START_Y = 363
 
 LAST_COLUMN_RIGHT_X = 1936
-LAST_ROW_BOTTOM_Y = 767
+LAST_ROW_BOTTOM_Y = 1183
 
 SCAN_OFFSET = 30
 
@@ -251,6 +251,8 @@ def scan_inventory(image):
         column_positions=column_positions,
         row_positions=row_positions,
     )
+
+    print(cells)
 
     return {
         "grid": {
