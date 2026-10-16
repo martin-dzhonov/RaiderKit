@@ -40,5 +40,33 @@
         "ANVIL I_03": 1,
         "ARPEGGIO II_03": 1,
         "photoelectric_cloak": 1
+    },
+    "New Loadout 3": {
+        "looting_mk2": 1,
+        "light_shield": 1
+    },
+    "New Loadout 4": {
+        "medium_ammo": 234,
+        "herbal_bandage": 5,
+        "bandage": 5,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO III_05": 1,
+        "smoke_grenade": 3,
+        "adrenaline_shot": 5,
+        "shield_recharger": 6
+    },
+    "New Loadout 5": {
+        "medium_ammo": 234,
+        "herbal_bandage": 5,
+        "bandage": 5,
+        "yellow_light_stick": 1,
+        "blue_light_stick": 3,
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "ARPEGGIO III_07": 1,
+        "smoke_grenade": 3,
+        "adrenaline_shot": 5,
+        "shield_recharger": 6
     }
 }

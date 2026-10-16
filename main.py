@@ -232,6 +232,9 @@ def perform_player_inventory_save_actions(initial_image=None):
         empty_boxes = [
             cell for cell in grid_result["cells"] if cell["status"] == "empty_box"
         ]
+        empty_boxes.sort(
+            key=lambda cell: (cell["column_index"], cell["row_index"])
+        )
         logger.info(
             "Player inventory save: found %d occupied source(s) and %d empty slot(s)",
             len(occupied_sources),
@@ -600,7 +603,26 @@ def move_requested_items(
 
         found_stacks += len(items)
 
-        for item in reversed(items):
+        if recognition.CURRENT_TAB in ("augment", "weapons"):
+            items.sort(
+                key=lambda item: (
+                    -item["score"],
+                    item.get("row_top", 0),
+                    item.get("slot_index", 0),
+                )
+            )
+            if len(items) > 1:
+                logger.info(
+                    "Stash viewport: processing %d %s matches from highest SSIM %.2f first",
+                    len(items),
+                    recognition.CURRENT_TAB,
+                    items[0]["score"],
+                )
+            items_to_process = items
+        else:
+            items_to_process = reversed(items)
+
+        for item in items_to_process:
             if is_cancelled():
                 return found_stacks
 
