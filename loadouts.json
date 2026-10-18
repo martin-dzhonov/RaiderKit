@@ -19,20 +19,45 @@
         "shield_recharger": 1
     },
     "New Loadout 3": {
-        "looting_mk2": 1,
+        "launcher_ammo": 24,
+        "tactical_mk1": 1,
         "light_shield": 1,
-        "blaze_grenade": 4
+        "ANVIL I_01": 1,
+        "ARPEGGIO III_01": 1,
+        "blaze_grenade": 3,
+        "sterilized_bandage": 2,
+        "herbal_bandage": 5
     },
     "New Loadout 4": {
-        "looting_mk1": 1,
-        "light_shield": 2,
-        "looting_mk2": 1,
-        "bandage": 5
+        "launcher_ammo": 24,
+        "tactical_mk1": 1,
+        "light_shield": 1,
+        "ANVIL I_02": 1,
+        "ARPEGGIO III_02": 1,
+        "blaze_grenade": 3,
+        "sterilized_bandage": 2,
+        "herbal_bandage": 5,
+        "seeker_grenade": 3
     },
     "New Loadout 5": {
-        "looting_mk1": 1,
-        "light_shield": 2,
-        "looting_mk2": 1,
-        "bandage": 1
+        "shotgun_ammo": 20,
+        "launcher_ammo": 80,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "VULCANO I_02": 1,
+        "HULLCRACKER IV_03": 1,
+        "showstopper": 5,
+        "heavy_fuze_grenade": 3,
+        "vita_spray": 1
+    },
+    "New Loadout 6": {
+        "medium_ammo": 120,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "VULCANO I_03": 1,
+        "HULLCRACKER IV_04": 1,
+        "showstopper": 5,
+        "heavy_fuze_grenade": 3,
+        "vita_spray": 1
     }
 }

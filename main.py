@@ -32,14 +32,14 @@ TABS_Y = {
     "quickuse": 795,
 }
 
-AFTER_MOVE_DELAY = 0.05
-POPUP_DISMISS_DELAY = 0.05
-TAB_SWITCH_DELAY = 0.25
+AFTER_MOVE_DELAY = 0.04
+POPUP_DISMISS_DELAY = 0.04
+TAB_SWITCH_DELAY = 0.23
 MAX_SCROLL_ATTEMPTS = 50
 SCROLLBAR_CLICK_OFFSET = 10
 MAX_CLEAR_CLICKS = 50
 MAX_UNCHANGED_CLEAR_SCANS = 2
-BIG_ITEM_CLICK_DELAY = 0.1
+BIG_ITEM_CLICK_DELAY = 0.04
 PLAYER_INVENTORY_SAVE_DRAG_DURATION = 0.16
 PLAYER_INVENTORY_SAVE_SOURCE_BOTTOM_INSET = 130
 
@@ -604,6 +604,7 @@ def _plan_group_moves(sizes, needed):
     move exactly `needed` items if possible, else the smallest overshoot,
     else as many as possible; fewest clicks win ties.
     """
+
     def rank(path):
         # Fewest clicks first, then prefer acting on backmost stacks.
         return (len(path), tuple(-step[0] for step in path))

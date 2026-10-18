@@ -6,7 +6,7 @@ import ocr_service
 import numpy as np
 import pyautogui
 
-WEAPON_HOVER_DELAY = 0.2
+WEAPON_HOVER_DELAY = 0.15
 VALID_TIERS = {"I", "II", "III", "IV", "V"}
 
 POPUP_BACKGROUND = (249, 238, 223)

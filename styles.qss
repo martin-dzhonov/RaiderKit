@@ -225,6 +225,7 @@ QPushButton#scan {
     color: #10131d;
     border: 1px solid #D9B84C;
     font-weight: bold;
+    font-size:12px;
 }
 
 QPushButton#scan:hover {

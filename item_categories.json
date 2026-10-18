@@ -3,6 +3,7 @@
         "combat_mk1",
         "combat_mk2",
         "combat_mk3",
+        "free_loadout",
         "looting_mk1",
         "looting_mk2",
         "looting_mk3",
@@ -16,11 +17,19 @@
         "medium_shield"
     ],
     "weapons": [
+        "ANVIL I_01",
+        "ANVIL I_02",
+        "ARPEGGIO III_01",
+        "ARPEGGIO III_02",
         "HAIRPIN I_01",
         "HULLCRACKER IV_01",
         "HULLCRACKER IV_02",
+        "HULLCRACKER IV_03",
+        "HULLCRACKER IV_04",
         "TEMPEST II_01",
-        "VULCANO I_01"
+        "VULCANO I_01",
+        "VULCANO I_02",
+        "VULCANO I_03"
     ],
     "ammo": [
         "energy_clip",
@@ -38,6 +47,7 @@
         "basic_camera",
         "binoculars",
         "blaze_grenade",
+        "blaze_grenade_trap",
         "blue_light_stick",
         "crash_mat",
         "deadline",
@@ -58,6 +68,7 @@
         "light_impact_grenade",
         "lil_smoke_grenade",
         "lure_grenade",
+        "lure_grenade_trap",
         "noisemaker",
         "photoelectric_cloak",
         "powered_descender",
@@ -76,6 +87,7 @@
         "surge_coil",
         "surge_shield_recharger",
         "tagging_grenade",
+        "tether_launcher",
         "trailblazer",
         "trigger_nade",
         "vita_shot",

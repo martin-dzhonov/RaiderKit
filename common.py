@@ -117,6 +117,10 @@ ITEM_NAMES = {
     "zipline": "Zipline",
     "powered_descender": "Powered Descender",
     "gas_mine": "Gas Mine",
+    "blaze_grenade_trap": "Blaze Grenade Trap",
+    "lure_grenade_trap": "Lure Grenade Trap",
+    "free_loadout": "Free Loadout",
+    "tether_launcher": "Tether Launcher",
 }
 
 
