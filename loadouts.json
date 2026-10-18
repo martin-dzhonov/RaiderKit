@@ -9,5 +9,30 @@
         "showstopper": 5,
         "heavy_fuze_grenade": 3,
         "vita_spray": 1
+    },
+    "New Loadout 2": {
+        "light_ammo": 49,
+        "looting_mk1": 1,
+        "light_shield": 1,
+        "HAIRPIN I_01": 1,
+        "bandage": 4,
+        "shield_recharger": 1
+    },
+    "New Loadout 3": {
+        "looting_mk2": 1,
+        "light_shield": 1,
+        "blaze_grenade": 4
+    },
+    "New Loadout 4": {
+        "looting_mk1": 1,
+        "light_shield": 2,
+        "looting_mk2": 1,
+        "bandage": 5
+    },
+    "New Loadout 5": {
+        "looting_mk1": 1,
+        "light_shield": 2,
+        "looting_mk2": 1,
+        "bandage": 1
     }
 }

@@ -595,6 +595,57 @@ def _item_stack_size(item):
         return 0
 
 
+def _plan_group_moves(sizes, needed):
+    """Plan clicks for stacks of one item, given front-to-back stack sizes.
+
+    The game re-sorts same-item stacks by size (descending) after every move,
+    so the plan is found by simulating that. Only the backmost stack may be
+    emptied. Returns (slot_index, "split" | "all", items_moved) steps that
+    move exactly `needed` items if possible, else the smallest overshoot,
+    else as many as possible; fewest clicks win ties.
+    """
+    def rank(path):
+        # Fewest clicks first, then prefer acting on backmost stacks.
+        return (len(path), tuple(-step[0] for step in path))
+
+    start = tuple(sizes)
+    paths = {start: []}
+    queue = [start]
+    for state in queue:
+        for index, size in enumerate(state):
+            is_last = index == len(state) - 1
+            moves = [("split", utils.estimate_items_moved(size))]
+            if is_last:
+                moves.append(("all", size))
+            for kind, moved in moves:
+                if moved == size and not is_last:
+                    continue
+                rest = list(state)
+                if moved == size:
+                    rest.pop(index)
+                else:
+                    rest[index] = size - moved
+                new_state = tuple(sorted(rest, reverse=True))
+                path = paths[state] + [(index, kind, moved)]
+                if new_state not in paths:
+                    paths[new_state] = path
+                    queue.append(new_state)
+                elif len(path) == len(paths[new_state]) and rank(path) < rank(
+                    paths[new_state]
+                ):
+                    paths[new_state] = path
+
+    base = sum(start)
+    totals = {}
+    for state, path in paths.items():
+        total = base - sum(state)
+        if total not in totals or rank(path) < rank(totals[total]):
+            totals[total] = path
+
+    over = [total for total in totals if total >= needed]
+    return totals[min(over) if over else max(totals)]
+
+
 def _select_best_matches(items, remaining):
     """Pick the highest-SSIM matches per item until the requested amount is covered."""
     by_name = {}
@@ -708,64 +759,58 @@ def move_requested_items(
         # Always move from the last slot to the first: the grid compacts
         # toward the start, so removing front-first shifts later items.
         items.sort(key=lambda item: (item.get("row_top", 0), item.get("slot_index", 0)))
-        items_to_process = reversed(items)
 
-        for item in items_to_process:
+        # Group stacks of the same item (adjacent because the list is sorted),
+        # each group ordered back to front, backmost group first.
+        groups = []
+        for item in reversed(items):
+            if groups and groups[-1][0]["name"] == item["name"]:
+                groups[-1].append(item)
+            else:
+                groups.append([item])
+
+        for group in groups:
             if is_cancelled():
                 return found_stacks
 
-            name = item["name"]
+            name = group[0]["name"]
 
             if name not in requested_names or remaining.get(name, 0) <= 0:
                 continue
 
-            banner_text = item["banner_text"]
-
-            # Single-item tabs are always one item per slot.
-            if recognition.CURRENT_TAB in recognition.SINGLE_ITEM_TABS:
-                stack_size = 1
-            elif banner_text is None or not str(banner_text).strip():
-                stack_size = 1
-            else:
-                try:
-                    stack_size = int(str(banner_text).strip())
-                except (TypeError, ValueError):
+            # Front-to-back slots; stacks of one item are sorted by size.
+            slots = []
+            sizes = []
+            for item in reversed(group):
+                stack_size = _item_stack_size(item)
+                if stack_size <= 0:
                     logger.warning(
                         "Skipping '%s': unreadable quantity %r",
                         name,
-                        banner_text,
+                        item.get("banner_text"),
                     )
                     continue
+                slots.append(item)
+                sizes.append(stack_size)
 
-            if stack_size <= 0:
-                logger.warning(
-                    "Skipping '%s': invalid stack size %s",
-                    name,
-                    stack_size,
-                )
+            if not slots:
                 continue
 
-            x, y = item["x"], item["y"]
-
-            while stack_size > 0 and remaining[name] > 0:
+            for slot_index, kind, amount_moved in _plan_group_moves(
+                sizes, remaining[name]
+            ):
                 if is_cancelled():
                     return found_stacks
 
-                if remaining[name] >= stack_size:
-                    amount_moved = stack_size
+                x, y = slots[slot_index]["x"], slots[slot_index]["y"]
+                if kind == "all":
                     pyautogui.moveTo(x, y, duration=0.1)
                     pyautogui.doubleClick(x, y, interval=0.05)
                 else:
-                    amount_moved = utils.estimate_items_moved(stack_size)
-
-                    if amount_moved <= 0:
-                        break
-
                     alt_shift_click(x, y)
 
                 time.sleep(AFTER_MOVE_DELAY)
                 remaining[name] -= amount_moved
-                stack_size -= amount_moved
 
             if not any(
                 count > 0 and eligible_name in searchable_names
