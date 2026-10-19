@@ -3,6 +3,7 @@ import os
 import time
 
 import ocr_service
+from common import DATA_DIR
 import numpy as np
 import pyautogui
 
@@ -66,10 +67,7 @@ def find_icon(image, popup_x, mouse_y):
 
 
 def save_icon_diagnostic_image(image, slot_label):
-    diagnostic_dir = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "debug_image",
-    )
+    diagnostic_dir = str(DATA_DIR / "debug_image")
     os.makedirs(diagnostic_dir, exist_ok=True)
     image_path = os.path.join(
         diagnostic_dir,

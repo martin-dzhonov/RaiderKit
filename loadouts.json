@@ -59,5 +59,11 @@
         "showstopper": 5,
         "heavy_fuze_grenade": 3,
         "vita_spray": 1
+    },
+    "New Loadout 7": {
+        "launcher_ammo": 19,
+        "looting_mk3": 1,
+        "light_shield": 1,
+        "ANVIL I_03": 1
     }
 }

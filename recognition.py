@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 import utils
-from common import get_item_categories
+from common import DATA_DIR, get_item_categories
 
 warnings.filterwarnings(
     "ignore",
@@ -39,7 +39,7 @@ BOXES = {
 }
 
 logger = logging.getLogger(__name__)
-SSIM_DEBUG_DIR = Path(__file__).resolve().parent / "SSIM_debug"
+SSIM_DEBUG_DIR = DATA_DIR / "SSIM_debug"
 
 TEMPLATES = []
 TAB_TEMPLATES = {}

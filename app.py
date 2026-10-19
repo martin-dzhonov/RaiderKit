@@ -1,8 +1,39 @@
+import sys
+
+# Frozen builds launch the OCR worker as this same exe.
+# Handle worker mode before importing the GUI stack.
+if "--ocr-worker" in sys.argv:
+    import multiprocessing
+    import os
+    import tempfile
+    import traceback
+
+    multiprocessing.freeze_support()
+
+    try:
+        import ocr_worker
+
+        ocr_worker.main()
+    except BaseException:
+        log_path = os.path.join(
+            tempfile.gettempdir(),
+            "RaiderKit_ocr_worker_crash.log",
+        )
+        try:
+            with open(log_path, "a", encoding="utf-8") as log:
+                traceback.print_exc(file=log)
+        except OSError:
+            pass
+        raise
+
+    sys.exit(0)
+
 import copy
 import faulthandler
 import logging
-import sys
 import threading
+import multiprocessing
+
 from pathlib import Path
 
 from pynput import keyboard
@@ -18,6 +49,7 @@ from PySide6.QtWidgets import (
 
 import main as automation
 from common import (
+    DATA_DIR,
     TEMPLATE_DIR,
     flatten_loadout,
     get_item_categories,
@@ -121,9 +153,9 @@ def process_generated_loadout(overlay, inventory_scan):
             lambda error: handle_inventory_actions_failure(overlay, error)
         )
         worker.cancelled.connect(lambda: handle_inventory_actions_cancelled(overlay))
+
         def release_worker():
-            # finished fires from inside the thread; wait for it to fully exit
-            # before dropping the last reference, or Qt aborts the process.
+            # Wait until the thread fully exits before dropping the last reference.
             worker.wait()
             overlay.inventory_save_worker = None
 
@@ -170,7 +202,6 @@ def finish_generated_loadout(overlay, inventory_scan, weapon_item_ids):
             inventory_scan["quickuse_items"],
         )
 
-        # Flattening checks that the generated structure can be processed.
         flatten_loadout(loadout)
         validate_loadout("Generated Loadout", loadout)
     except ValueError as exc:
@@ -374,9 +405,7 @@ crash_log_file = None
 def main():
     global crash_log_file
 
-    # Native crashes print no Python traceback unless faulthandler is enabled.
-    # Also write to a file, since the console can close with the process.
-    crash_log_file = open(Path(__file__).with_name("crash.log"), "a", buffering=1)
+    crash_log_file = open(DATA_DIR / "crash.log", "a", buffering=1)
     faulthandler.enable(file=crash_log_file, all_threads=True)
     _install_qt_message_handler()
     threading.excepthook = lambda args: logger.error(
@@ -412,7 +441,6 @@ def main():
     if QSystemTrayIcon.isSystemTrayAvailable():
         tray.show()
 
-    # Bridge the background hotkey thread to Qt's main thread.
     class HotkeyBridge(QThread):
         toggle_requested = Signal()
         cancel_requested = Signal()
@@ -421,7 +449,6 @@ def main():
     hotkey_bridge.toggle_requested.connect(overlay.toggle_visibility)
     hotkey_bridge.cancel_requested.connect(overlay.cancel_current_task)
 
-    # Set ENABLE_GLOBAL_HOTKEYS to False to run without the global keyboard hook.
     hotkey = None
     if ENABLE_GLOBAL_HOTKEYS:
         hotkey = HotkeyListener(
@@ -434,7 +461,6 @@ def main():
 
     app.aboutToQuit.connect(tray.hide)
 
-    # Stop any overlay-owned timers or initialization work during shutdown.
     if hasattr(overlay, "stop_initialization"):
         app.aboutToQuit.connect(overlay.stop_initialization)
 
@@ -447,4 +473,5 @@ def main():
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     sys.exit(main())

@@ -1,15 +1,23 @@
 import json
 import logging
+import sys
 from pathlib import Path
 from queue import Empty
 
 from PySide6.QtWidgets import QMessageBox
 
-BASE_DIR = Path(__file__).resolve().parent
+# BASE_DIR holds bundled read-only resources; DATA_DIR holds user-writable files
+# (next to the exe when frozen).
+if getattr(sys, "frozen", False):
+    BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
+    DATA_DIR = Path(sys.executable).resolve().parent
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+    DATA_DIR = BASE_DIR
 
-LOADOUTS_FILE = BASE_DIR / "loadouts.json"
-LOADOUT_TAB_OPTIONS_FILE = BASE_DIR / "loadout_tab_options.json"
-ITEM_CATEGORIES_FILE = BASE_DIR / "item_categories.json"
+LOADOUTS_FILE = DATA_DIR / "loadouts.json"
+LOADOUT_TAB_OPTIONS_FILE = DATA_DIR / "loadout_tab_options.json"
+ITEM_CATEGORIES_FILE = DATA_DIR / "item_categories.json"
 ICONS_DIR = BASE_DIR / "assets/icons"
 STYLES_FILE = BASE_DIR / "styles.qss"
 TEMPLATE_DIR = BASE_DIR / "assets/item_templates"
